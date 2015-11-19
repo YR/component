@@ -1,6 +1,6 @@
 'use strict';
 
-var component = require('../component')
+var component = require('../src/index')
   , expect = require('expect.js')
   , React = require('react')
   , ReactDOMServer = require('react-dom/server');

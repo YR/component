@@ -7,15 +7,15 @@
     "@yr/is-equal": "1.0.0",
     "debug": "2.2.0",
     "object-assign": "4.0.1",
-    "react": "0.14.2"
+    "react": "0.14.3"
   },
   "devDependencies": {
     "buddy": "3.1.x",
     "expect.js": "*",
     "mocha": "*",
     "mocha-phantomjs": "*",
-    "react-addons-test-utils": "0.14.2",
-    "react-dom": "0.14.2",
+    "react-addons-test-utils": "0.14.3",
+    "react-dom": "0.14.3",
     "transfigure-babel": "6.1.x"
   },
   "main": "src/index.js",
