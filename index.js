@@ -5,6 +5,7 @@ var assign = require('object-assign'),
     isEqual = require('@yr/is-equal'),
     React = require('react'),
     DEFAULT_TRANSITION_DURATION = 250,
+    TIMEOUT = 10,
     debug = Debug('yr:component'),
     isDev = undefined == 'development';
 
@@ -117,7 +118,7 @@ function willTransition(component, state) {
   state.visibility = !state.visibility ? 1 : 2;
   component.__timerID = setTimeout(function () {
     isTransitioning(component);
-  }, 0);
+  }, TIMEOUT);
 }
 
 /**

@@ -6,6 +6,7 @@ const assign = require('object-assign')
   , React = require('react')
 
   , DEFAULT_TRANSITION_DURATION = 250
+  , TIMEOUT = 10
 
   , debug = Debug('yr:component')
   , isDev = (process.env.NODE_ENV == 'development');
@@ -123,7 +124,7 @@ function willTransition (component, state) {
   state.visibility = !state.visibility ? 1 : 2;
   component.__timerID = setTimeout(() => {
     isTransitioning(component);
-  }, 0);
+  }, TIMEOUT);
 }
 
 /**

@@ -19678,6 +19678,7 @@ require.register('src/index.js', function(require, module, exports) {
         isEqual = require('@yr/is-equal/index.js#1.0.0'),
         React = require('react/react.js#0.14.3'),
         DEFAULT_TRANSITION_DURATION = 250,
+        TIMEOUT = 10,
         debug = Debug('yr:component'),
         isDev = undefined == 'development';
     
@@ -19790,7 +19791,7 @@ require.register('src/index.js', function(require, module, exports) {
       state.visibility = !state.visibility ? 1 : 2;
       component.__timerID = setTimeout(function () {
         isTransitioning(component);
-      }, 0);
+      }, TIMEOUT);
     }
     
     /**
