@@ -1,13 +1,13 @@
 {
   "name": "@yr/component",
   "description": "A factory utility for creating React.js components",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
-    "@yr/is-equal": "1.0.0",
-    "debug": "2.2.0",
-    "object-assign": "4.0.1",
-    "react": "0.14.3"
+    "@yr/is-equal": "1.0.x",
+    "debug": "2.2.x",
+    "object-assign": "4.0.x",
+    "react": "0.14.x"
   },
   "devDependencies": {
     "buddy": "3.1.x",
