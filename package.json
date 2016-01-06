@@ -1,7 +1,7 @@
 {
   "name": "@yr/component",
   "description": "A factory utility for creating React.js components",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
     "@yr/is-equal": "1.0.x",
@@ -30,15 +30,15 @@
   "build": {
     "targets": [
       {
-        "input": "src",
-        "output": ".",
-        "modular": false
-      },
-      {
         "input": "src/index.js",
         "output": "test/lib.js",
         "boilerplate": true,
         "bootstrap": true
+      },
+      {
+        "input": "src",
+        "output": ".",
+        "modular": false
       }
     ]
   }
