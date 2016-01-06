@@ -1,3 +1,6 @@
+[![NPM Version](https://img.shields.io/npm/v/@yr/component.svg?style=flat)](https://npmjs.org/package/@yr/component)
+[![Build Status](https://img.shields.io/travis/YR/component.svg?style=flat)](https://travis-ci.org/YR/component?branch=master)
+
 A factory utility for creating React.js components. Includes default handling of efficient rendering, basic support for transition state management, and property validation.
 
 ## Usage
