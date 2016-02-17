@@ -3,66 +3,76 @@
 var assign = require('object-assign'),
     Debug = require('debug'),
     isEqual = require('@yr/is-equal'),
-    React = require('react'),
+    runtime = require('@yr/runtime')
+// Use production builds for server (hide from static analysis)
+,
+    react = runtime.isBrowser ? require('react') : require('react/dist/' + 'react.min'),
+    reactDom = runtime.isBrowser ? require('react-dom') : require('react/dist/' + 'react-dom-server.min'),
     DEFAULT_TRANSITION_DURATION = 250,
     TIMEOUT = 10,
     debug = Debug('yr:component'),
     isDev = undefined == 'development';
 
-/**
- * Convert 'specification' into React component class,
- * returning React element factory
- * @param {Object} specification
- * @param {Array} mixins
- * @returns {Function}
- */
-module.exports = function component(specification, mixins) {
-  if (mixins && mixins.length) {
-    mixins.reduce(function (specification, mixin) {
-      return assign(specification, mixin);
-    }, specification);
+module.exports = {
+  WILL_TRANSITION: 1,
+  IS_TRANSITIONING: 2,
+  DID_TRANSITION: 3,
+
+  react: react,
+  reactDom: reactDom,
+
+  /**
+   * Convert 'specification' into React component class,
+   * returning React element factory
+   * @param {Object} specification
+   * @param {Array} mixins
+   * @returns {Function}
+   */
+  component: function component(specification, mixins) {
+    if (mixins && mixins.length) {
+      mixins.reduce(function (specification, mixin) {
+        return assign(specification, mixin);
+      }, specification);
+    }
+
+    if (!('shouldComponentUpdate' in specification)) {
+      specification.shouldComponentUpdate = shouldComponentUpdateFactory(specification.displayName);
+    }
+
+    if ('shouldComponentTransition' in specification) {
+      specification.__timerID = 0;
+    }
+
+    var comp = React.createClass(specification);
+
+    return function createElement(props) {
+      processProps(props, specification);
+
+      return React.createElement(comp, props);
+    };
+  },
+
+
+  /**
+   * Stateless component factory
+   * @param {Object} specification
+   * @param {Array} mixins
+   * @returns {Function}
+   */
+  stateless: function stateless(specification, mixins) {
+    if (mixins && mixins.length) {
+      mixins.reduce(function (specification, mixin) {
+        return assign(specification, mixin);
+      }, specification);
+    }
+
+    return function renderStateless(props) {
+      processProps(props, specification);
+
+      return specification.render(props);
+    };
   }
-
-  if (!('shouldComponentUpdate' in specification)) {
-    specification.shouldComponentUpdate = shouldComponentUpdateFactory(specification.displayName);
-  }
-
-  if ('shouldComponentTransition' in specification) {
-    specification.__timerID = 0;
-  }
-
-  var comp = React.createClass(specification);
-
-  return function createElement(props) {
-    processProps(props, specification);
-
-    return React.createElement(comp, props);
-  };
 };
-
-/**
- * Stateless component factory
- * @param {Object} specification
- * @param {Array} mixins
- * @returns {Function}
- */
-module.exports.stateless = function statelessComponent(specification, mixins) {
-  if (mixins && mixins.length) {
-    mixins.reduce(function (specification, mixin) {
-      return assign(specification, mixin);
-    }, specification);
-  }
-
-  return function renderStateless(props) {
-    processProps(props, specification);
-
-    return specification.render(props);
-  };
-};
-
-module.exports.WILL_TRANSITION = 1;
-module.exports.IS_TRANSITIONING = 2;
-module.exports.DID_TRANSITION = 3;
 
 /**
  * shouldComponentUpdate factory

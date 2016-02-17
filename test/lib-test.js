@@ -1,27 +1,25 @@
 'use strict';
 
-var component = require('../src/index')
-  , expect = require('expect.js')
-  , React = require('react')
-  , ReactDOMServer = require('react-dom/server');
+const component = require('../src/index')
+  , expect = require('expect.js');
 
-describe('component', function () {
-  it('should return a renderable element factory', function () {
-    var spec = {
-      render: function () {
-        return React.DOM.div({}, this.props.text);
+describe('component', () => {
+  it('should return a renderable element factory', () => {
+    const foo = component.create({
+      render: () => {
+        return component.react.DOM.div({}, this.props.text);
       }
-    };
-    var foo = component(spec);
-    expect(ReactDOMServer.renderToStaticMarkup(foo({text: 'foo'}))).to.eql('<div>foo</div>');
+    });
+
+    expect(component.reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
   });
-  it('should return a stateless renderable element factory', function () {
-    var spec = {
-      render: function (props) {
-        return React.DOM.div({}, props.text);
+  it('should return a stateless renderable element factory', () => {
+    const foo = component.stateless({
+      render: (props) => {
+        return component.react.DOM.div({}, props.text);
       }
-    };
-    var foo = component.stateless(spec);
-    expect(ReactDOMServer.renderToStaticMarkup(foo({text: 'foo'}))).to.eql('<div>foo</div>');
+    });
+
+    expect(component.reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
   });
 });

@@ -5,9 +5,11 @@
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
     "@yr/is-equal": "1.0.x",
+    "@yr/runtime": "1.1.0",
     "debug": "2.2.x",
     "object-assign": "4.0.x",
-    "react": "0.14.x"
+    "react": "0.14.x",
+    "react-dom": "0.14.x"
   },
   "devDependencies": {
     "buddy": "*",
@@ -15,7 +17,7 @@
     "mocha": "*",
     "react-addons-test-utils": "0.14.x",
     "react-dom": "0.14.x",
-    "transfigure-babel": "*"
+    "transfigure-babel": "6.5.1-2"
   },
   "main": "index.js",
   "repository": "https://github.com/YR/component.git",
