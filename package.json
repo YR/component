@@ -12,6 +12,7 @@
     "react-dom": "0.14.x"
   },
   "devDependencies": {
+    "benchmark": "^2.0.0",
     "buddy": "*",
     "expect.js": "*",
     "mocha": "*",
@@ -23,6 +24,7 @@
   "repository": "https://github.com/YR/component.git",
   "license": "MIT",
   "scripts": {
+    "perf": "NODE_ENV=production node test/perf.js",
     "prepublish": "buddy build",
     "test": "NODE_ENV=test mocha test/lib-test.js --reporter spec"
   },

@@ -14,13 +14,22 @@ const assign = require('object-assign')
   , debug = Debug('yr:component')
   , isDev = (process.env.NODE_ENV == 'development');
 
+class Component extends react.Component {
+  constructor () {
+    super();
+  }
+}
+
 module.exports = {
   WILL_TRANSITION: 1,
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
 
+  dom: react.DOM,
   react,
   reactDom,
+
+  Component,
 
   /**
    * Convert 'specification' into React component class,
@@ -30,21 +39,27 @@ module.exports = {
    * @returns {Function}
    */
   create (specification, mixins) {
-    if (mixins && mixins.length) {
-      mixins.reduce((specification, mixin) => {
-        return assign(specification, mixin);
-      }, specification);
-    }
+    let comp;
 
-    if (!('shouldComponentUpdate' in specification)) {
-      specification.shouldComponentUpdate = shouldComponentUpdateFactory(specification.displayName);
-    }
+    if ('function' == typeof specification) {
 
-    if ('shouldComponentTransition' in specification) {
-      specification.__timerID = 0;
-    }
+    } else {
+      if (mixins && mixins.length) {
+        mixins.reduce((specification, mixin) => {
+          return assign(specification, mixin);
+        }, specification);
+      }
 
-    const comp = react.createClass(specification);
+      if (!('shouldComponentUpdate' in specification)) {
+        specification.shouldComponentUpdate = shouldComponentUpdateFactory(specification.displayName);
+      }
+
+      if ('shouldComponentTransition' in specification) {
+        specification.__timerID = 0;
+      }
+
+      comp = react.createClass(specification);
+    }
 
     return function createElement (props) {
       processProps(props, specification);

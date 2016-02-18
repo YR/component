@@ -1,0 +1,48 @@
+'use strict';
+
+const benchmark = require('benchmark')
+  , component = require('../src/index')
+
+  , BREADTH = 11
+  , DEPTH = 4
+
+  , suite = new benchmark.Suite();
+
+const comp = component.create({
+  render () {
+    const breadth = this.props.breadth
+      , depth = this.props.depth;
+
+    if (depth <= 0) {
+      return component.dom.div(null, 'abcdefghi');
+    }
+
+    let children = [];
+
+    for (let i = 0; i < breadth; i++) {
+      children.push(comp({ key: i, depth: depth - 1, breadth }));
+    }
+    return component.dom.div({ children, onClick: this.onClick });
+  },
+
+  onClick () {
+    console.log('click');
+  }
+});
+
+function render () {
+  return component.reactDom.renderToString(comp({ depth: DEPTH, breadth: BREADTH }));
+}
+
+suite
+  .add({ name: 'comp', fn: render })
+  .on('complete', function () {
+      for (let i = 0; i < this.length; i++) {
+        const benchmark = this[i];
+
+        console.log(benchmark.name);
+        console.log(`Mean:    ${Math.round(benchmark.stats.mean * 1000)} ms`);
+        console.log(`Std Dev: ${Math.round(benchmark.stats.deviation * 1000)} ms\n`);
+      }
+    })
+  .run({ async: true });
