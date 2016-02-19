@@ -24,6 +24,14 @@ class Component extends react.Component {
   }
 
   /**
+   * React: render
+   * @returns {React}
+   */
+  render () {
+    return this._render(this.props, this.state);
+  }
+
+  /**
    * React: shouldComponentUpdate
    * @param {Object} nextProps
    * @param {Object} nextState
@@ -108,14 +116,19 @@ module.exports = {
    * @returns {Function}
    */
   create (specification, mixins) {
-    mixins = mixins || [];
+    if (runtime.isServer) return this.stateless(specification, mixins);
     let comp = class extends Component {};
+
+    mixins = mixins || [];
+    mixins.unshift(comp.prototype, specification);
 
     if ('shouldComponentTransition' in specification) {
       specification.__timerID = 0;
     }
+    specification._render = specification.render;
+    delete specification.render;
 
-    assign.apply(null, [comp.prototype, specification].concat(mixins));
+    assign.apply(null, mixins);
 
     return function createElement (props) {
       processProps(props, specification);
@@ -131,16 +144,21 @@ module.exports = {
    * @returns {Function}
    */
   stateless (specification, mixins) {
-    if (mixins && mixins.length) {
-      mixins.reduce((specification, mixin) => {
-        return assign(specification, mixin);
-      }, specification);
+    let state = {};
+
+    mixins = mixins || [];
+    mixins.unshift(specification);
+
+    if ('getInitialState' in specification) {
+      state = specification.getInitialState();
     }
+
+    assign.apply(null, mixins);
 
     return function renderStateless (props) {
       processProps(props, specification);
 
-      return specification.render(props);
+      return specification.render(props, state);
     };
   }
 };

@@ -4,7 +4,7 @@ var assign = require('object-assign'),
     Debug = require('debug'),
     isEqual = require('@yr/is-equal'),
     runtime = require('@yr/runtime')
-// Use production builds for server (hide from static analysis)
+// Use production builds for server
 ,
     react = require('react/dist/react.min'),
     reactDom = require('react-dom/dist/react-dom-server.min'),
@@ -27,14 +27,25 @@ var Component = function (_react$Component) {
   }
 
   /**
-   * React: shouldComponentUpdate
-   * @param {Object} nextProps
-   * @param {Object} nextState
-   * @returns {Boolean}
+   * React: render
+   * @returns {React}
    */
 
 
   babelHelpers.createClass(Component, [{
+    key: 'render',
+    value: function render() {
+      return this._render(this.props, this.state);
+    }
+
+    /**
+     * React: shouldComponentUpdate
+     * @param {Object} nextProps
+     * @param {Object} nextState
+     * @returns {Boolean}
+     */
+
+  }, {
     key: 'shouldComponentUpdate',
     value: function shouldComponentUpdate(nextProps, nextState) {
       var propsChanged = 'isEqual' in nextProps ? !this.props.isEqual(nextProps) : !isEqual(nextProps, this.props, null, debug),
@@ -124,7 +135,7 @@ module.exports = {
    * @returns {Function}
    */
   create: function create(specification, mixins) {
-    mixins = mixins || [];
+    if (runtime.isServer) return this.stateless(specification, mixins);
     var comp = function (_Component) {
       babelHelpers.inherits(comp, _Component);
 
@@ -136,11 +147,16 @@ module.exports = {
       return comp;
     }(Component);
 
+    mixins = mixins || [];
+    mixins.unshift(comp.prototype, specification);
+
     if ('shouldComponentTransition' in specification) {
       specification.__timerID = 0;
     }
+    specification._render = specification.render;
+    delete specification.render;
 
-    assign.apply(null, [comp.prototype, specification].concat(mixins));
+    assign.apply(null, mixins);
 
     return function createElement(props) {
       processProps(props, specification);
@@ -157,16 +173,21 @@ module.exports = {
    * @returns {Function}
    */
   stateless: function stateless(specification, mixins) {
-    if (mixins && mixins.length) {
-      mixins.reduce(function (specification, mixin) {
-        return assign(specification, mixin);
-      }, specification);
+    var state = {};
+
+    mixins = mixins || [];
+    mixins.unshift(specification);
+
+    if ('getInitialState' in specification) {
+      state = specification.getInitialState();
     }
+
+    assign.apply(null, mixins);
 
     return function renderStateless(props) {
       processProps(props, specification);
 
-      return specification.render(props);
+      return specification.render(props, state);
     };
   }
 };
