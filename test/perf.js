@@ -8,7 +8,7 @@ const benchmark = require('benchmark')
 
   , suite = new benchmark.Suite();
 
-const comp = component.stateless({
+const comp = component.create({
   render (props) {
     const breadth = props.breadth
       , depth = props.depth;
