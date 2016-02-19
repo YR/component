@@ -6,8 +6,8 @@ var assign = require('object-assign'),
     runtime = require('@yr/runtime')
 // Use production builds for server (hide from static analysis)
 ,
-    react = runtime.isBrowser ? require('react') : require('react/dist/' + 'react.min'),
-    reactDom = runtime.isBrowser ? require('react-dom') : require('react-dom/dist/' + 'react-dom-server.min'),
+    react = require('react/dist/react.min'),
+    reactDom = require('react-dom/dist/react-dom-server.min'),
     DEFAULT_TRANSITION_DURATION = 250,
     TIMEOUT = 10,
     debug = Debug('yr:component'),

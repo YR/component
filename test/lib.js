@@ -19802,8 +19802,8 @@ require.register('src/index.js', function(require, module, exports) {
         runtime = require('@yr/runtime/index.js#1.1.0')
     // Use production builds for server (hide from static analysis)
     ,
-        react = runtime.isBrowser ? require('react/react.js#0.14.3') : require('react/dist/' + 'react.min'),
-        reactDom = runtime.isBrowser ? require('react-dom/index.js#0.14.3') : require('react-dom/dist/' + 'react-dom-server.min'),
+        react = require('react/react.js#0.14.3'),
+        reactDom = require('react-dom/index.js#0.14.3'),
         DEFAULT_TRANSITION_DURATION = 250,
         TIMEOUT = 10,
         debug = Debug('yr:component'),

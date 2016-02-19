@@ -31,6 +31,10 @@
   "engines": {
     "node": ">=4"
   },
+  "browser": {
+    "react/dist/react.min": "react",
+    "react-dom/dist/react-dom-server.min": "react-dom"
+  },
   "build": {
     "targets": [
       {
