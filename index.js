@@ -7,19 +7,114 @@ var assign = require('object-assign'),
 // Use production builds for server (hide from static analysis)
 ,
     react = runtime.isBrowser ? require('react') : require('react/dist/' + 'react.min'),
-    reactDom = runtime.isBrowser ? require('react-dom') : require('react/dist/' + 'react-dom-server.min'),
+    reactDom = runtime.isBrowser ? require('react-dom') : require('react-dom/dist/' + 'react-dom-server.min'),
     DEFAULT_TRANSITION_DURATION = 250,
     TIMEOUT = 10,
     debug = Debug('yr:component'),
     isDev = undefined == 'development';
+
+var Component = function (_react$Component) {
+  babelHelpers.inherits(Component, _react$Component);
+
+  /**
+   * Constructor
+   * @param {Object} props
+   */
+
+  function Component(props) {
+    babelHelpers.classCallCheck(this, Component);
+    return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this, props));
+  }
+
+  /**
+   * React: shouldComponentUpdate
+   * @param {Object} nextProps
+   * @param {Object} nextState
+   * @returns {Boolean}
+   */
+
+
+  babelHelpers.createClass(Component, [{
+    key: 'shouldComponentUpdate',
+    value: function shouldComponentUpdate(nextProps, nextState) {
+      var propsChanged = 'isEqual' in nextProps ? !this.props.isEqual(nextProps) : !isEqual(nextProps, this.props, null, debug),
+          stateChanged = !isEqual(nextState, this.state, null, debug),
+          changed = propsChanged || stateChanged;
+
+      if (propsChanged) debug('props changed %s', this.displayName);
+      if (stateChanged) debug('state changed %s', this.displayName);
+
+      if (changed && 'shouldComponentTransition' in this && this.shouldComponentTransition(nextProps, nextState)) {
+        this.willTransition(nextState);
+      }
+
+      return propsChanged || stateChanged;
+    }
+
+    /**
+     * Update 'state' for transition
+     * @param {Object} state
+     */
+
+  }, {
+    key: 'willTransition',
+    value: function willTransition(state) {
+      var _this2 = this;
+
+      if (this.__timerID) clearTimeout(this.__timerID);
+      // Beware: dangerous hack!
+      state.visibility = !state.visibility ? 1 : 2;
+      this.__timerID = setTimeout(function () {
+        _this2.isTransitioning(component);
+      }, TIMEOUT);
+    }
+
+    /**
+     * Trigger transition state change
+     */
+
+  }, {
+    key: 'isTransitioning',
+    value: function isTransitioning() {
+      var _this3 = this;
+
+      var duration = 'getTransitionDuration' in this ? this.getTransitionDuration() : DEFAULT_TRANSITION_DURATION;
+
+      this.setState({
+        visibility: this.state.visibility == 1 ? 2 : 1
+      });
+
+      this.__timerID = setTimeout(function () {
+        _this3.didTransition();
+      }, duration);
+    }
+
+    /**
+     * Trigger transition state change
+     */
+
+  }, {
+    key: 'didTransition',
+    value: function didTransition() {
+      this.__timerID = 0;
+      this.setState({
+        visibility: this.state.visibility == 2 ? 3 : 0
+      });
+    }
+  }]);
+  return Component;
+}(react.Component);
 
 module.exports = {
   WILL_TRANSITION: 1,
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
 
+  el: react.DOM,
   react: react,
   reactDom: reactDom,
+
+  Component: Component,
 
   /**
    * Convert 'specification' into React component class,
@@ -28,27 +123,29 @@ module.exports = {
    * @param {Array} mixins
    * @returns {Function}
    */
-  component: function component(specification, mixins) {
-    if (mixins && mixins.length) {
-      mixins.reduce(function (specification, mixin) {
-        return assign(specification, mixin);
-      }, specification);
-    }
+  create: function create(specification, mixins) {
+    mixins = mixins || [];
+    var comp = function (_Component) {
+      babelHelpers.inherits(comp, _Component);
 
-    if (!('shouldComponentUpdate' in specification)) {
-      specification.shouldComponentUpdate = shouldComponentUpdateFactory(specification.displayName);
-    }
+      function comp() {
+        babelHelpers.classCallCheck(this, comp);
+        return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(comp).apply(this, arguments));
+      }
+
+      return comp;
+    }(Component);
 
     if ('shouldComponentTransition' in specification) {
       specification.__timerID = 0;
     }
 
-    var comp = React.createClass(specification);
+    assign.apply(null, [comp.prototype, specification].concat(mixins));
 
     return function createElement(props) {
       processProps(props, specification);
 
-      return React.createElement(comp, props);
+      return react.createElement(comp, props);
     };
   },
 
@@ -75,28 +172,6 @@ module.exports = {
 };
 
 /**
- * shouldComponentUpdate factory
- * @param {String} name
- * @returns {Function}
- */
-function shouldComponentUpdateFactory(name) {
-  return function shouldComponentUpdate(nextProps, nextState) {
-    var propsChanged = 'isEqual' in nextProps ? !this.props.isEqual(nextProps) : !isEqual(nextProps, this.props, null, debug),
-        stateChanged = !isEqual(nextState, this.state, null, debug),
-        changed = propsChanged || stateChanged;
-
-    if (propsChanged) debug('props changed %s', name);
-    if (stateChanged) debug('state changed %s', name);
-
-    if (changed && 'shouldComponentTransition' in this && this.shouldComponentTransition(nextProps, nextState)) {
-      willTransition(this, nextState);
-    }
-
-    return propsChanged || stateChanged;
-  };
-}
-
-/**
  * Process 'props'
  * @param {Props} props
  * @param {Object} specification
@@ -115,45 +190,4 @@ function processProps(props, specification) {
 
     if (err) console.error(err);
   }
-}
-
-/**
- * Update 'component' 'state' for transition
- * @param {React} component
- * @param {Object} state
- */
-function willTransition(component, state) {
-  if (component.__timerID) clearTimeout(component.__timerID);
-  // Beware: dangerous hack!
-  state.visibility = !state.visibility ? 1 : 2;
-  component.__timerID = setTimeout(function () {
-    isTransitioning(component);
-  }, TIMEOUT);
-}
-
-/**
- * Trigger transition state change for 'component'
- * @param {React} component
- */
-function isTransitioning(component) {
-  var duration = 'getTransitionDuration' in component ? component.getTransitionDuration() : DEFAULT_TRANSITION_DURATION;
-
-  component.setState({
-    visibility: component.state.visibility == 1 ? 2 : 1
-  });
-
-  component.__timerID = setTimeout(function () {
-    didTransition(component);
-  }, duration);
-}
-
-/**
- * Trigger transition state change for 'component'
- * @param {React} component
- */
-function didTransition(component) {
-  component.__timerID = 0;
-  component.setState({
-    visibility: component.state.visibility == 2 ? 3 : 0
-  });
 }
