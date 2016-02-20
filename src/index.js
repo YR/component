@@ -82,10 +82,11 @@ class Component extends react.Component {
    */
   willTransition (state) {
     if (this.__timerID) clearTimeout(this.__timerID);
-    // Beware: dangerous hack!
-    state.visibility = !state.visibility ? 1 : 2;
+    this.setState({
+      visibility: !state.visibility ? 1 : 2
+    });
     this.__timerID = setTimeout(() => {
-      this.isTransitioning(component);
+      this.isTransitioning();
     }, TIMEOUT);
   }
 
