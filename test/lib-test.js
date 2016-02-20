@@ -1,27 +1,41 @@
 'use strict';
 
-var component = require('../src/index')
+const component = require('../src/index')
   , expect = require('expect.js')
-  , React = require('react')
-  , ReactDOMServer = require('react-dom/server');
+  , reactDom = require('react-dom/server')
+  , runtime = require('@yr/runtime');
 
-describe('component', function () {
-  it('should return a renderable element factory', function () {
-    var spec = {
-      render: function () {
-        return React.DOM.div({}, this.props.text);
+describe('component', () => {
+  it('should return a renderable element factory', () => {
+    runtime.isServer = false;
+    const foo = component.create({
+      render (props, state) {
+        return component.el.div({}, props.text);
       }
-    };
-    var foo = component(spec);
-    expect(ReactDOMServer.renderToStaticMarkup(foo({text: 'foo'}))).to.eql('<div>foo</div>');
+    });
+
+    expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
+    runtime.isServer = true;
   });
-  it('should return a stateless renderable element factory', function () {
-    var spec = {
-      render: function (props) {
-        return React.DOM.div({}, props.text);
+  it('should return a stateless renderable element factory', () => {
+    const foo = component.stateless({
+      render (props, state) {
+        return component.el.div({}, props.text);
       }
-    };
-    var foo = component.stateless(spec);
-    expect(ReactDOMServer.renderToStaticMarkup(foo({text: 'foo'}))).to.eql('<div>foo</div>');
+    });
+
+    expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
+  });
+  it('should return a stateless renderable element factory, passing initial state', () => {
+    const foo = component.stateless({
+      state: {
+        foo: 'bar'
+      },
+      render (props, state) {
+        return component.el.div({ className: state.foo }, props.text);
+      }
+    });
+
+    expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div class="bar">foo</div>');
   });
 });

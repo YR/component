@@ -4,42 +4,60 @@
   "version": "1.0.4",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
+    "@yr/clock": "1.1.x",
     "@yr/is-equal": "1.0.x",
+    "@yr/runtime": "1.2.x",
     "debug": "2.2.x",
     "object-assign": "4.0.x",
-    "react": "0.14.x"
+    "react": "0.14.x",
+    "react-dom": "0.14.x"
   },
   "devDependencies": {
+    "benchmark": "^2.0.0",
     "buddy": "*",
     "expect.js": "*",
     "mocha": "*",
     "react-addons-test-utils": "0.14.x",
-    "react-dom": "0.14.x",
-    "transfigure-babel": "*"
+    "transfigure-babel": "6.5.1-2"
   },
-  "main": "index.js",
+  "optionalDependencies": {
+    "buddy-server": "1.0.0"
+  },
+  "main": "src/index.js",
   "repository": "https://github.com/YR/component.git",
   "license": "MIT",
   "scripts": {
+    "perf": "NODE_ENV=production node test/perf.js",
     "prepublish": "buddy build",
-    "test": "NODE_ENV=test mocha test/lib-test.js --reporter spec"
+    "test": "NODE_ENV=test mocha test/lib-test.js --reporter spec",
+    "watch": "buddy -rs watch"
   },
   "engines": {
     "node": ">=4"
   },
-  "build": {
-    "targets": [
-      {
-        "input": "src/index.js",
-        "output": "test/lib.js",
-        "boilerplate": true,
-        "bootstrap": true
-      },
-      {
-        "input": "src",
-        "output": ".",
-        "modular": false
-      }
-    ]
+  "browser": {
+    "src/index.js": "index.js",
+    "react/dist/react.min": "react"
+  },
+  "buddy": {
+    "build": {
+      "targets": [
+        {
+          "input": "test/fixtures/test-client.js",
+          "output": "test/index.js",
+          "boilerplate": true,
+          "bootstrap": true
+        },
+        {
+          "input": "src",
+          "output": ".",
+          "modular": false
+        }
+      ]
+    },
+    "server": {
+      "directory": "test",
+      "port": 3000
+    }
   }
 }
