@@ -68,7 +68,7 @@ Check out this presentation by [Sasha Aickin](https://www.youtube.com/watch?feat
 
 ### About mixins
 
-The primary use case for `mixins` is to separate rendering from interactive behaviour. By conditionally `require`ing this optional behaviour in the browser, unneeded code is never loaded or evaluted on the server, and the risk of referencing `window`, `document`, or other invalid globals is reduced. For an example of this pattern, see [here](https://github.com/YR/component/blob/master/test/lib-test.js).
+The primary use case for `mixins` is to separate rendering from interactive behaviour. By conditionally `require`ing this optional behaviour in the browser, unneeded code is never loaded or evaluted on the server, and the risk of referencing `window`, `document`, or other invalid globals is reduced. For an example of this pattern, see [here](https://github.com/YR/component/blob/master/test/fixtures/testComponent.js).
 
 Although components subclass `React.Component`, and therefore miss out on the [autobinding](https://facebook.github.io/react/docs/reusable-components.html#no-autobinding) provided by `React.createClass`, methods passed via mixins will be automatically bound to the component backing instance:
 
@@ -94,7 +94,7 @@ component.create({
 - if `shouldComponentUpdate` is not defined in `specification` or `mixins`, a default is defined. See [efficient renders](#efficient-renders)
 - if `shouldComponentTransition` is defined in `specification` or `mixins`, transition support is enabled. See [transitioning](#transitioning)
 
-**stateless(specification, mixins)**: returns a factory function for creating stateless React elements (no component lifecycle methods or backing instance), though property type validation will be performed when in development mode. **Note**: this is the default for all components on the server.
+**stateless(specification, mixins)**: returns a factory function for creating stateless React elements (no component lifecycle methods or backing instance), though property type validation will be performed when in development mode. **Note**: *this is the default for all components on the server.*
 
 **NOT_TRANSITIONING**: value of `0`. 
 
