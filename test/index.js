@@ -180,6 +180,48 @@ var global = window.global = window;
 	root.require = require;
 
 })((typeof window !== 'undefined') ? window : global);
+require.register('test/fixtures/testComponentMixin.js', function(require, module, exports) {
+    'use strict';
+    
+    module.exports = {
+      shouldComponentTransition: function shouldComponentTransition(nextProps, nextState) {
+        return nextState.active != this.state.active;
+      },
+      onClick: function onClick(evt) {
+        this.setState({
+          active: !this.state.active
+        });
+      }
+    };
+});
+require.register('test/fixtures/testComponent.js', function(require, module, exports) {
+    'use strict';
+    
+    var component = require('src/index.js'),
+        runtime = require('@yr/runtime/index.js#1.2.0'),
+        el = component.el,
+        mixins = runtime.isBrowser ? [require('test/fixtures/testComponentMixin.js')] : [];
+    
+    exports.create = function create() {
+      return component.create({
+        state: {
+          active: false,
+          visibility: 0
+        },
+        render: function render(props, state) {
+          return el.div({}, el.button({ onClick: this.onClick }, props.text), this.renderPanel(props, state));
+        },
+        renderPanel: function renderPanel(props, state) {
+          if (state.visibility > 0) {
+            var className = 'panel';
+    
+            if (this.state.visibility > 1) className += ' js-show';
+            return el.div({ className: className });
+          }
+        }
+      }, mixins);
+    };
+});
 require.register('react-dom/index.js#0.14.7', function(require, module, exports) {
     'use strict';
     
@@ -19150,15 +19192,21 @@ require.register('react/react.js#0.14.7', function(require, module, exports) {
     module.exports = require('react/lib/React.js#0.14.7');
     
 });
-require.register('@yr/runtime/index.js#1.1.0', function(require, module, exports) {
+require.register('@yr/runtime/index.js#1.2.0', function(require, module, exports) {
+    'use strict';
+    
+    /**
+     * Determine if the current runtime is server or browser
+     * https://github.com/yr/runtime
+     * @copyright Yr
+     * @license MIT
+     */
+    
     var isNode = (typeof process !== 'undefined'
       && {}.toString.call(process) === '[object process]');
     
     exports.isServer = isNode;
     exports.isBrowser = !isNode;
-    
-    exports.isTest = undefined == 'test';
-    
 });
 require.register('@yr/is-equal/index.js#1.0.1', function(require, module, exports) {
     'use strict'
@@ -19813,12 +19861,13 @@ require.register('src/index.js', function(require, module, exports) {
     var assign = require('object-assign/index.js#4.0.1'),
         Debug = require('debug/browser.js#2.2.0'),
         isEqual = require('@yr/is-equal/index.js#1.0.1'),
-        runtime = require('@yr/runtime/index.js#1.1.0')
-    // Use production builds for server
+        runtime = require('@yr/runtime/index.js#1.2.0')
+    // Use production builds for server (override with package.json browser field for client)
     ,
         react = require('react/react.js#0.14.7'),
         reactDom = require('react-dom/index.js#0.14.7'),
         DEFAULT_TRANSITION_DURATION = 250,
+        RESERVED_METHODS = ['render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount', 'shouldComponentTransition', 'getTransitionDuration'],
         TIMEOUT = 10,
         debug = Debug('yr:component'),
         isDev = undefined == 'development';
@@ -19833,7 +19882,17 @@ require.register('src/index.js', function(require, module, exports) {
     
       function Component(props) {
         babelHelpers.classCallCheck(this, Component);
-        return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this, props));
+    
+        var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this, props));
+    
+        _this.__timerID = 0;
+        // Autobind mixin methods
+        if (_this.__bindableMethods) {
+          _this.__bindableMethods.forEach(function (method) {
+            _this[method] = _this[method].bind(_this);
+          });
+        }
+        return _this;
       }
     
       /**
@@ -19845,7 +19904,7 @@ require.register('src/index.js', function(require, module, exports) {
       babelHelpers.createClass(Component, [{
         key: 'render',
         value: function render() {
-          return this._render(this.props, this.state);
+          return this.__render(this.props, this.state);
         }
     
         /**
@@ -19883,10 +19942,11 @@ require.register('src/index.js', function(require, module, exports) {
           var _this2 = this;
     
           if (this.__timerID) clearTimeout(this.__timerID);
-          // Beware: dangerous hack!
-          state.visibility = !state.visibility ? 1 : 2;
+          this.setState({
+            visibility: !state.visibility ? 1 : 2
+          });
           this.__timerID = setTimeout(function () {
-            _this2.isTransitioning(component);
+            _this2.isTransitioning();
           }, TIMEOUT);
         }
     
@@ -19946,6 +20006,7 @@ require.register('src/index.js', function(require, module, exports) {
        */
       create: function create(specification, mixins) {
         if (runtime.isServer) return this.stateless(specification, mixins);
+    
         var comp = function (_Component) {
           babelHelpers.inherits(comp, _Component);
     
@@ -19957,16 +20018,25 @@ require.register('src/index.js', function(require, module, exports) {
           return comp;
         }(Component);
     
-        mixins = mixins || [];
-        mixins.unshift(comp.prototype, specification);
-    
-        if ('shouldComponentTransition' in specification) {
-          specification.__timerID = 0;
+        // Handle mixins
+        if (mixins && mixins.length) {
+          mixins.unshift({});
+          // Clone
+          mixins = assign.apply(null, mixins);
+          // Store method names to autobind on instantiation
+          specification.__bindableMethods = Object.keys(mixins).filter(function (key) {
+            return ! ~RESERVED_METHODS.indexOf(key) && 'function' == typeof mixins[key];
+          });
+        } else {
+          mixins = {};
         }
-        specification._render = specification.render;
+    
+        // Rename render implementation
+        specification.__render = specification.render;
         delete specification.render;
     
-        assign.apply(null, mixins);
+        // Copy to comp prototype
+        assign(comp.prototype, specification, mixins);
     
         return function createElement(props) {
           processProps(props, specification);
@@ -19983,21 +20053,15 @@ require.register('src/index.js', function(require, module, exports) {
        * @returns {Function}
        */
       stateless: function stateless(specification, mixins) {
-        var state = {};
-    
         mixins = mixins || [];
         mixins.unshift(specification);
-    
-        if ('getInitialState' in specification) {
-          state = specification.getInitialState();
-        }
-    
         assign.apply(null, mixins);
     
         return function renderStateless(props) {
           processProps(props, specification);
     
-          return specification.render(props, state);
+          // Send in initial state
+          return specification.render(props, specification.state || {});
         };
       }
     };
@@ -20023,4 +20087,14 @@ require.register('src/index.js', function(require, module, exports) {
       }
     }
 });
-require('src/index.js');
+require.register('test/fixtures/test-client.js', function(require, module, exports) {
+    'use strict';
+    
+    var component = require('src/index.js'),
+        testComponent = require('test/fixtures/testComponent.js'),
+        comp = testComponent.create(),
+        reactDom = component.reactDom;
+    
+    reactDom.render(comp({ text: 'foo' }), document.getElementById('container'));
+});
+require('test/fixtures/test-client.js');
