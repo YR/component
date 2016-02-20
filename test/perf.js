@@ -2,6 +2,7 @@
 
 const benchmark = require('benchmark')
   , component = require('../src/index')
+  , reactDom = require('react-dom/server')
 
   , BREADTH = 11
   , DEPTH = 4
@@ -31,7 +32,7 @@ const comp = component.create({
 });
 
 function render () {
-  return component.reactDom.renderToString(comp({ depth: DEPTH, breadth: BREADTH }));
+  return reactDom.renderToString(comp({ depth: DEPTH, breadth: BREADTH }));
 }
 
 suite

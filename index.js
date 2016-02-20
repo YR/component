@@ -1,21 +1,29 @@
 'use strict';
 
+/**
+ *
+ * https://github.com/yr/component
+ * @copyright Yr
+ * @license MIT
+ */
+
 var assign = require('object-assign'),
+    clock = require('@yr/clock'),
     Debug = require('debug'),
     isEqual = require('@yr/is-equal'),
     runtime = require('@yr/runtime')
-// Use production builds for server (override with package.json browser field for client)
+// Use production build for server
+// Override with package.json browser field for client to enable debug during dev
 ,
-    react = require('react/dist/react.min'),
-    reactDom = require('react-dom/dist/react-dom-server.min'),
+    React = require('react/dist/react.min'),
     DEFAULT_TRANSITION_DURATION = 250,
     RESERVED_METHODS = ['render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount', 'shouldComponentTransition', 'getTransitionDuration'],
-    TIMEOUT = 10,
+    TIMEOUT = 20,
     debug = Debug('yr:component'),
     isDev = undefined == 'development';
 
-var Component = function (_react$Component) {
-  babelHelpers.inherits(Component, _react$Component);
+var Component = function (_React$Component) {
+  babelHelpers.inherits(Component, _React$Component);
 
   /**
    * Constructor
@@ -83,13 +91,14 @@ var Component = function (_react$Component) {
     value: function willTransition(state) {
       var _this2 = this;
 
-      if (this.__timerID) clearTimeout(this.__timerID);
+      if (this.__timerID) clock.cancel(this.__timerID);
       this.setState({
         visibility: !state.visibility ? 1 : 2
       });
-      this.__timerID = setTimeout(function () {
+      // frame/immediate don't leave enough time for redraw between states
+      this.__timerID = clock.timeout(TIMEOUT, function () {
         _this2.isTransitioning();
-      }, TIMEOUT);
+      });
     }
 
     /**
@@ -107,9 +116,9 @@ var Component = function (_react$Component) {
         visibility: this.state.visibility == 1 ? 2 : 1
       });
 
-      this.__timerID = setTimeout(function () {
+      this.__timerID = clock.timeout(duration, function () {
         _this3.didTransition();
-      }, duration);
+      });
     }
 
     /**
@@ -126,18 +135,16 @@ var Component = function (_react$Component) {
     }
   }]);
   return Component;
-}(react.Component);
+}(React.Component);
 
 module.exports = {
+  NOT_TRANSITIONING: 0,
   WILL_TRANSITION: 1,
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
 
-  el: react.DOM,
-  react: react,
-  reactDom: reactDom,
-
-  Component: Component,
+  el: React.DOM,
+  React: React,
 
   /**
    * Convert 'specification' into React component class,
@@ -183,7 +190,7 @@ module.exports = {
     return function createElement(props) {
       processProps(props, specification);
 
-      return react.createElement(comp, props);
+      return React.createElement(comp, props);
     };
   },
 

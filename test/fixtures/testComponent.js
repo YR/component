@@ -16,7 +16,7 @@ exports.create = function create () {
     },
     render (props, state) {
       return el.div({},
-        el.button({ onClick: this.onClick }, props.text),
+        el.button({ onClick: this.onClick }, props.label),
         this.renderPanel(props, state)
       );
     },

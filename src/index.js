@@ -1,12 +1,20 @@
 'use strict';
 
+/**
+ *
+ * https://github.com/yr/component
+ * @copyright Yr
+ * @license MIT
+ */
+
 const assign = require('object-assign')
+  , clock = require('@yr/clock')
   , Debug = require('debug')
   , isEqual = require('@yr/is-equal')
   , runtime = require('@yr/runtime')
-    // Use production builds for server (override with package.json browser field for client)
-  , react = require('react/dist/react.min')
-  , reactDom = require('react-dom/dist/react-dom-server.min')
+    // Use production build for server
+    // Override with package.json browser field for client to enable debug during dev
+  , React = require('react/dist/react.min')
 
   , DEFAULT_TRANSITION_DURATION = 250
   , RESERVED_METHODS = [
@@ -21,12 +29,12 @@ const assign = require('object-assign')
       'shouldComponentTransition',
       'getTransitionDuration'
     ]
-  , TIMEOUT = 10
+  , TIMEOUT = 20
 
   , debug = Debug('yr:component')
   , isDev = (process.env.NODE_ENV == 'development');
 
-class Component extends react.Component {
+class Component extends React.Component {
   /**
    * Constructor
    * @param {Object} props
@@ -81,13 +89,14 @@ class Component extends react.Component {
    * @param {Object} state
    */
   willTransition (state) {
-    if (this.__timerID) clearTimeout(this.__timerID);
+    if (this.__timerID) clock.cancel(this.__timerID);
     this.setState({
       visibility: !state.visibility ? 1 : 2
     });
-    this.__timerID = setTimeout(() => {
+    // frame/immediate don't leave enough time for redraw between states
+    this.__timerID = clock.timeout(TIMEOUT, () => {
       this.isTransitioning();
-    }, TIMEOUT);
+    });
   }
 
   /**
@@ -102,9 +111,9 @@ class Component extends react.Component {
       visibility: (this.state.visibility == 1) ? 2 : 1
     });
 
-    this.__timerID = setTimeout(() => {
+    this.__timerID = clock.timeout(duration, () => {
       this.didTransition();
-    }, duration);
+    });
   }
 
   /**
@@ -119,15 +128,13 @@ class Component extends react.Component {
 }
 
 module.exports = {
+  NOT_TRANSITIONING: 0,
   WILL_TRANSITION: 1,
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
 
-  el: react.DOM,
-  react,
-  reactDom,
-
-  Component,
+  el: React.DOM,
+  React,
 
   /**
    * Convert 'specification' into React component class,
@@ -166,7 +173,7 @@ module.exports = {
     return function createElement (props) {
       processProps(props, specification);
 
-      return react.createElement(comp, props);
+      return React.createElement(comp, props);
     };
   },
 

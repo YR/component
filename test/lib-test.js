@@ -2,6 +2,7 @@
 
 const component = require('../src/index')
   , expect = require('expect.js')
+  , reactDom = require('react-dom/server')
   , runtime = require('@yr/runtime');
 
 describe('component', () => {
@@ -13,7 +14,7 @@ describe('component', () => {
       }
     });
 
-    expect(component.reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
     runtime.isServer = true;
   });
   it('should return a stateless renderable element factory', () => {
@@ -23,7 +24,7 @@ describe('component', () => {
       }
     });
 
-    expect(component.reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should return a stateless renderable element factory, passing initial state', () => {
     const foo = component.stateless({
@@ -35,6 +36,6 @@ describe('component', () => {
       }
     });
 
-    expect(component.reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div class="bar">foo</div>');
+    expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div class="bar">foo</div>');
   });
 });

@@ -1,9 +1,8 @@
 'use strict';
 
-const component = require('../../src/index')
+const ReactDom = require('react-dom')
   , testComponent = require('./testComponent')
 
-  , comp = testComponent.create()
-  , reactDom = component.reactDom;
+  , comp = testComponent.create();
 
-reactDom.render(comp({ text: 'foo' }), document.getElementById('container'));
+ReactDom.render(comp({ label: 'click here!' }), document.getElementById('container'));

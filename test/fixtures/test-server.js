@@ -1,11 +1,10 @@
 'use strict';
 
-const component = require('../../src/index')
+const ReactDom = require('react-dom/server')
   , testComponent = require('./testComponent')
 
-  , comp = testComponent.create()
-  , reactDom = component.reactDom;
+  , comp = testComponent.create();
 
 exports.render = function render () {
-  return reactDom.renderToString(comp({ text: 'foo' }));
+  return ReactDom.renderToString(comp({ label: 'click here!' }));
 };

@@ -4,6 +4,7 @@
   "version": "1.0.4",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
+    "@yr/clock": "1.1.x",
     "@yr/is-equal": "1.0.x",
     "@yr/runtime": "1.2.x",
     "debug": "2.2.x",
@@ -22,7 +23,7 @@
   "optionalDependencies": {
     "buddy-server": "1.0.0"
   },
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": "https://github.com/YR/component.git",
   "license": "MIT",
   "scripts": {
@@ -35,8 +36,8 @@
     "node": ">=4"
   },
   "browser": {
-    "react/dist/react.min": "react",
-    "react-dom/dist/react-dom-server.min": "react-dom"
+    "src/index.js": "index.js",
+    "react/dist/react.min": "react"
   },
   "buddy": {
     "build": {
