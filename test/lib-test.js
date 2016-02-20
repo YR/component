@@ -13,7 +13,6 @@ describe('component', () => {
       }
     });
 
-    console.log(component.reactDom.renderToString(foo({ text: 'foo' })))
     expect(component.reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
     runtime.isServer = true;
   });
@@ -24,18 +23,15 @@ describe('component', () => {
       }
     });
 
-    console.log(component.reactDom.renderToString(foo({ text: 'foo' })))
     expect(component.reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should return a stateless renderable element factory, passing initial state', () => {
     const foo = component.stateless({
+      state: {
+        foo: 'bar'
+      },
       render (props, state) {
         return component.el.div({ className: state.foo }, props.text);
-      },
-      getInitialState () {
-        return {
-          foo: 'bar'
-        };
       }
     });
 

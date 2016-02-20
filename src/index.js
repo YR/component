@@ -177,21 +177,15 @@ module.exports = {
    * @returns {Function}
    */
   stateless (specification, mixins) {
-    let state = {};
-
     mixins = mixins || [];
     mixins.unshift(specification);
-
-    if ('getInitialState' in specification) {
-      state = specification.getInitialState();
-    }
-
     assign.apply(null, mixins);
 
     return function renderStateless (props) {
       processProps(props, specification);
 
-      return specification.render(props, state);
+      // Send in initial state
+      return specification.render(props, specification.state || {});
     };
   }
 };
