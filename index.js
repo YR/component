@@ -4,11 +4,12 @@ var assign = require('object-assign'),
     Debug = require('debug'),
     isEqual = require('@yr/is-equal'),
     runtime = require('@yr/runtime')
-// Use production builds for server
+// Use production builds for server (override with package.json browser field for client)
 ,
     react = require('react/dist/react.min'),
     reactDom = require('react-dom/dist/react-dom-server.min'),
     DEFAULT_TRANSITION_DURATION = 250,
+    RESERVED_METHODS = ['render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount', 'shouldComponentTransition', 'getTransitionDuration'],
     TIMEOUT = 10,
     debug = Debug('yr:component'),
     isDev = undefined == 'development';
@@ -23,7 +24,17 @@ var Component = function (_react$Component) {
 
   function Component(props) {
     babelHelpers.classCallCheck(this, Component);
-    return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this, props));
+
+    var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this, props));
+
+    _this.__timerID = 0;
+    // Autobind mixin methods
+    if (_this.__bindableMethods) {
+      _this.__bindableMethods.forEach(function (method) {
+        _this[method] = _this[method].bind(_this);
+      });
+    }
+    return _this;
   }
 
   /**
@@ -35,7 +46,7 @@ var Component = function (_react$Component) {
   babelHelpers.createClass(Component, [{
     key: 'render',
     value: function render() {
-      return this._render(this.props, this.state);
+      return this.__render(this.props, this.state);
     }
 
     /**
@@ -73,10 +84,11 @@ var Component = function (_react$Component) {
       var _this2 = this;
 
       if (this.__timerID) clearTimeout(this.__timerID);
-      // Beware: dangerous hack!
-      state.visibility = !state.visibility ? 1 : 2;
+      this.setState({
+        visibility: !state.visibility ? 1 : 2
+      });
       this.__timerID = setTimeout(function () {
-        _this2.isTransitioning(component);
+        _this2.isTransitioning();
       }, TIMEOUT);
     }
 
@@ -136,6 +148,7 @@ module.exports = {
    */
   create: function create(specification, mixins) {
     if (runtime.isServer) return this.stateless(specification, mixins);
+
     var comp = function (_Component) {
       babelHelpers.inherits(comp, _Component);
 
@@ -147,16 +160,25 @@ module.exports = {
       return comp;
     }(Component);
 
-    mixins = mixins || [];
-    mixins.unshift(comp.prototype, specification);
-
-    if ('shouldComponentTransition' in specification) {
-      specification.__timerID = 0;
+    // Handle mixins
+    if (mixins && mixins.length) {
+      mixins.unshift({});
+      // Clone
+      mixins = assign.apply(null, mixins);
+      // Store method names to autobind on instantiation
+      specification.__bindableMethods = Object.keys(mixins).filter(function (key) {
+        return ! ~RESERVED_METHODS.indexOf(key) && 'function' == typeof mixins[key];
+      });
+    } else {
+      mixins = {};
     }
-    specification._render = specification.render;
+
+    // Rename render implementation
+    specification.__render = specification.render;
     delete specification.render;
 
-    assign.apply(null, mixins);
+    // Copy to comp prototype
+    assign(comp.prototype, specification, mixins);
 
     return function createElement(props) {
       processProps(props, specification);
@@ -173,21 +195,15 @@ module.exports = {
    * @returns {Function}
    */
   stateless: function stateless(specification, mixins) {
-    var state = {};
-
     mixins = mixins || [];
     mixins.unshift(specification);
-
-    if ('getInitialState' in specification) {
-      state = specification.getInitialState();
-    }
-
     assign.apply(null, mixins);
 
     return function renderStateless(props) {
       processProps(props, specification);
 
-      return specification.render(props, state);
+      // Send in initial state
+      return specification.render(props, specification.state || {});
     };
   }
 };

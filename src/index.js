@@ -4,11 +4,23 @@ const assign = require('object-assign')
   , Debug = require('debug')
   , isEqual = require('@yr/is-equal')
   , runtime = require('@yr/runtime')
-    // Use production builds for server
+    // Use production builds for server (override with package.json browser field for client)
   , react = require('react/dist/react.min')
   , reactDom = require('react-dom/dist/react-dom-server.min')
 
   , DEFAULT_TRANSITION_DURATION = 250
+  , RESERVED_METHODS = [
+      'render',
+      'componentWillMount',
+      'componentDidMount',
+      'componentWillReceiveProps',
+      'shouldComponentUpdate',
+      'componentWillUpdate',
+      'componentDidUpdate',
+      'componentWillUnmount',
+      'shouldComponentTransition',
+      'getTransitionDuration'
+    ]
   , TIMEOUT = 10
 
   , debug = Debug('yr:component')
@@ -21,6 +33,14 @@ class Component extends react.Component {
    */
   constructor (props) {
     super(props);
+
+    this.__timerID = 0;
+    // Autobind mixin methods
+    if (this.__bindableMethods) {
+      this.__bindableMethods.forEach((method) => {
+        this[method] = this[method].bind(this);
+      });
+    }
   }
 
   /**
@@ -28,7 +48,7 @@ class Component extends react.Component {
    * @returns {React}
    */
   render () {
-    return this._render(this.props, this.state);
+    return this.__render(this.props, this.state);
   }
 
   /**
@@ -117,18 +137,30 @@ module.exports = {
    */
   create (specification, mixins) {
     if (runtime.isServer) return this.stateless(specification, mixins);
+
     let comp = class extends Component {};
 
-    mixins = mixins || [];
-    mixins.unshift(comp.prototype, specification);
-
-    if ('shouldComponentTransition' in specification) {
-      specification.__timerID = 0;
+    // Handle mixins
+    if (mixins && mixins.length) {
+      mixins.unshift({});
+      // Clone
+      mixins = assign.apply(null, mixins);
+      // Store method names to autobind on instantiation
+      specification.__bindableMethods = Object.keys(mixins)
+        .filter((key) => {
+          return !~RESERVED_METHODS.indexOf(key)
+            && ('function' == typeof mixins[key]);
+        });
+    } else {
+      mixins = {};
     }
-    specification._render = specification.render;
+
+    // Rename render implementation
+    specification.__render = specification.render;
     delete specification.render;
 
-    assign.apply(null, mixins);
+    // Copy to comp prototype
+    assign(comp.prototype, specification, mixins);
 
     return function createElement (props) {
       processProps(props, specification);

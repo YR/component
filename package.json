@@ -5,7 +5,7 @@
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
     "@yr/is-equal": "1.0.x",
-    "@yr/runtime": "1.1.0",
+    "@yr/runtime": "1.2.x",
     "debug": "2.2.x",
     "object-assign": "4.0.x",
     "react": "0.14.x",
@@ -17,8 +17,10 @@
     "expect.js": "*",
     "mocha": "*",
     "react-addons-test-utils": "0.14.x",
-    "react-dom": "0.14.x",
     "transfigure-babel": "6.5.1-2"
+  },
+  "optionalDependencies": {
+    "buddy-server": "1.0.0"
   },
   "main": "index.js",
   "repository": "https://github.com/YR/component.git",
@@ -26,7 +28,8 @@
   "scripts": {
     "perf": "NODE_ENV=production node test/perf.js",
     "prepublish": "buddy build",
-    "test": "NODE_ENV=test mocha test/lib-test.js --reporter spec"
+    "test": "NODE_ENV=test mocha test/lib-test.js --reporter spec",
+    "watch": "buddy -rs watch"
   },
   "engines": {
     "node": ">=4"
@@ -35,19 +38,25 @@
     "react/dist/react.min": "react",
     "react-dom/dist/react-dom-server.min": "react-dom"
   },
-  "build": {
-    "targets": [
-      {
-        "input": "src/index.js",
-        "output": "test/lib.js",
-        "boilerplate": true,
-        "bootstrap": true
-      },
-      {
-        "input": "src",
-        "output": ".",
-        "modular": false
-      }
-    ]
+  "buddy": {
+    "build": {
+      "targets": [
+        {
+          "input": "test/fixtures/test-client.js",
+          "output": "test/index.js",
+          "boilerplate": true,
+          "bootstrap": true
+        },
+        {
+          "input": "src",
+          "output": ".",
+          "modular": false
+        }
+      ]
+    },
+    "server": {
+      "directory": "test",
+      "port": 3000
+    }
   }
 }
