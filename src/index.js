@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- *
+ * A factory utility for creating React.js components
  * https://github.com/yr/component
  * @copyright Yr
  * @license MIT

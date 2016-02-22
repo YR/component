@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- *
+ * A factory utility for creating React.js components
  * https://github.com/yr/component
  * @copyright Yr
  * @license MIT
@@ -33,7 +33,7 @@ var Component = function (_React$Component) {
   function Component(props) {
     babelHelpers.classCallCheck(this, Component);
 
-    var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this, props));
+    var _this = babelHelpers.possibleConstructorReturn(this, _React$Component.call(this, props));
 
     _this.__timerID = 0;
     // Autobind mixin methods
@@ -51,89 +51,83 @@ var Component = function (_React$Component) {
    */
 
 
-  babelHelpers.createClass(Component, [{
-    key: 'render',
-    value: function render() {
-      return this.__render(this.props, this.state);
+  Component.prototype.render = function render() {
+    return this.__render(this.props, this.state);
+  };
+
+  /**
+   * React: shouldComponentUpdate
+   * @param {Object} nextProps
+   * @param {Object} nextState
+   * @returns {Boolean}
+   */
+
+
+  Component.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
+    var propsChanged = 'isEqual' in nextProps ? !this.props.isEqual(nextProps) : !isEqual(nextProps, this.props, null, debug),
+        stateChanged = !isEqual(nextState, this.state, null, debug),
+        changed = propsChanged || stateChanged;
+
+    if (propsChanged) debug('props changed %s', this.displayName);
+    if (stateChanged) debug('state changed %s', this.displayName);
+
+    if (changed && 'shouldComponentTransition' in this && this.shouldComponentTransition(nextProps, nextState)) {
+      this.willTransition(nextState);
     }
 
-    /**
-     * React: shouldComponentUpdate
-     * @param {Object} nextProps
-     * @param {Object} nextState
-     * @returns {Boolean}
-     */
+    return propsChanged || stateChanged;
+  };
 
-  }, {
-    key: 'shouldComponentUpdate',
-    value: function shouldComponentUpdate(nextProps, nextState) {
-      var propsChanged = 'isEqual' in nextProps ? !this.props.isEqual(nextProps) : !isEqual(nextProps, this.props, null, debug),
-          stateChanged = !isEqual(nextState, this.state, null, debug),
-          changed = propsChanged || stateChanged;
+  /**
+   * Update 'state' for transition
+   * @param {Object} state
+   */
 
-      if (propsChanged) debug('props changed %s', this.displayName);
-      if (stateChanged) debug('state changed %s', this.displayName);
 
-      if (changed && 'shouldComponentTransition' in this && this.shouldComponentTransition(nextProps, nextState)) {
-        this.willTransition(nextState);
-      }
+  Component.prototype.willTransition = function willTransition(state) {
+    var _this2 = this;
 
-      return propsChanged || stateChanged;
-    }
+    if (this.__timerID) clock.cancel(this.__timerID);
+    this.setState({
+      visibility: !state.visibility ? 1 : 2
+    });
+    // frame/immediate don't leave enough time for redraw between states
+    this.__timerID = clock.timeout(TIMEOUT, function () {
+      _this2.isTransitioning();
+    });
+  };
 
-    /**
-     * Update 'state' for transition
-     * @param {Object} state
-     */
+  /**
+   * Trigger transition state change
+   */
 
-  }, {
-    key: 'willTransition',
-    value: function willTransition(state) {
-      var _this2 = this;
 
-      if (this.__timerID) clock.cancel(this.__timerID);
-      this.setState({
-        visibility: !state.visibility ? 1 : 2
-      });
-      // frame/immediate don't leave enough time for redraw between states
-      this.__timerID = clock.timeout(TIMEOUT, function () {
-        _this2.isTransitioning();
-      });
-    }
+  Component.prototype.isTransitioning = function isTransitioning() {
+    var _this3 = this;
 
-    /**
-     * Trigger transition state change
-     */
+    var duration = 'getTransitionDuration' in this ? this.getTransitionDuration() : DEFAULT_TRANSITION_DURATION;
 
-  }, {
-    key: 'isTransitioning',
-    value: function isTransitioning() {
-      var _this3 = this;
+    this.setState({
+      visibility: this.state.visibility == 1 ? 2 : 1
+    });
 
-      var duration = 'getTransitionDuration' in this ? this.getTransitionDuration() : DEFAULT_TRANSITION_DURATION;
+    this.__timerID = clock.timeout(duration, function () {
+      _this3.didTransition();
+    });
+  };
 
-      this.setState({
-        visibility: this.state.visibility == 1 ? 2 : 1
-      });
+  /**
+   * Trigger transition state change
+   */
 
-      this.__timerID = clock.timeout(duration, function () {
-        _this3.didTransition();
-      });
-    }
 
-    /**
-     * Trigger transition state change
-     */
+  Component.prototype.didTransition = function didTransition() {
+    this.__timerID = 0;
+    this.setState({
+      visibility: this.state.visibility == 2 ? 3 : 0
+    });
+  };
 
-  }, {
-    key: 'didTransition',
-    value: function didTransition() {
-      this.__timerID = 0;
-      this.setState({
-        visibility: this.state.visibility == 2 ? 3 : 0
-      });
-    }
-  }]);
   return Component;
 }(React.Component);
 
@@ -161,7 +155,7 @@ module.exports = {
 
       function comp() {
         babelHelpers.classCallCheck(this, comp);
-        return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(comp).apply(this, arguments));
+        return babelHelpers.possibleConstructorReturn(this, _Component.apply(this, arguments));
       }
 
       return comp;

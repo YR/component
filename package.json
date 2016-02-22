@@ -15,10 +15,10 @@
   "devDependencies": {
     "benchmark": "^2.0.0",
     "buddy": "*",
+    "buddy-plugin-babel": "6.5.2-2",
     "expect.js": "*",
     "mocha": "*",
-    "react-addons-test-utils": "0.14.x",
-    "transfigure-babel": "6.5.1-2"
+    "react-addons-test-utils": "0.14.x"
   },
   "optionalDependencies": {
     "buddy-server": "1.0.0"
@@ -43,15 +43,15 @@
     "build": {
       "targets": [
         {
+          "input": "src",
+          "output": ".",
+          "modular": false
+        },
+        {
           "input": "test/fixtures/test-client.js",
           "output": "test/index.js",
           "boilerplate": true,
           "bootstrap": true
-        },
-        {
-          "input": "src",
-          "output": ".",
-          "modular": false
         }
       ]
     },
