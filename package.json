@@ -1,7 +1,7 @@
 {
   "name": "@yr/component",
   "description": "A factory utility for creating React.js components",
-  "version": "2.0.4",
+  "version": "2.1.0",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
     "@yr/clock": "1.1.x",
