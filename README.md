@@ -7,16 +7,16 @@ A utility for creating performant React.js components. Includes default handling
 
 ```js
 const component = require('@yr/component')
-  , el = component.el
-  , React = component.React;
+  , dataTypes = component.dataTypes
+  , el = component.el;
 
 const comp = component.create({
   displayName: 'myComponent',
 
-  // Validate prop types
+  // Validate prop types (React.PropTypes)
   data: {
-    height: React.PropTypes.number,
-    width: React.PropTypes.number
+    height: dataTypes.number,
+    width: dataTypes.number
   },
 
   // Declare initial state
@@ -58,13 +58,13 @@ const comp = component.create({
 Due to the synchronous, blocking nature of React's `renderToString()`, it is important to optimize component rendering as much as possible when rending on the server. The following steps have been taken to speed up rendering:
 
 - link to minified production bundle of `React` (available as `component.React`) to avoid calls to `process.env.NODE_ENV` and other costly development-only code
-- treat all components as *stateless functions*, skipping instantiation via `class` inheritance or `React.createClass`
+- treat all components as *stateless functions*, avoiding the costs of instantiation via `class` inheritance or `React.createClass`
 
-Check out this presentation by [Sasha Aickin](https://www.youtube.com/watch?feature=player_embedded&v=PnpfGy7q96U) for more great performance tips.
+> Check out this presentation by [Sasha Aickin](https://www.youtube.com/watch?feature=player_embedded&v=PnpfGy7q96U) for more great performance tips.
 
 ### About component specifications
 
-**Component** aims to provide a performant, seamless interface for React component creation on the server and in the browser. In the browser, components subclass `React.Component` "under the hood", while on the server, instantiation is avoided altogether by treating all components as [stateless functions](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions). In order to use the same `specification` for both these use cases, `render()` must always receive `props` and `state`, regardless of whether `this.props` or `this.state` exist. Since lifecycle methods are never called on the server, `this.props` and `this.state` will still need to be referenced in these cases.
+**Component** aims to provide a performant, seamless interface for React component creation on the server and in the browser. In the browser, components subclass `React.Component` *under the hood*, while on the server, instantiation is avoided altogether by treating all components as [stateless functions](https://facebook.github.io/react/docs/reusable-components.html#stateless-functions). In order to use the same `specification` for both these use cases, `render()` should always accept `props` and `state`, regardless of whether `this.props` or `this.state` exist. Since lifecycle methods are never called on the server, `this.props` and `this.state` will still need to be referenced in these cases.
 
 ### About mixins
 
@@ -73,16 +73,18 @@ The primary use case for `mixins` is to separate rendering from interactive beha
 Although components subclass `React.Component`, and therefore miss out on the [autobinding](https://facebook.github.io/react/docs/reusable-components.html#no-autobinding) provided by `React.createClass`, methods passed via mixins will be automatically bound to the component backing instance:
 
 ```js
+const mixin = {
+  onClick: function onClick () {
+    console.log(this.props);
+  }
+};
+
 component.create({
   render (props, state) {
     // No arrow function for 'onClick' needed here
     return component.el.button({ onClick: this.onClick }, 'click me!');
   }
-}, [{
-  onClick: function onClick () {
-    console.log(this.props);
-  }
-}]);
+}, [mixin]);
 ```
 
 ## API
@@ -105,6 +107,8 @@ component.create({
 **DID_TRANSITION**: value of `3`. This value will be stored in `this.state.visibility` after `IS_TRANSITIONING` has been set and the transition duration has elapsed (default 250ms or value returned by `getTransitionDuration()`).
 
 **React**: reference to minified React production bundle (`require('react/dist/react.min')`)
+
+**dataTypes**: reference to `React.PropTypes`
 
 **el**: reference to `React.DOM`
 

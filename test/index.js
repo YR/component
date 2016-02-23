@@ -1301,18 +1301,18 @@ require.register('performance-now/lib/performance-now.js#0.2.0', function(requir
     }).call(this);
     
 });
-require.register('raf/index.js#3.1.0', function(require, module, exports) {
+require.register('raf/index.js#3.2.0', function(require, module, exports) {
     var now = require('performance-now/lib/performance-now.js#0.2.0')
-      , global = typeof window === 'undefined' ? {} : window
+      , root = typeof window === 'undefined' ? global : window
       , vendors = ['moz', 'webkit']
       , suffix = 'AnimationFrame'
-      , raf = global['request' + suffix]
-      , caf = global['cancel' + suffix] || global['cancelRequest' + suffix]
+      , raf = root['request' + suffix]
+      , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
     
-    for(var i = 0; i < vendors.length && !raf; i++) {
-      raf = global[vendors[i] + 'Request' + suffix]
-      caf = global[vendors[i] + 'Cancel' + suffix]
-          || global[vendors[i] + 'CancelRequest' + suffix]
+    for(var i = 0; !raf && i < vendors.length; i++) {
+      raf = root[vendors[i] + 'Request' + suffix]
+      caf = root[vendors[i] + 'Cancel' + suffix]
+          || root[vendors[i] + 'CancelRequest' + suffix]
     }
     
     // Some versions of FF have rAF but not cAF
@@ -1365,10 +1365,14 @@ require.register('raf/index.js#3.1.0', function(require, module, exports) {
       // Wrap in a new function to prevent
       // `cancel` potentially being assigned
       // to the native rAF function
-      return raf.call(global, fn)
+      return raf.call(root, fn)
     }
     module.exports.cancel = function() {
-      caf.apply(global, arguments)
+      caf.apply(root, arguments)
+    }
+    module.exports.polyfill = function() {
+      root.requestAnimationFrame = raf
+      root.cancelAnimationFrame = caf
     }
     
 });
@@ -1871,7 +1875,7 @@ require.register('debug/browser.js#2.2.0', function(require, module, exports) {
     }
     
 });
-require.register('@yr/clock/index.js#1.1.4', function(require, module, exports) {
+require.register('@yr/clock/index.js#1.1.5', function(require, module, exports) {
     'use strict';
     
     /**
@@ -1882,7 +1886,7 @@ require.register('@yr/clock/index.js#1.1.4', function(require, module, exports) 
      */
     
     var Debug = require('debug/browser.js#2.2.0'),
-        raf = require('raf/index.js#3.1.0'),
+        raf = require('raf/index.js#3.2.0'),
         now = require('performance-now/lib/performance-now.js#0.2.0'),
         INTERVAL_CUTOFF = 1000,
         INTERVAL_MAX = 600000,
@@ -2114,7 +2118,7 @@ require.register('index.js', function(require, module, exports) {
      */
     
     var assign = require('object-assign/index.js#4.0.1'),
-        clock = require('@yr/clock/index.js#1.1.4'),
+        clock = require('@yr/clock/index.js#1.1.5'),
         Debug = require('debug/browser.js#2.2.0'),
         isEqual = require('@yr/is-equal/index.js#1.0.2'),
         runtime = require('@yr/runtime/index.js#1.2.0')
@@ -2239,6 +2243,7 @@ require.register('index.js', function(require, module, exports) {
       IS_TRANSITIONING: 2,
       DID_TRANSITION: 3,
     
+      dataTypes: React.PropTypes,
       el: React.DOM,
       React: React,
     

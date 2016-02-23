@@ -133,6 +133,7 @@ module.exports = {
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
 
+  dataTypes: React.PropTypes,
   el: React.DOM,
   React,
 
