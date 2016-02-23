@@ -2103,7 +2103,7 @@ require.register('object-assign/index.js#4.0.1', function(require, module, expor
     };
     
 });
-require.register('src/index.js', function(require, module, exports) {
+require.register('index.js', function(require, module, exports) {
     'use strict';
     
     /**
@@ -2120,6 +2120,7 @@ require.register('src/index.js', function(require, module, exports) {
         runtime = require('@yr/runtime/index.js#1.2.0')
     // Use production build for server
     // Override with package.json browser field for client to enable debug during dev
+    
     ,
         React = require('react/react.js#0.14.7'),
         DEFAULT_TRANSITION_DURATION = 250,
@@ -2156,7 +2157,6 @@ require.register('src/index.js', function(require, module, exports) {
        * @returns {React}
        */
     
-    
       Component.prototype.render = function render() {
         return this.__render(this.props, this.state);
       };
@@ -2167,7 +2167,6 @@ require.register('src/index.js', function(require, module, exports) {
        * @param {Object} nextState
        * @returns {Boolean}
        */
-    
     
       Component.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
         var propsChanged = 'isEqual' in nextProps ? !this.props.isEqual(nextProps) : !isEqual(nextProps, this.props, null, debug),
@@ -2189,7 +2188,6 @@ require.register('src/index.js', function(require, module, exports) {
        * @param {Object} state
        */
     
-    
       Component.prototype.willTransition = function willTransition(state) {
         var _this2 = this;
     
@@ -2206,7 +2204,6 @@ require.register('src/index.js', function(require, module, exports) {
       /**
        * Trigger transition state change
        */
-    
     
       Component.prototype.isTransitioning = function isTransitioning() {
         var _this3 = this;
@@ -2225,7 +2222,6 @@ require.register('src/index.js', function(require, module, exports) {
       /**
        * Trigger transition state change
        */
-    
     
       Component.prototype.didTransition = function didTransition() {
         this.__timerID = 0;
@@ -2294,7 +2290,6 @@ require.register('src/index.js', function(require, module, exports) {
         };
       },
     
-    
       /**
        * Stateless component factory
        * @param {Object} specification
@@ -2334,7 +2329,7 @@ require.register('src/index.js', function(require, module, exports) {
 require.register('test/fixtures/testComponent.js', function(require, module, exports) {
     'use strict';
     
-    var component = require('src/index.js'),
+    var component = require('index.js'),
         runtime = require('@yr/runtime/index.js#1.2.0'),
         el = component.el,
         mixins = runtime.isBrowser ? [require('test/fixtures/testComponentMixin.js')] : [];
