@@ -148,7 +148,7 @@ module.exports = {
    * @returns {Function}
    */
   create: function create(specification, mixins) {
-    if (runtime.isServer) return this.stateless(specification, mixins);
+    if (runtime.isServer) return this.stateless(specification);
 
     var comp = function (_Component) {
       babelHelpers.inherits(comp, _Component);
@@ -192,14 +192,9 @@ module.exports = {
   /**
    * Stateless component factory
    * @param {Object} specification
-   * @param {Array} mixins
    * @returns {Function}
    */
-  stateless: function stateless(specification, mixins) {
-    mixins = mixins || [];
-    mixins.unshift(specification);
-    assign.apply(null, mixins);
-
+  stateless: function stateless(specification) {
     return function renderStateless(props) {
       processProps(props, specification);
 

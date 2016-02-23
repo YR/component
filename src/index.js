@@ -144,7 +144,7 @@ module.exports = {
    * @returns {Function}
    */
   create (specification, mixins) {
-    if (runtime.isServer) return this.stateless(specification, mixins);
+    if (runtime.isServer) return this.stateless(specification);
 
     let comp = class extends Component {};
 
@@ -180,14 +180,9 @@ module.exports = {
   /**
    * Stateless component factory
    * @param {Object} specification
-   * @param {Array} mixins
    * @returns {Function}
    */
-  stateless (specification, mixins) {
-    mixins = mixins || [];
-    mixins.unshift(specification);
-    assign.apply(null, mixins);
-
+  stateless (specification) {
     return function renderStateless (props) {
       processProps(props, specification);
 
