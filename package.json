@@ -9,16 +9,16 @@
     "@yr/runtime": "1.2.x",
     "debug": "2.2.x",
     "object-assign": "4.0.x",
-    "react": "0.14.x",
-    "react-dom": "0.14.x"
+    "react": "0.14.x"
   },
   "devDependencies": {
-    "benchmark": "^2.0.0",
-    "buddy": "*",
-    "buddy-plugin-babel": "6.5.2-2",
+    "benchmark": "2.0.x",
+    "buddy": "4.1.x",
+    "buddy-plugin-babel": "6.6.x",
     "expect.js": "*",
     "mocha": "*",
-    "react-addons-test-utils": "0.14.x"
+    "react-addons-test-utils": "0.14.x",
+    "react-dom": "0.14.x"
   },
   "optionalDependencies": {
     "buddy-server": "1.0.0"
