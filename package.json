@@ -1,7 +1,7 @@
 {
   "name": "@yr/component",
   "description": "A factory utility for creating React.js components",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
     "@yr/clock": "1.1.x",
@@ -9,16 +9,16 @@
     "@yr/runtime": "1.2.x",
     "debug": "2.2.x",
     "object-assign": "4.0.x",
-    "react": "0.14.8"
+    "react": "15.0.0"
   },
   "devDependencies": {
-    "benchmark": "2.0.x",
+    "benchmark": "2.1.x",
     "buddy": "4.1.x",
     "buddy-plugin-babel": "6.7.x",
     "expect.js": "*",
     "mocha": "*",
-    "react-addons-test-utils": "0.14.8",
-    "react-dom": "0.14.8"
+    "react-addons-test-utils": "15.0.0",
+    "react-dom": "15.0.0"
   },
   "optionalDependencies": {
     "buddy-server": "1.0.0"
