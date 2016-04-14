@@ -41,7 +41,7 @@ const comp = component.create({
         className += 'js-show';
       }
 
-      return el.div({ 
+      return el('div', { 
         className,
         style: { 
           height: `${props.height}px`, 
@@ -59,6 +59,7 @@ Due to the synchronous, blocking nature of React's `renderToString()`, it is imp
 
 - link to minified production bundle of `React` (available as `component.React`) to avoid calls to `process.env.NODE_ENV` and other costly development-only code
 - treat all components as *stateless functions*, avoiding the costs of instantiation via `class` inheritance or `React.createClass`
+- inline all calls to `React.createElement` (similar to [babelHelpers.jsx](http://babeljs.io/docs/plugins/transform-react-inline-elements/))
 
 > Check out this presentation by [Sasha Aickin](https://www.youtube.com/watch?feature=player_embedded&v=PnpfGy7q96U) for more great performance tips.
 
@@ -96,6 +97,8 @@ component.create({
 - if `shouldComponentUpdate` is not defined in `specification` or `mixins`, a default is defined. See [efficient renders](#efficient-renders)
 - if `shouldComponentTransition` is defined in `specification` or `mixins`, transition support is enabled. See [transitioning](#transitioning)
 
+**el(type, props, ...children)**: optimises calls to `React.createElement` when `process.env.NODE_ENV == 'production'`.
+
 **stateless(specification, mixins)**: returns a factory function for creating stateless React elements (no component lifecycle methods or backing instance), though property type validation will be performed when in development mode. **Note**: *this is the default for all components on the server.*
 
 **NOT_TRANSITIONING**: value of `0`. 
@@ -110,7 +113,6 @@ component.create({
 
 **dataTypes**: reference to `React.PropTypes`
 
-**el**: reference to `React.DOM`
 
 ### Efficient Renders
 

@@ -8,15 +8,13 @@
  */
 
 const assign = require('object-assign')
-  , clock = require('@yr/clock')
-  , Debug = require('debug')
-  , isEqual = require('@yr/is-equal')
+  , Component = require('./lib/Component')
   , runtime = require('@yr/runtime')
     // Use production build for server
-    // Override with package.json browser field for client to enable debug during dev
+    // Override with package.json "browser" field for client to enable debug during dev
   , React = require('react/dist/react.min')
 
-  , DEFAULT_TRANSITION_DURATION = 250
+  , REACT_ELEMENT_TYPE = (typeof Symbol === "function" && Symbol.for && Symbol.for('react.element')) || 0xeac7
   , RESERVED_METHODS = [
       'render',
       'componentWillMount',
@@ -28,104 +26,7 @@ const assign = require('object-assign')
       'componentWillUnmount',
       'shouldComponentTransition',
       'getTransitionDuration'
-    ]
-  , TIMEOUT = 20
-
-  , debug = Debug('yr:component')
-  , isDev = (process.env.NODE_ENV == 'development');
-
-class Component extends React.Component {
-  /**
-   * Constructor
-   * @param {Object} props
-   */
-  constructor (props) {
-    super(props);
-
-    this.__timerID = 0;
-    // Autobind mixin methods
-    if (this.__bindableMethods) {
-      this.__bindableMethods.forEach((method) => {
-        this[method] = this[method].bind(this);
-      });
-    }
-  }
-
-  /**
-   * React: render
-   * @returns {React}
-   */
-  render () {
-    return this.__render(this.props, this.state);
-  }
-
-  /**
-   * React: shouldComponentUpdate
-   * @param {Object} nextProps
-   * @param {Object} nextState
-   * @returns {Boolean}
-   */
-  shouldComponentUpdate (nextProps, nextState) {
-    const propsChanged = ('isEqual' in nextProps)
-        ? !this.props.isEqual(nextProps)
-        : !isEqual(nextProps, this.props, null, debug)
-      , stateChanged = !isEqual(nextState, this.state, null, debug)
-      , changed = propsChanged || stateChanged;
-
-    if (propsChanged) debug('props changed %s', this.displayName);
-    if (stateChanged) debug('state changed %s', this.displayName);
-
-    if (changed
-      && 'shouldComponentTransition' in this
-      && this.shouldComponentTransition(nextProps, nextState)) {
-        this.willTransition(nextState);
-    }
-
-    return propsChanged || stateChanged;
-  }
-
-  /**
-   * Update 'state' for transition
-   * @param {Object} state
-   */
-  willTransition (state) {
-    if (this.__timerID) clock.cancel(this.__timerID);
-    this.setState({
-      visibility: !state.visibility ? 1 : 2
-    });
-    // frame/immediate don't leave enough time for redraw between states
-    this.__timerID = clock.timeout(TIMEOUT, () => {
-      this.isTransitioning();
-    });
-  }
-
-  /**
-   * Trigger transition state change
-   */
-  isTransitioning () {
-    const duration = ('getTransitionDuration' in this)
-      ? this.getTransitionDuration()
-      : DEFAULT_TRANSITION_DURATION;
-
-    this.setState({
-      visibility: (this.state.visibility == 1) ? 2 : 1
-    });
-
-    this.__timerID = clock.timeout(duration, () => {
-      this.didTransition();
-    });
-  }
-
-  /**
-   * Trigger transition state change
-   */
-  didTransition () {
-    this.__timerID = 0;
-    this.setState({
-      visibility: (this.state.visibility == 2) ? 3 : 0
-    });
-  }
-}
+    ];
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -134,7 +35,7 @@ module.exports = {
   DID_TRANSITION: 3,
 
   dataTypes: React.PropTypes,
-  el: React.DOM,
+  el: createReactElement,
   React,
 
   /**
@@ -171,10 +72,19 @@ module.exports = {
     // Copy to comp prototype
     assign(comp.prototype, specification, mixins);
 
-    return function createElement (props) {
+    return function createElement (props/*, ...children*/) {
+      // Non-leaky args conversion
+      const n = arguments.length;
+      let args = Array(n + 1);
+
+      args[0] = comp;
+      for (let i = 0; i < n; i++) {
+        args[i + 1] = arguments[i];
+      }
+
       processProps(props, specification);
 
-      return React.createElement(comp, props);
+      return createReactElement.apply(null, args);
     };
   },
 
@@ -204,7 +114,7 @@ function processProps (props, specification) {
   // Extract missing props
   if (data && props && 'extract' in props) props.extract(Object.keys(data));
 
-  if (!isDev || !data || !props) return;
+  if (process.env.NODE_ENV == 'production' || !data || !props) return;
 
   // Validate prop types
   for (const key in data) {
@@ -212,4 +122,46 @@ function processProps (props, specification) {
 
     if (err) console.error(err);
   }
+}
+
+/**
+ * Fast 'inline' createElement
+ * Mostly borrowed from babelHelpers.jsx
+ * @param {Class|String} type
+ * @param {Object} [props]
+ * @returns {Object}
+ */
+function createReactElement (type, props/*, ...children*/) {
+  props = props || {};
+
+  // Non-leaky args conversion
+  const n = arguments.length;
+  let childArgs = Array(n > 2 ? n - 2 : 0);
+
+  for (let i = 2; i < n; i++) {
+    childArgs[i - 2] = arguments[i];
+  }
+
+  // Defer to React.createElement if 'ref' or not production
+  if (props.ref !== undefined || process.env.NODE_ENV != 'production') return React.createElement.apply(null, [type, props].concat(childArgs));
+
+  const defaultProps = type && type.defaultProps;
+
+  // Copy default props
+  if (defaultProps) {
+    for (const prop in defaultProps) {
+      if (props[prop] == null) props[prop] = defaultProps[prop];
+    }
+  }
+  // Store children
+  props.children = childArgs;
+
+  return {
+    $$typeof: REACT_ELEMENT_TYPE,
+    type,
+    key: props.key !== undefined ? String(props.key) : null,
+    ref: null,
+    props,
+    _owner: null
+  };
 }

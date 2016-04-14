@@ -7,6 +7,7 @@ const benchmark = require('benchmark')
   , BREADTH = 11
   , DEPTH = 4
 
+  , el = component.el
   , suite = new benchmark.Suite();
 
 const comp = component.create({
@@ -15,7 +16,7 @@ const comp = component.create({
       , depth = props.depth;
 
     if (depth <= 0) {
-      return component.el.div(null, 'abcdefghi');
+      return el('div', null, 'abcdefghi');
     }
 
     let children = [];
@@ -23,7 +24,7 @@ const comp = component.create({
     for (let i = 0; i < breadth; i++) {
       children.push(comp({ key: i, depth: depth - 1, breadth }));
     }
-    return component.el.div({ children, onClick: this.onClick });
+    return el('div', { children, onClick: this.onClick });
   },
 
   onClick () {

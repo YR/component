@@ -187,6 +187,22 @@ require.register('test/fixtures/testComponentMixin.js', function(require, module
       }
     };
 });
+require.register('@yr/runtime/index.js#1.2.0', function(require, module, exports) {
+    'use strict';
+    
+    /**
+     * Determine if the current runtime is server or browser
+     * https://github.com/yr/runtime
+     * @copyright Yr
+     * @license MIT
+     */
+    
+    var isNode = (typeof process !== 'undefined'
+      && {}.toString.call(process) === '[object process]');
+    
+    exports.isServer = isNode;
+    exports.isBrowser = !isNode;
+});
 require.register('react/lib/onlyChild.js#15.0.1', function(require, module, exports) {
     /**
      * Copyright 2013-present, Facebook, Inc.
@@ -829,22 +845,6 @@ require.register('react/react.js#15.0.1', function(require, module, exports) {
     
     module.exports = require('react/lib/React.js#15.0.1');
     
-});
-require.register('@yr/runtime/index.js#1.2.0', function(require, module, exports) {
-    'use strict';
-    
-    /**
-     * Determine if the current runtime is server or browser
-     * https://github.com/yr/runtime
-     * @copyright Yr
-     * @license MIT
-     */
-    
-    var isNode = (typeof process !== 'undefined'
-      && {}.toString.call(process) === '[object process]');
-    
-    exports.isServer = isNode;
-    exports.isBrowser = !isNode;
 });
 require.register('@yr/is-equal/index.js#1.0.2', function(require, module, exports) {
     'use strict';
@@ -1764,31 +1764,24 @@ require.register('@yr/clock/index.js#1.1.7', function(require, module, exports) 
       stHandle = 0;
     }
 });
-require.register('index.js', function(require, module, exports) {
+require.register('lib/Component.js', function(require, module, exports) {
     'use strict';
     
     /**
-     * A factory utility for creating React.js components
-     * https://github.com/yr/component
-     * @copyright Yr
-     * @license MIT
+     * Base component class (client)
      */
     
-    var assign = require('object-assign/index.js#4.0.1'),
-        clock = require('@yr/clock/index.js#1.1.7'),
+    var clock = require('@yr/clock/index.js#1.1.7'),
         Debug = require('debug/browser.js#2.2.0'),
-        isEqual = require('@yr/is-equal/index.js#1.0.2'),
-        runtime = require('@yr/runtime/index.js#1.2.0')
+        isEqual = require('@yr/is-equal/index.js#1.0.2')
     // Use production build for server
-    // Override with package.json browser field for client to enable debug during dev
+    // Override with package.json "browser" field for client to enable debug during dev
     
     ,
         React = require('react/react.js#15.0.1'),
         DEFAULT_TRANSITION_DURATION = 250,
-        RESERVED_METHODS = ['render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount', 'shouldComponentTransition', 'getTransitionDuration'],
         TIMEOUT = 20,
-        debug = Debug('yr:component'),
-        isDev = undefined == 'development';
+        debug = Debug('yr:component');
     
     var Component = function (_React$Component) {
       babelHelpers.inherits(Component, _React$Component);
@@ -1894,6 +1887,29 @@ require.register('index.js', function(require, module, exports) {
       return Component;
     }(React.Component);
     
+    module.exports = Component;
+});
+require.register('index.js', function(require, module, exports) {
+    'use strict';
+    
+    /**
+     * A factory utility for creating React.js components
+     * https://github.com/yr/component
+     * @copyright Yr
+     * @license MIT
+     */
+    
+    var assign = require('object-assign/index.js#4.0.1'),
+        Component = require('lib/Component.js'),
+        runtime = require('@yr/runtime/index.js#1.2.0')
+    // Use production build for server
+    // Override with package.json "browser" field for client to enable debug during dev
+    
+    ,
+        React = require('react/react.js#15.0.1'),
+        REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol['for'] && Symbol['for']('react.element') || 0xeac7,
+        RESERVED_METHODS = ['render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount', 'shouldComponentTransition', 'getTransitionDuration'];
+    
     module.exports = {
       NOT_TRANSITIONING: 0,
       WILL_TRANSITION: 1,
@@ -1901,7 +1917,7 @@ require.register('index.js', function(require, module, exports) {
       DID_TRANSITION: 3,
     
       dataTypes: React.PropTypes,
-      el: React.DOM,
+      el: createReactElement,
       React: React,
     
       /**
@@ -1945,10 +1961,19 @@ require.register('index.js', function(require, module, exports) {
         // Copy to comp prototype
         assign(comp.prototype, specification, mixins);
     
-        return function createElement(props) {
+        return function createElement(props /*, ...children*/) {
+          // Non-leaky args conversion
+          var n = arguments.length;
+          var args = Array(n + 1);
+    
+          args[0] = comp;
+          for (var i = 0; i < n; i++) {
+            args[i + 1] = arguments[i];
+          }
+    
           processProps(props, specification);
     
-          return React.createElement(comp, props);
+          return createReactElement.apply(null, args);
         };
       },
     
@@ -1978,7 +2003,7 @@ require.register('index.js', function(require, module, exports) {
       // Extract missing props
       if (data && props && 'extract' in props) props.extract(Object.keys(data));
     
-      if (!isDev || !data || !props) return;
+      if (undefined == 'production' || !data || !props) return;
     
       // Validate prop types
       for (var key in data) {
@@ -1986,6 +2011,48 @@ require.register('index.js', function(require, module, exports) {
     
         if (err) console.error(err);
       }
+    }
+    
+    /**
+     * Fast 'inlined' createElement
+     * Borrowed from babelHelpers.jsx
+     * @param {Class|String} type
+     * @param {Object} [props]
+     * @returns {Object}
+     */
+    function createReactElement(type, props /*, ...children*/) {
+      props = props || {};
+    
+      // Non-leaky args conversion
+      var n = arguments.length;
+      var childArgs = Array(n > 2 ? n - 2 : 0);
+    
+      for (var i = 2; i < n; i++) {
+        childArgs[i - 2] = arguments[i];
+      }
+    
+      // Defer to React.createElement if 'ref' or not production
+      if (props.ref !== undefined || undefined != 'production') return React.createElement.apply(null, [type, props].concat(childArgs));
+    
+      var defaultProps = type && type.defaultProps;
+    
+      // Copy default props
+      if (defaultProps) {
+        for (var prop in defaultProps) {
+          if (props[prop] == null) props[prop] = defaultProps[prop];
+        }
+      }
+      // Store children
+      props.children = childArgs;
+    
+      return {
+        $$typeof: REACT_ELEMENT_TYPE,
+        type: type,
+        key: props.key !== undefined ? String(props.key) : null,
+        ref: null,
+        props: props,
+        _owner: null
+      };
     }
 });
 require.register('test/fixtures/testComponent.js', function(require, module, exports) {
@@ -2003,14 +2070,14 @@ require.register('test/fixtures/testComponent.js', function(require, module, exp
           visibility: 0
         },
         render: function render(props, state) {
-          return el.div({}, el.button({ onClick: this.onClick }, props.label), this.renderPanel(props, state));
+          return el('div', {}, el('button', { onClick: this.onClick }, props.label), this.renderPanel(props, state));
         },
         renderPanel: function renderPanel(props, state) {
           if (state.visibility > 0) {
             var className = 'panel';
     
             if (this.state.visibility > 1) className += ' js-show';
-            return el.div({ className: className });
+            return el('div', { className: className });
           }
         }
       }, mixins);
