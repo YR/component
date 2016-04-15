@@ -142,8 +142,12 @@ function createReactElement (type, props/*, ...children*/) {
     childArgs[i - 2] = arguments[i];
   }
 
-  // Defer to React.createElement if 'ref' or not production
-  if (props.ref !== undefined || process.env.NODE_ENV != 'production') return React.createElement.apply(null, [type, props].concat(childArgs));
+  // De-optimize for client
+  if (runtime.isBrowser
+    && (props.ref !== undefined
+    || process.env.NODE_ENV != 'production')) {
+      return React.createElement.apply(null, [type, props].concat(childArgs));
+  }
 
   const defaultProps = type && type.defaultProps;
 
