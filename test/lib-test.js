@@ -23,6 +23,18 @@ describe('component', () => {
 
       expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
     });
+    it('should return a renderable element factory for a component with defaultProps', () => {
+      const foo = component.create({
+        defaultProps: {
+          foo: 'bar'
+        },
+        render (props, state) {
+          return component.el('div', {}, props.foo);
+        }
+      });
+
+      expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
+    });
     it('should return a renderable element factory for an svg component', () => {
       const foo = component.create({
         render (props, state) {
@@ -52,6 +64,18 @@ describe('component', () => {
       });
 
       expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
+    });
+    it('should return a stateless renderable element factory for a component with defaultProps', () => {
+      const foo = component.stateless({
+        defaultProps: {
+          foo: 'bar'
+        },
+        render (props, state) {
+          return component.el('div', {}, props.foo);
+        }
+      });
+
+      expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
     });
     it('should return a stateless renderable element factory, passing initial state', () => {
       const foo = component.stateless({

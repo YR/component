@@ -14,7 +14,6 @@ const assign = require('object-assign')
     // Override with package.json "browser" field for client to enable debug during dev
   , React = require('react/dist/react.min')
 
-  , REACT_ELEMENT_TYPE = (typeof Symbol === "function" && Symbol.for && Symbol.for('react.element')) || 0xeac7
   , RESERVED_METHODS = [
       'render',
       'componentWillMount',
@@ -35,7 +34,7 @@ module.exports = {
   DID_TRANSITION: 3,
 
   dataTypes: React.PropTypes,
-  el: createReactElement,
+  el: React.createElement,
   React,
 
   /**
@@ -65,7 +64,7 @@ module.exports = {
       mixins = {};
     }
 
-    // Rename render implementation
+    // Proxy render implementation to force sending 'state'
     specification.__render = specification.render;
     delete specification.render;
 
@@ -73,6 +72,8 @@ module.exports = {
     assign(comp.prototype, specification, mixins);
 
     return function createElement (props/*, ...children*/) {
+      processProps(props, specification);
+
       // Non-leaky args conversion
       const n = arguments.length;
       let args = Array(n + 1);
@@ -82,9 +83,7 @@ module.exports = {
         args[i + 1] = arguments[i];
       }
 
-      processProps(props, specification);
-
-      return createReactElement.apply(null, args);
+      return React.createElement.apply(null, args);
     };
   },
 
@@ -109,47 +108,14 @@ module.exports = {
  * @param {Object} specification
  */
 function processProps (props, specification) {
-  const data = specification.data;
-
-  // Extract missing props
-  if (data && props && 'extract' in props) props.extract(Object.keys(data));
-
-  if (process.env.NODE_ENV == 'production' || !data || !props) return;
-
-  // Validate prop types
-  for (const key in data) {
-    const err = data[key](props, key, specification.displayName, 'prop');
-
-    if (err) console.error(err);
-  }
-}
-
-/**
- * Fast 'inline' createElement
- * Mostly borrowed from babelHelpers.jsx
- * @param {Class|String} type
- * @param {Object} [props]
- * @returns {Object}
- */
-function createReactElement (type, props/*, ...children*/) {
   props = props || {};
 
-  // Non-leaky args conversion
-  const n = arguments.length;
-  let childArgs = Array(n > 2 ? n - 2 : 0);
+  const data = specification.data
+    , defaultProps = specification.defaultProps
+    , displayName = specification.displayName;
 
-  for (let i = 2; i < n; i++) {
-    childArgs[i - 2] = arguments[i];
-  }
-
-  // De-optimize for client
-  if (runtime.isBrowser
-    && (props.ref !== undefined
-    || process.env.NODE_ENV != 'production')) {
-      return React.createElement.apply(null, [type, props].concat(childArgs));
-  }
-
-  const defaultProps = type && type.defaultProps;
+  // Extract missing props defined in 'data'
+  if (data && props && 'extract' in props) props.extract(Object.keys(data));
 
   // Copy default props
   if (defaultProps) {
@@ -157,15 +123,13 @@ function createReactElement (type, props/*, ...children*/) {
       if (props[prop] == null) props[prop] = defaultProps[prop];
     }
   }
-  // Store children
-  props.children = childArgs;
 
-  return {
-    $$typeof: REACT_ELEMENT_TYPE,
-    type,
-    key: props.key !== undefined ? String(props.key) : null,
-    ref: null,
-    props,
-    _owner: null
-  };
+  if (process.env.NODE_ENV == 'production' || !data) return;
+
+  // Validate prop types
+  for (const key in data) {
+    const err = data[key](props, key, displayName, 'prop');
+
+    if (err) console.error(err);
+  }
 }
