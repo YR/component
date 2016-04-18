@@ -57,9 +57,8 @@ const comp = component.create({
 
 Due to the synchronous, blocking nature of React's `renderToString()`, it is important to optimize component rendering as much as possible when rending on the server. The following steps have been taken to speed up rendering:
 
-- link to minified production bundle of `React` (available as `component.React`) to avoid calls to `process.env.NODE_ENV` and other costly development-only code
+- use minified production bundle of `React` (available as `component.React`) to avoid calls to `process.env.NODE_ENV` and other costly development-only code
 - treat all components as *stateless functions*, avoiding the costs of instantiation via `class` inheritance or `React.createClass`
-- inline all calls to `React.createElement` (similar to [babelHelpers.jsx](http://babeljs.io/docs/plugins/transform-react-inline-elements/))
 
 > Check out this presentation by [Sasha Aickin](https://www.youtube.com/watch?feature=player_embedded&v=PnpfGy7q96U) for more great performance tips.
 
@@ -83,7 +82,7 @@ const mixin = {
 component.create({
   render (props, state) {
     // No arrow function for 'onClick' needed here
-    return component.el.button({ onClick: this.onClick }, 'click me!');
+    return component.el('button', { onClick: this.onClick }, 'click me!');
   }
 }, [mixin]);
 ```
@@ -97,7 +96,7 @@ component.create({
 - if `shouldComponentUpdate` is not defined in `specification` or `mixins`, a default is defined. See [efficient renders](#efficient-renders)
 - if `shouldComponentTransition` is defined in `specification` or `mixins`, transition support is enabled. See [transitioning](#transitioning)
 
-**el(type, props, ...children)**: optimises calls to `React.createElement` when `process.env.NODE_ENV == 'production'`.
+**el(type, props, ...children)**: alias for `React.createElement`.
 
 **stateless(specification, mixins)**: returns a factory function for creating stateless React elements (no component lifecycle methods or backing instance), though property type validation will be performed when in development mode. **Note**: *this is the default for all components on the server.*
 
@@ -109,9 +108,7 @@ component.create({
 
 **DID_TRANSITION**: value of `3`. This value will be stored in `this.state.visibility` after `IS_TRANSITIONING` has been set and the transition duration has elapsed (default 250ms or value returned by `getTransitionDuration()`).
 
-**React**: reference to minified React production bundle (`require('react/dist/react.min')`)
-
-**dataTypes**: reference to `React.PropTypes`
+**dataTypes**: alias for `React.PropTypes`
 
 
 ### Efficient Renders

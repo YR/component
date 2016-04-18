@@ -35,7 +35,6 @@ module.exports = {
 
   dataTypes: React.PropTypes,
   el: React.createElement,
-  React,
 
   /**
    * Convert 'specification' into React component class,

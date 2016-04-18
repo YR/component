@@ -1917,7 +1917,6 @@ require.register('index.js', function(require, module, exports) {
     
       dataTypes: React.PropTypes,
       el: React.createElement,
-      React: React,
     
       /**
        * Convert 'specification' into React component class,
