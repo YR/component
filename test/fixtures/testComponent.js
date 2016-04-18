@@ -15,8 +15,8 @@ exports.create = function create () {
       visibility: 0
     },
     render (props, state) {
-      return el.div({},
-        el.button({ onClick: this.onClick }, props.label),
+      return el('div', {},
+        el('button', { onClick: this.onClick }, props.label),
         this.renderPanel(props, state)
       );
     },
@@ -25,7 +25,7 @@ exports.create = function create () {
         let className = 'panel';
 
         if (this.state.visibility > 1) className += ' js-show';
-        return el.div({ className });
+        return el('div', { className });
       }
     }
   }, mixins);
