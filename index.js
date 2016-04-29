@@ -7,14 +7,14 @@
  * @license MIT
  */
 
-var assign = require('object-assign'),
-    Component = require('./lib/Component'),
-    runtime = require('@yr/runtime')
+var assign = require('object-assign');
+var Component = require('./lib/Component');
+var runtime = require('@yr/runtime');
 // Use production build for server
 // Override with package.json "browser" field for client to enable debug during dev
-,
-    React = require('react/dist/react.min'),
-    RESERVED_METHODS = ['render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount', 'shouldComponentTransition', 'getTransitionDuration'];
+var React = require('react/dist/react.min');
+
+var RESERVED_METHODS = ['render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount', 'shouldComponentTransition', 'getTransitionDuration'];
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -106,9 +106,9 @@ module.exports = {
 function processProps(props, specification) {
   props = props || {};
 
-  var data = specification.data,
-      defaultProps = specification.defaultProps,
-      displayName = specification.displayName;
+  var data = specification.data;
+  var defaultProps = specification.defaultProps;
+  var displayName = specification.displayName;
 
   // Extract missing props defined in 'data'
   if (data && props && 'extract' in props) props.extract(Object.keys(data));

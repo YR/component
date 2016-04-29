@@ -4,17 +4,15 @@
  * Base component class (client)
  */
 
-const clock = require('@yr/clock')
-  , Debug = require('debug')
-  , isEqual = require('@yr/is-equal')
-    // Use production build for server
-    // Override with package.json "browser" field for client to enable debug during dev
-  , React = require('react/dist/react.min')
+const clock = require('@yr/clock');
+const Debug = require('debug');
+const isEqual = require('@yr/is-equal');
+const React = require('react');
 
-  , DEFAULT_TRANSITION_DURATION = 250
-  , TIMEOUT = 20
+const DEFAULT_TRANSITION_DURATION = 250;
+const TIMEOUT = 20;
 
-  , debug = Debug('yr:component');
+const debug = Debug('yr:component');
 
 class Component extends React.Component {
   /**
@@ -49,10 +47,10 @@ class Component extends React.Component {
    */
   shouldComponentUpdate (nextProps, nextState) {
     const propsChanged = ('isEqual' in nextProps)
-        ? !this.props.isEqual(nextProps)
-        : !isEqual(nextProps, this.props, null, debug)
-      , stateChanged = !isEqual(nextState, this.state, null, debug)
-      , changed = propsChanged || stateChanged;
+      ? !this.props.isEqual(nextProps)
+      : !isEqual(nextProps, this.props, null, debug);
+    const stateChanged = !isEqual(nextState, this.state, null, debug);
+    const changed = propsChanged || stateChanged;
 
     if (propsChanged) debug('props changed %s', this.displayName);
     if (stateChanged) debug('state changed %s', this.displayName);

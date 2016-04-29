@@ -7,25 +7,25 @@
  * @license MIT
  */
 
-const assign = require('object-assign')
-  , Component = require('./lib/Component')
-  , runtime = require('@yr/runtime')
-    // Use production build for server
-    // Override with package.json "browser" field for client to enable debug during dev
-  , React = require('react/dist/react.min')
+const assign = require('object-assign');
+const Component = require('./lib/Component');
+const runtime = require('@yr/runtime');
+// Use production build for server
+// Override with package.json "browser" field for client to enable debug during dev
+const React = require('react/dist/react.min');
 
-  , RESERVED_METHODS = [
-      'render',
-      'componentWillMount',
-      'componentDidMount',
-      'componentWillReceiveProps',
-      'shouldComponentUpdate',
-      'componentWillUpdate',
-      'componentDidUpdate',
-      'componentWillUnmount',
-      'shouldComponentTransition',
-      'getTransitionDuration'
-    ];
+const RESERVED_METHODS = [
+  'render',
+  'componentWillMount',
+  'componentDidMount',
+  'componentWillReceiveProps',
+  'shouldComponentUpdate',
+  'componentWillUpdate',
+  'componentDidUpdate',
+  'componentWillUnmount',
+  'shouldComponentTransition',
+  'getTransitionDuration'
+];
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -109,9 +109,9 @@ module.exports = {
 function processProps (props, specification) {
   props = props || {};
 
-  const data = specification.data
-    , defaultProps = specification.defaultProps
-    , displayName = specification.displayName;
+  const data = specification.data;
+  const defaultProps = specification.defaultProps;
+  const displayName = specification.displayName;
 
   // Extract missing props defined in 'data'
   if (data && props && 'extract' in props) props.extract(Object.keys(data));
