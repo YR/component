@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "benchmark": "2.1.x",
-    "buddy": "4.1.x",
+    "buddy": "5.0.x",
     "buddy-plugin-babel": "6.7.x",
     "expect.js": "*",
     "mocha": "*",
