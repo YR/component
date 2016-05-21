@@ -14,18 +14,26 @@ const runtime = require('@yr/runtime');
 // Override with package.json "browser" field for client to enable debug during dev
 const React = require('react/dist/react.min');
 
-const RESERVED_METHODS = [
-  'render',
+const LIFECYCLE_METHODS = [
   'componentWillMount',
   'componentDidMount',
   'componentWillReceiveProps',
-  'shouldComponentUpdate',
   'componentWillUpdate',
   'componentDidUpdate',
+  'componentWillUnmount'
+];
+const PROXY_METHODS = [
   'componentWillUnmount',
+  'render'
+];
+const RESERVED_METHODS = LIFECYCLE_METHODS.concat([
+  'render',
+  'shouldComponentUpdate',
   'shouldComponentTransition',
   'getTransitionDuration'
-];
+]);
+
+const isProduction = process.env.NODE_ENV == 'production';
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -50,39 +58,26 @@ module.exports = {
 
     // Handle mixins
     if (mixins && mixins.length) {
-      mixins.unshift({});
-      // Clone
-      mixins = assign.apply(null, mixins);
+      // Merge/clone
+      mixins = assign({}, ...mixins);
       // Store method names to autobind on instantiation
       specification.__bindableMethods = Object.keys(mixins)
         .filter((key) => {
           return !~RESERVED_METHODS.indexOf(key)
             && ('function' == typeof mixins[key]);
         });
-    } else {
-      mixins = {};
+      specification = assign(specification, mixins);
     }
 
-    // Proxy render implementation to force sending 'state'
-    specification.__render = specification.render;
-    delete specification.render;
-
+    // Rename select methods to prevent overwriting
+    proxyMethods(specification, PROXY_METHODS);
     // Copy to comp prototype
-    assign(comp.prototype, specification, mixins);
+    assign(comp.prototype, specification);
 
-    return function createElement (props/*, ...children*/) {
+    return function createElement (props, ...children) {
       processProps(props, specification);
 
-      // Non-leaky args conversion
-      const n = arguments.length;
-      let args = Array(n + 1);
-
-      args[0] = comp;
-      for (let i = 0; i < n; i++) {
-        args[i + 1] = arguments[i];
-      }
-
-      return React.createElement.apply(null, args);
+      return React.createElement(comp, props, ...children);
     };
   },
 
@@ -92,7 +87,7 @@ module.exports = {
    * @returns {Function}
    */
   stateless (specification) {
-    return function renderStateless (props) {
+    return function createStatelessElement (props) {
       processProps(props, specification);
 
       // Send in initial state
@@ -102,16 +97,27 @@ module.exports = {
 };
 
 /**
+ * Proxy 'methods' of 'obj'
+ * @param {Object} obj
+ * @param {Array} methods
+ */
+function proxyMethods (obj, methods) {
+  methods.forEach((method) => {
+    if (method in obj) {
+      obj[`__${method}`] = obj[method];
+      delete obj[method];
+    }
+  });
+}
+
+/**
  * Process 'props'
  * @param {Props} props
  * @param {Object} specification
  */
 function processProps (props, specification) {
   props = props || {};
-
-  const data = specification.data;
-  const defaultProps = specification.defaultProps;
-  const displayName = specification.displayName;
+  const { data, defaultProps, displayName } = specification;
 
   // Extract missing props defined in 'data'
   if (data && props && 'extract' in props) props.extract(Object.keys(data));
@@ -123,7 +129,7 @@ function processProps (props, specification) {
     }
   }
 
-  if (process.env.NODE_ENV == 'production' || !data) return;
+  if (!isProduction || !data) return;
 
   // Validate prop types
   for (const key in data) {
