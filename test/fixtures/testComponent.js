@@ -1,12 +1,12 @@
 'use strict';
 
-const component = require('../../src/index')
-  , runtime = require('@yr/runtime')
+const component = require('../../src/index');
+const runtime = require('@yr/runtime');
 
-  , el = component.el
-  , mixins = runtime.isBrowser
-    ? [require('./testComponentMixin')]
-    : [];
+const el = component.el;
+const mixins = runtime.isBrowser
+  ? [require('./testComponentMixin')]
+  : [];
 
 exports.create = function create () {
   return component.create({
