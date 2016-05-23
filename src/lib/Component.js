@@ -4,6 +4,7 @@
  * Base component class (client)
  */
 
+const assign = require('object-assign');
 const clock = require('@yr/clock');
 const Debug = require('debug');
 const isEqual = require('@yr/is-equal');
@@ -26,6 +27,8 @@ module.exports = class Component extends React.Component {
     this.__transitionDuration = ('getTransitionDuration' in this)
       ? this.getTransitionDuration()
       : DEFAULT_TRANSITION_DURATION;
+    // Set up initial state
+    this.state = assign({}, this.__state);
     // Autobind mixin methods
     if (this.__bindableMethods) {
       this.__bindableMethods.forEach((method) => {
@@ -121,6 +124,8 @@ module.exports = class Component extends React.Component {
    * React: componentWillUnmount
    */
   componentWillUnmount () {
+    // Reset
+    if (this.state && this.state.visibility) this.state.visibility = 0;
     if (this.__timerID) clock.cancel(this.__timerID);
     if (this.__componentWillUnmount) this.__componentWillUnmount();
   }

@@ -4209,7 +4209,7 @@ _m_['react/react.js#15.1.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['@yr/is-equal/index.js#1.0.2']=(function(module,exports){
+_m_['@yr/is-equal/index.js#1.0.3']=(function(module,exports){
   module=this;exports=module.exports;
 
   'use strict';
@@ -4236,15 +4236,15 @@ _m_['@yr/is-equal/index.js#1.0.2']=(function(module,exports){
     if (equal(obj1, obj2)) return true;
   
     if (isObject(obj1) && isObject(obj2)) {
-      var keys1 = keys(obj1, ignore),
-          keys2 = keys(obj2, ignore);
+      var keys1 = keys(obj1, ignore);
+      var keys2 = keys(obj2, ignore);
   
       if (keys1.length != keys2.length) return false;
   
       for (var i = 0, n = keys1.length; i < n; i++) {
-        var prop = keys1[i],
-            val1 = obj1[prop],
-            val2 = obj2[prop];
+        var prop = keys1[i];
+        var val1 = obj1[prop];
+        var val2 = obj2[prop];
   
         if (!equal(val1, val2)) {
           if (debug) debug('"%s" not equal %s:%s', prop, val1, val2);
@@ -4263,8 +4263,8 @@ _m_['@yr/is-equal/index.js#1.0.2']=(function(module,exports){
    * @returns {Boolean}
    */
   function equal(val1, val2) {
-    var type1 = typeof val1,
-        type2 = typeof val2;
+    var type1 = typeof val1;
+    var type2 = typeof val2;
   
     // Convert NaN to null
     if (type1 == 'number' && isNaN(val1)) val1 = null;
@@ -4307,8 +4307,8 @@ _m_['@yr/is-equal/index.js#1.0.2']=(function(module,exports){
    */
   function isEqualArray(arr1, arr2) {
     if (Array.isArray(arr1) && Array.isArray(arr2)) {
-      var n1 = arr1.length,
-          n2 = arr2.length;
+      var n1 = arr1.length;
+      var n2 = arr2.length;
   
       if (n1 != n2) return false;
       // Equal if both empty
@@ -4954,7 +4954,7 @@ _m_['raf/index.js#3.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['@yr/clock/index.js#1.1.7']=(function(module,exports){
+_m_['@yr/clock/index.js#1.1.8']=(function(module,exports){
   module=this;exports=module.exports;
 
   'use strict';
@@ -4966,18 +4966,19 @@ _m_['@yr/clock/index.js#1.1.7']=(function(module,exports){
    * @license MIT
    */
   
-  var Debug = _m_['debug/browser.js#2.2.0'],
-      raf = _m_['raf/index.js#3.2.0'],
-      now = _m_['performance-now/lib/performance-now.js#0.2.0'],
-      INTERVAL_CUTOFF = 1000,
-      INTERVAL_MAX = 600000,
-      debug = Debug('yr:clock'),
-      hasImmediate = 'setImmediate' in (typeof global !== 'undefined' ? global : window);
+  var Debug = _m_['debug/browser.js#2.2.0'];
+  var raf = _m_['raf/index.js#3.2.0'];
+  var now = _m_['performance-now/lib/performance-now.js#0.2.0'];
   
-  var queue = {},
-      rafHandle = 0,
-      stHandle = 0,
-      uid = 0;
+  var INTERVAL_CUTOFF = 1000;
+  var INTERVAL_MAX = 600000;
+  
+  var debug = Debug('yr:clock');
+  var hasImmediate = 'setImmediate' in (typeof global !== 'undefined' ? global : window);
+  var queue = {};
+  var rafHandle = 0;
+  var stHandle = 0;
+  var uid = 0;
   
   // Add polyfills
   raf.polyfill();
@@ -4989,8 +4990,8 @@ _m_['@yr/clock/index.js#1.1.7']=(function(module,exports){
      */
   
     initialize: function initialize(features) {
-      var hidden = features.hidden,
-          visibilityChange = features.visibilityChange;
+      var hidden = features.hidden;
+      var visibilityChange = features.visibilityChange;
   
       if (hidden) {
         document.addEventListener(visibilityChange, function (evt) {
@@ -5008,10 +5009,10 @@ _m_['@yr/clock/index.js#1.1.7']=(function(module,exports){
               if (item) {
                 running = true;
   
-                if (item.time <= current) {
-                  debug('timeout should trigger for "%s"', id);
-                } else {
-                  if (debug.enabled) {
+                if (debug.enabled) {
+                  if (item.time <= current) {
+                    debug('timeout should trigger for "%s"', id);
+                  } else {
                     var date = new Date();
   
                     date.setMilliseconds(date.getMilliseconds() + item.time - current);
@@ -5109,20 +5110,18 @@ _m_['@yr/clock/index.js#1.1.7']=(function(module,exports){
    */
   function run() {
     var current = now();
-    var interval = INTERVAL_MAX,
-        running = false;
+    var interval = INTERVAL_MAX;
+    var running = false;
   
     // Reset
     if (rafHandle || stHandle) stop();
   
     for (var id in queue) {
-      var item = queue[id],
-          duration = item.time - current;
+      var item = queue[id];
+      var duration = item.time - current;
   
       if (duration <= 0) {
-        if (debug.enabled) {
-          debug('timeout triggered for "%s" at %s', id, new Date().toLocaleTimeString());
-        }
+        if (debug.enabled) debug('timeout triggered for "%s" at %s', id, new Date().toLocaleTimeString());
         delete queue[id];
         item.fn();
       } else {
@@ -5164,9 +5163,10 @@ _m_['lib/Component.js']=(function(module,exports){
    * Base component class (client)
    */
   
-  var clock = _m_['@yr/clock/index.js#1.1.7'];
+  var assign = _m_['object-assign/index.js#4.1.0'];
+  var clock = _m_['@yr/clock/index.js#1.1.8'];
   var Debug = _m_['debug/browser.js#2.2.0'];
-  var isEqual = _m_['@yr/is-equal/index.js#1.0.2'];
+  var isEqual = _m_['@yr/is-equal/index.js#1.0.3'];
   var React = _m_['react/react.js#15.1.0'];
   
   var DEFAULT_TRANSITION_DURATION = 250;
@@ -5189,6 +5189,8 @@ _m_['lib/Component.js']=(function(module,exports){
   
       _this.__timerID = 0;
       _this.__transitionDuration = 'getTransitionDuration' in _this ? _this.getTransitionDuration() : DEFAULT_TRANSITION_DURATION;
+      // Set up initial state
+      _this.state = assign({}, _this.__state);
       // Autobind mixin methods
       if (_this.__bindableMethods) {
         _this.__bindableMethods.forEach(function (method) {
@@ -5251,8 +5253,10 @@ _m_['lib/Component.js']=(function(module,exports){
       var _this2 = this;
   
       if (this.__timerID) clock.cancel(this.__timerID);
+  
       // Generally a bad idea...
       state.visibility = !state.visibility ? 1 : 2;
+  
       // frame/immediate doesn't leave enough time for redraw between states
       this.__timerID = clock.timeout(TIMEOUT, function () {
         _this2.isTransitioning();
@@ -5281,6 +5285,7 @@ _m_['lib/Component.js']=(function(module,exports){
   
     Component.prototype.didTransition = function didTransition() {
       this.__timerID = 0;
+  
       this.setState({
         visibility: this.state.visibility == 2 ? 3 : 0
       });
@@ -5291,7 +5296,10 @@ _m_['lib/Component.js']=(function(module,exports){
      */
   
     Component.prototype.componentWillUnmount = function componentWillUnmount() {
+      // Reset
+      // if (this.state && this.state.visibility) this.state.visibility = 0;
       if (this.__timerID) clock.cancel(this.__timerID);
+      if (this.__componentWillUnmount) this.__componentWillUnmount();
     };
   
     return Component;
@@ -5319,7 +5327,7 @@ _m_['@yr/component']=(function(module,exports){
   var React = _m_['react/react.js#15.1.0'];
   
   var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
-  var PROXY_METHODS = ['componentWillUnmount', 'render'];
+  var PROXY_KEYS = ['componentWillUnmount', 'render', 'state'];
   var RESERVED_METHODS = LIFECYCLE_METHODS.concat(['render', 'shouldComponentUpdate', 'shouldComponentTransition', 'getTransitionDuration']);
   
   var isProduction = undefined == 'production';
@@ -5365,8 +5373,8 @@ _m_['@yr/component']=(function(module,exports){
         specification = assign(specification, mixins);
       }
   
-      // Rename select methods to prevent overwriting
-      proxyMethods(specification, PROXY_METHODS);
+      // Rename select keys to prevent overwriting
+      proxyKeys(specification, PROXY_KEYS);
       // Copy to comp prototype
       assign(comp.prototype, specification);
   
@@ -5397,15 +5405,15 @@ _m_['@yr/component']=(function(module,exports){
   };
   
   /**
-   * Proxy 'methods' of 'obj'
+   * Proxy 'keys' of 'obj'
    * @param {Object} obj
-   * @param {Array} methods
+   * @param {Array} keys
    */
-  function proxyMethods(obj, methods) {
-    methods.forEach(function (method) {
-      if (method in obj) {
-        obj['__' + method] = obj[method];
-        delete obj[method];
+  function proxyKeys(obj, keys) {
+    keys.forEach(function (key) {
+      if (key in obj) {
+        obj['__' + key] = obj[key];
+        delete obj[key];
       }
     });
   }

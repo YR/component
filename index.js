@@ -15,7 +15,7 @@ var runtime = require('@yr/runtime');
 var React = require('react/dist/react.min');
 
 var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
-var PROXY_METHODS = ['componentWillUnmount', 'render'];
+var PROXY_KEYS = ['componentWillUnmount', 'render', 'state'];
 var RESERVED_METHODS = LIFECYCLE_METHODS.concat(['render', 'shouldComponentUpdate', 'shouldComponentTransition', 'getTransitionDuration']);
 
 var isProduction = undefined == 'production';
@@ -61,8 +61,8 @@ module.exports = {
       specification = assign(specification, mixins);
     }
 
-    // Rename select methods to prevent overwriting
-    proxyMethods(specification, PROXY_METHODS);
+    // Rename select keys to prevent overwriting
+    proxyKeys(specification, PROXY_KEYS);
     // Copy to comp prototype
     assign(comp.prototype, specification);
 
@@ -94,15 +94,15 @@ module.exports = {
 };
 
 /**
- * Proxy 'methods' of 'obj'
+ * Proxy 'keys' of 'obj'
  * @param {Object} obj
- * @param {Array} methods
+ * @param {Array} keys
  */
-function proxyMethods(obj, methods) {
-  methods.forEach(function (method) {
-    if (method in obj) {
-      obj['__' + method] = obj[method];
-      delete obj[method];
+function proxyKeys(obj, keys) {
+  keys.forEach(function (key) {
+    if (key in obj) {
+      obj['__' + key] = obj[key];
+      delete obj[key];
     }
   });
 }

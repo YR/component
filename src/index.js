@@ -22,9 +22,10 @@ const LIFECYCLE_METHODS = [
   'componentDidUpdate',
   'componentWillUnmount'
 ];
-const PROXY_METHODS = [
+const PROXY_KEYS = [
   'componentWillUnmount',
-  'render'
+  'render',
+  'state'
 ];
 const RESERVED_METHODS = LIFECYCLE_METHODS.concat([
   'render',
@@ -69,8 +70,8 @@ module.exports = {
       specification = assign(specification, mixins);
     }
 
-    // Rename select methods to prevent overwriting
-    proxyMethods(specification, PROXY_METHODS);
+    // Rename select keys to prevent overwriting
+    proxyKeys(specification, PROXY_KEYS);
     // Copy to comp prototype
     assign(comp.prototype, specification);
 
@@ -97,15 +98,15 @@ module.exports = {
 };
 
 /**
- * Proxy 'methods' of 'obj'
+ * Proxy 'keys' of 'obj'
  * @param {Object} obj
- * @param {Array} methods
+ * @param {Array} keys
  */
-function proxyMethods (obj, methods) {
-  methods.forEach((method) => {
-    if (method in obj) {
-      obj[`__${method}`] = obj[method];
-      delete obj[method];
+function proxyKeys (obj, keys) {
+  keys.forEach((key) => {
+    if (key in obj) {
+      obj[`__${key}`] = obj[key];
+      delete obj[key];
     }
   });
 }

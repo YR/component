@@ -35,6 +35,18 @@ describe('component', function () {
 
       expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
     });
+    it('should return a renderable element factory for a component with state', function () {
+      const foo = component.create({
+        state: {
+          foo: 'bar'
+        },
+        render (props, state) {
+          return component.el('div', {}, state.foo);
+        }
+      });
+
+      expect(reactDom.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
+    });
     it('should return a renderable element factory for an svg component', function () {
       const foo = component.create({
         render (props, state) {
