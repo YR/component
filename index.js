@@ -129,7 +129,7 @@ function processProps(props, specification) {
     }
   }
 
-  if (!isProduction || !data) return;
+  if (isProduction || !data) return;
 
   // Validate prop types
   for (var key in data) {

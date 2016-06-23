@@ -5297,7 +5297,7 @@ _m_['lib/Component.js']=(function(module,exports){
   
     Component.prototype.componentWillUnmount = function componentWillUnmount() {
       // Reset
-      // if (this.state && this.state.visibility) this.state.visibility = 0;
+      if (this.state && this.state.visibility) this.state.visibility = 0;
       if (this.__timerID) clock.cancel(this.__timerID);
       if (this.__componentWillUnmount) this.__componentWillUnmount();
     };
@@ -5440,7 +5440,7 @@ _m_['@yr/component']=(function(module,exports){
       }
     }
   
-    if (!isProduction || !data) return;
+    if (isProduction || !data) return;
   
     // Validate prop types
     for (var key in data) {
