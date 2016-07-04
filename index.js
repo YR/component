@@ -18,7 +18,7 @@ var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWi
 var PROXY_KEYS = ['componentWillUnmount', 'render', 'state'];
 var RESERVED_METHODS = LIFECYCLE_METHODS.concat(['render', 'shouldComponentUpdate', 'shouldComponentTransition', 'getTransitionDuration']);
 
-var isProduction = undefined == 'production';
+var isProduction = process.env.NODE_ENV == 'production';
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -56,7 +56,7 @@ module.exports = {
       mixins = assign.apply(undefined, [{}].concat(mixins));
       // Store method names to autobind on instantiation
       specification.__bindableMethods = Object.keys(mixins).filter(function (key) {
-        return ! ~RESERVED_METHODS.indexOf(key) && 'function' == typeof mixins[key];
+        return !~RESERVED_METHODS.indexOf(key) && 'function' == typeof mixins[key];
       });
       specification = assign(specification, mixins);
     }

@@ -9,19 +9,19 @@
     "@yr/runtime": "1.2.x",
     "debug": "2.2.x",
     "object-assign": "4.1.x",
-    "react": "15.1.0"
+    "react": "15.2.0"
   },
   "devDependencies": {
     "benchmark": "2.1.x",
-    "buddy": "5.0.x",
-    "buddy-plugin-babel": "6.9.x",
+    "buddy": "5.1.x",
+    "buddy-plugin-babel": "6.10.x",
     "expect.js": "*",
     "mocha": "*",
-    "react-addons-test-utils": "15.1.0",
-    "react-dom": "15.1.0"
+    "react-addons-test-utils": "15.2.0",
+    "react-dom": "15.2.0"
   },
   "optionalDependencies": {
-    "buddy-server": "1.0.0"
+    "buddy-server": "1.0.1"
   },
   "main": "./src/index.js",
   "repository": "https://github.com/YR/component.git",
