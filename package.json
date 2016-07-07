@@ -6,7 +6,7 @@
   "dependencies": {
     "@yr/clock": "1.1.x",
     "@yr/is-equal": "1.0.x",
-    "@yr/runtime": "1.2.x",
+    "@yr/runtime": "2.0.x",
     "debug": "2.2.x",
     "object-assign": "4.1.x",
     "react": "15.2.0"
