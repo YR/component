@@ -31,7 +31,7 @@ const comp = component.create({
     return nextState.active != this.state.active;
   },
 
-  // render() is passed 'props' and 'state' for seamless interface 
+  // render() is passed 'props' and 'state' for seamless interface
   // between stateful/stateless components
   render (props, state) {
     if (state.visibility >= component.WILL_TRANSITION) {
@@ -41,10 +41,10 @@ const comp = component.create({
         className += 'js-show';
       }
 
-      return el('div', { 
+      return el('div', {
         className,
-        style: { 
-          height: `${props.height}px`, 
+        style: {
+          height: `${props.height}px`,
           width: `${props.width}px`
         }
       }, 'my component');
@@ -55,7 +55,7 @@ const comp = component.create({
 
 ### About server rendering performance
 
-Due to the synchronous, blocking nature of React's `renderToString()`, it is important to optimize component rendering as much as possible when rending on the server. The following steps have been taken to speed up rendering:
+Due to the synchronous, blocking nature of React's `renderToString()`, it is important to optimize component rendering as much as possible when rendering on the server. The following steps have been taken to speed up rendering:
 
 - use minified production bundle of `React` (available as `component.React`) to avoid calls to `process.env.NODE_ENV` and other costly development-only code
 - treat all components as *stateless functions*, avoiding the costs of instantiation via `class` inheritance or `React.createClass`
@@ -100,7 +100,7 @@ component.create({
 
 **stateless(specification, mixins)**: returns a factory function for creating stateless React elements (no component lifecycle methods or backing instance), though property type validation will be performed when in development mode. **Note**: *this is the default for all components on the server.*
 
-**NOT_TRANSITIONING**: value of `0`. 
+**NOT_TRANSITIONING**: value of `0`.
 
 **WILL_TRANSITION**: value of `1`. This value will be stored in `this.state.visibility` if `component.shouldComponentTransition` returns `true`.
 
