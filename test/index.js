@@ -129,7 +129,7 @@ _m_['test/fixtures/testComponentMixin.js']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['@yr/runtime/index.js#1.2.0']=(function(module,exports){
+_m_['@yr/runtime/index.js#2.0.0']=(function(module,exports){
   module=this;exports=module.exports;
 
   'use strict';
@@ -141,11 +141,13 @@ _m_['@yr/runtime/index.js#1.2.0']=(function(module,exports){
    * @license MIT
    */
   
-  var isNode = (typeof process !== 'undefined'
+  var isServer = (typeof process !== 'undefined'
     && {}.toString.call(process) === '[object process]');
+  var isBrowser = typeof window !== 'undefined';
   
-  exports.isServer = isNode;
-  exports.isBrowser = !isNode;
+  exports.isServer = isServer;
+  exports.isBrowser = !isServer && isBrowser;
+  exports.isWorker = !isServer && !isBrowser;
 
   return module.exports;
 }).call({exports:{}});
@@ -255,7 +257,7 @@ _m_['fbjs/lib/warning.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getIteratorFn.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getIteratorFn.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -267,6 +269,7 @@ _m_['react/lib/getIteratorFn.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule getIteratorFn
+   * 
    */
   
   'use strict';
@@ -301,7 +304,7 @@ _m_['react/lib/getIteratorFn.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/canDefineProperty.js#15.2.0']=(function(module,exports){
+_m_['react/lib/canDefineProperty.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -386,37 +389,7 @@ _m_['fbjs/lib/invariant.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactPropTypeLocationNames.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2013-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule ReactPropTypeLocationNames
-   */
-  
-  'use strict';
-  
-  var ReactPropTypeLocationNames = {};
-  
-  if (process.env.NODE_ENV !== 'production') {
-    ReactPropTypeLocationNames = {
-      prop: 'prop',
-      context: 'context',
-      childContext: 'child context'
-    };
-  }
-  
-  module.exports = ReactPropTypeLocationNames;
-
-  return module.exports;
-}).call({exports:{}});
-_m_['react/lib/ReactCurrentOwner.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactCurrentOwner.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -453,7 +426,7 @@ _m_['react/lib/ReactCurrentOwner.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/reactProdInvariant.js#15.2.0']=(function(module,exports){
+_m_['react/lib/reactProdInvariant.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -465,6 +438,7 @@ _m_['react/lib/reactProdInvariant.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule reactProdInvariant
+   * 
    */
   'use strict';
   
@@ -497,7 +471,7 @@ _m_['react/lib/reactProdInvariant.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactComponentTreeDevtool.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactComponentTreeDevtool.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -513,9 +487,9 @@ _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -536,10 +510,6 @@ _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0']=(function(module,exports){
         isMounted: false,
         updateCount: 0
       };
-      // TODO: We need to do this awkward dance because TopLevelWrapper "never
-      // gets mounted" but its display name gets set in instantiateReactComponent
-      // before its debug ID is set to 0.
-      unmountedIDs[id] = true;
     }
     update(tree[id]);
   }
@@ -625,7 +595,6 @@ _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0']=(function(module,exports){
       updateTree(id, function (item) {
         return item.isMounted = true;
       });
-      delete unmountedIDs[id];
     },
     onMountRootComponent: function (id) {
       rootIDs[id] = true;
@@ -726,7 +695,37 @@ _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/checkReactTypeSpec.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactPropTypeLocationNames.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2013-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactPropTypeLocationNames
+   */
+  
+  'use strict';
+  
+  var ReactPropTypeLocationNames = {};
+  
+  if (process.env.NODE_ENV !== 'production') {
+    ReactPropTypeLocationNames = {
+      prop: 'prop',
+      context: 'context',
+      childContext: 'child context'
+    };
+  }
+  
+  module.exports = ReactPropTypeLocationNames;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/checkReactTypeSpec.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -742,10 +741,9 @@ _m_['react/lib/checkReactTypeSpec.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0'];
-  var ReactPropTypeLocationNames = _m_['react/lib/ReactPropTypeLocationNames.js#15.2.0'];
+  var ReactPropTypeLocationNames = _m_['react/lib/ReactPropTypeLocationNames.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -787,10 +785,13 @@ _m_['react/lib/checkReactTypeSpec.js#15.2.0']=(function(module,exports){
   
           var componentStackInfo = '';
   
-          if (debugID !== null) {
-            componentStackInfo = ReactComponentTreeDevtool.getStackAddendumByID(debugID);
-          } else if (element !== null) {
-            componentStackInfo = ReactComponentTreeDevtool.getCurrentStackAddendum(element);
+          if (process.env.NODE_ENV !== 'production') {
+            var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.1'];
+            if (debugID !== null) {
+              componentStackInfo = ReactComponentTreeDevtool.getStackAddendumByID(debugID);
+            } else if (element !== null) {
+              componentStackInfo = ReactComponentTreeDevtool.getCurrentStackAddendum(element);
+            }
           }
   
           process.env.NODE_ENV !== 'production' ? warning(false, 'Failed %s type: %s%s', location, error.message, componentStackInfo) : void 0;
@@ -856,7 +857,7 @@ _m_['fbjs/lib/keyMirror.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactPropTypeLocations.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactPropTypeLocations.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -974,7 +975,7 @@ _m_['object-assign/index.js#4.1.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactElement.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactElement.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -992,10 +993,10 @@ _m_['react/lib/ReactElement.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
   
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
-  var canDefineProperty = _m_['react/lib/canDefineProperty.js#15.2.0'];
+  var canDefineProperty = _m_['react/lib/canDefineProperty.js#15.2.1'];
   var hasOwnProperty = Object.prototype.hasOwnProperty;
   
   // The Symbol used to tag the ReactElement type. If there is no native Symbol
@@ -1332,7 +1333,7 @@ _m_['react/lib/ReactElement.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactElementValidator.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactElementValidator.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -1355,15 +1356,15 @@ _m_['react/lib/ReactElementValidator.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
-  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0'];
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
-  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.0'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
+  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.1'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
+  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.1'];
   
-  var checkReactTypeSpec = _m_['react/lib/checkReactTypeSpec.js#15.2.0'];
+  var checkReactTypeSpec = _m_['react/lib/checkReactTypeSpec.js#15.2.1'];
   
-  var canDefineProperty = _m_['react/lib/canDefineProperty.js#15.2.0'];
-  var getIteratorFn = _m_['react/lib/getIteratorFn.js#15.2.0'];
+  var canDefineProperty = _m_['react/lib/canDefineProperty.js#15.2.1'];
+  var getIteratorFn = _m_['react/lib/getIteratorFn.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   function getDeclarationErrorAddendum() {
@@ -1564,7 +1565,7 @@ _m_['react/lib/ReactElementValidator.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/onlyChild.js#15.2.0']=(function(module,exports){
+_m_['react/lib/onlyChild.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -1579,9 +1580,9 @@ _m_['react/lib/onlyChild.js#15.2.0']=(function(module,exports){
    */
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -1608,7 +1609,7 @@ _m_['react/lib/onlyChild.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactVersion.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactVersion.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -1624,11 +1625,11 @@ _m_['react/lib/ReactVersion.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  module.exports = '15.2.0';
+  module.exports = '15.2.1';
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactPropTypes.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactPropTypes.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -1644,11 +1645,11 @@ _m_['react/lib/ReactPropTypes.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
-  var ReactPropTypeLocationNames = _m_['react/lib/ReactPropTypeLocationNames.js#15.2.0'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
+  var ReactPropTypeLocationNames = _m_['react/lib/ReactPropTypeLocationNames.js#15.2.1'];
   
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
-  var getIteratorFn = _m_['react/lib/getIteratorFn.js#15.2.0'];
+  var getIteratorFn = _m_['react/lib/getIteratorFn.js#15.2.1'];
   
   /**
    * Collection of methods that allow declaration and validation of props that are
@@ -2093,7 +2094,7 @@ _m_['fbjs/lib/mapObject.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMFactories.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMFactories.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -2109,7 +2110,7 @@ _m_['react/lib/ReactDOMFactories.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
   
   var mapObject = _m_['fbjs/lib/mapObject.js#0.8.3'];
   
@@ -2121,7 +2122,7 @@ _m_['react/lib/ReactDOMFactories.js#15.2.0']=(function(module,exports){
    */
   function createDOMFactory(tag) {
     if (process.env.NODE_ENV !== 'production') {
-      var ReactElementValidator = _m_['react/lib/ReactElementValidator.js#15.2.0'];
+      var ReactElementValidator = _m_['react/lib/ReactElementValidator.js#15.2.1'];
       return ReactElementValidator.createFactory(tag);
     }
     return ReactElement.createFactory(tag);
@@ -2340,7 +2341,7 @@ _m_['fbjs/lib/emptyObject.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactNoopUpdateQueue.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactNoopUpdateQueue.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -2358,9 +2359,10 @@ _m_['react/lib/ReactNoopUpdateQueue.js#15.2.0']=(function(module,exports){
   
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
-  function warnTDZ(publicInstance, callerName) {
+  function warnNoop(publicInstance, callerName) {
     if (process.env.NODE_ENV !== 'production') {
-      process.env.NODE_ENV !== 'production' ? warning(false, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, publicInstance.constructor && publicInstance.constructor.displayName || '') : void 0;
+      var constructor = publicInstance.constructor;
+      process.env.NODE_ENV !== 'production' ? warning(false, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, constructor && (constructor.displayName || constructor.name) || 'ReactClass') : void 0;
     }
   }
   
@@ -2404,7 +2406,7 @@ _m_['react/lib/ReactNoopUpdateQueue.js#15.2.0']=(function(module,exports){
      * @internal
      */
     enqueueForceUpdate: function (publicInstance) {
-      warnTDZ(publicInstance, 'forceUpdate');
+      warnNoop(publicInstance, 'forceUpdate');
     },
   
     /**
@@ -2419,7 +2421,7 @@ _m_['react/lib/ReactNoopUpdateQueue.js#15.2.0']=(function(module,exports){
      * @internal
      */
     enqueueReplaceState: function (publicInstance, completeState) {
-      warnTDZ(publicInstance, 'replaceState');
+      warnNoop(publicInstance, 'replaceState');
     },
   
     /**
@@ -2433,7 +2435,7 @@ _m_['react/lib/ReactNoopUpdateQueue.js#15.2.0']=(function(module,exports){
      * @internal
      */
     enqueueSetState: function (publicInstance, partialState) {
-      warnTDZ(publicInstance, 'setState');
+      warnNoop(publicInstance, 'setState');
     }
   };
   
@@ -2441,7 +2443,7 @@ _m_['react/lib/ReactNoopUpdateQueue.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -2457,11 +2459,11 @@ _m_['react/lib/ReactComponent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactNoopUpdateQueue = _m_['react/lib/ReactNoopUpdateQueue.js#15.2.0'];
+  var ReactNoopUpdateQueue = _m_['react/lib/ReactNoopUpdateQueue.js#15.2.1'];
   
-  var canDefineProperty = _m_['react/lib/canDefineProperty.js#15.2.0'];
+  var canDefineProperty = _m_['react/lib/canDefineProperty.js#15.2.1'];
   var emptyObject = _m_['fbjs/lib/emptyObject.js#0.8.3'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -2565,7 +2567,7 @@ _m_['react/lib/ReactComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactClass.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactClass.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -2581,14 +2583,14 @@ _m_['react/lib/ReactClass.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var ReactComponent = _m_['react/lib/ReactComponent.js#15.2.0'];
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
-  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.0'];
-  var ReactPropTypeLocationNames = _m_['react/lib/ReactPropTypeLocationNames.js#15.2.0'];
-  var ReactNoopUpdateQueue = _m_['react/lib/ReactNoopUpdateQueue.js#15.2.0'];
+  var ReactComponent = _m_['react/lib/ReactComponent.js#15.2.1'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
+  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.1'];
+  var ReactPropTypeLocationNames = _m_['react/lib/ReactPropTypeLocationNames.js#15.2.1'];
+  var ReactNoopUpdateQueue = _m_['react/lib/ReactNoopUpdateQueue.js#15.2.1'];
   
   var emptyObject = _m_['fbjs/lib/emptyObject.js#0.8.3'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
@@ -3296,7 +3298,7 @@ _m_['react/lib/ReactClass.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/KeyEscapeUtils.js#15.2.0']=(function(module,exports){
+_m_['react/lib/KeyEscapeUtils.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -3308,6 +3310,7 @@ _m_['react/lib/KeyEscapeUtils.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule KeyEscapeUtils
+   * 
    */
   
   'use strict';
@@ -3315,7 +3318,7 @@ _m_['react/lib/KeyEscapeUtils.js#15.2.0']=(function(module,exports){
   /**
    * Escape and wrap key so it is safe to use as a reactid
    *
-   * @param {*} key to be escaped.
+   * @param {string} key to be escaped.
    * @return {string} the escaped key.
    */
   
@@ -3360,7 +3363,7 @@ _m_['react/lib/KeyEscapeUtils.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/traverseAllChildren.js#15.2.0']=(function(module,exports){
+_m_['react/lib/traverseAllChildren.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -3376,14 +3379,14 @@ _m_['react/lib/traverseAllChildren.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
   
-  var getIteratorFn = _m_['react/lib/getIteratorFn.js#15.2.0'];
+  var getIteratorFn = _m_['react/lib/getIteratorFn.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  var KeyEscapeUtils = _m_['react/lib/KeyEscapeUtils.js#15.2.0'];
+  var KeyEscapeUtils = _m_['react/lib/KeyEscapeUtils.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var SEPARATOR = '.';
@@ -3526,7 +3529,7 @@ _m_['react/lib/traverseAllChildren.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/PooledClass.js#15.2.0']=(function(module,exports){
+_m_['react/lib/PooledClass.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -3542,7 +3545,7 @@ _m_['react/lib/PooledClass.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -3624,7 +3627,7 @@ _m_['react/lib/PooledClass.js#15.2.0']=(function(module,exports){
    * Augments `CopyConstructor` to be a poolable class, augmenting only the class
    * itself (statically) not adding any prototypical fields. Any CopyConstructor
    * you give this may have a `poolSize` property, and will look for a
-   * prototypical `destructor` on instances (optional).
+   * prototypical `destructor` on instances.
    *
    * @param {Function} CopyConstructor Constructor that can be used to reset.
    * @param {Function} pooler Customizable pooler.
@@ -3653,7 +3656,7 @@ _m_['react/lib/PooledClass.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactChildren.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactChildren.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -3669,11 +3672,11 @@ _m_['react/lib/ReactChildren.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
   
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
-  var traverseAllChildren = _m_['react/lib/traverseAllChildren.js#15.2.0'];
+  var traverseAllChildren = _m_['react/lib/traverseAllChildren.js#15.2.1'];
   
   var twoArgumentPooler = PooledClass.twoArgumentPooler;
   var fourArgumentPooler = PooledClass.fourArgumentPooler;
@@ -3850,7 +3853,7 @@ _m_['react/lib/ReactChildren.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/React.js#15.2.0']=(function(module,exports){
+_m_['react/lib/React.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -3868,15 +3871,15 @@ _m_['react/lib/React.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var ReactChildren = _m_['react/lib/ReactChildren.js#15.2.0'];
-  var ReactComponent = _m_['react/lib/ReactComponent.js#15.2.0'];
-  var ReactClass = _m_['react/lib/ReactClass.js#15.2.0'];
-  var ReactDOMFactories = _m_['react/lib/ReactDOMFactories.js#15.2.0'];
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
-  var ReactPropTypes = _m_['react/lib/ReactPropTypes.js#15.2.0'];
-  var ReactVersion = _m_['react/lib/ReactVersion.js#15.2.0'];
+  var ReactChildren = _m_['react/lib/ReactChildren.js#15.2.1'];
+  var ReactComponent = _m_['react/lib/ReactComponent.js#15.2.1'];
+  var ReactClass = _m_['react/lib/ReactClass.js#15.2.1'];
+  var ReactDOMFactories = _m_['react/lib/ReactDOMFactories.js#15.2.1'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
+  var ReactPropTypes = _m_['react/lib/ReactPropTypes.js#15.2.1'];
+  var ReactVersion = _m_['react/lib/ReactVersion.js#15.2.1'];
   
-  var onlyChild = _m_['react/lib/onlyChild.js#15.2.0'];
+  var onlyChild = _m_['react/lib/onlyChild.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var createElement = ReactElement.createElement;
@@ -3884,7 +3887,7 @@ _m_['react/lib/React.js#15.2.0']=(function(module,exports){
   var cloneElement = ReactElement.cloneElement;
   
   if (process.env.NODE_ENV !== 'production') {
-    var ReactElementValidator = _m_['react/lib/ReactElementValidator.js#15.2.0'];
+    var ReactElementValidator = _m_['react/lib/ReactElementValidator.js#15.2.1'];
     createElement = ReactElementValidator.createElement;
     createFactory = ReactElementValidator.createFactory;
     cloneElement = ReactElementValidator.cloneElement;
@@ -3943,12 +3946,12 @@ _m_['react/lib/React.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/react.js#15.2.0']=(function(module,exports){
+_m_['react/react.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   'use strict';
   
-  module.exports = _m_['react/lib/React.js#15.2.0'];
+  module.exports = _m_['react/lib/React.js#15.2.1'];
   
 
   return module.exports;
@@ -4910,7 +4913,7 @@ _m_['lib/Component.js']=(function(module,exports){
   var clock = _m_['@yr/clock/index.js#1.1.10'];
   var Debug = _m_['debug/browser.js#2.2.0'];
   var isEqual = _m_['@yr/is-equal/index.js#1.0.3'];
-  var React = _m_['react/react.js#15.2.0'];
+  var React = _m_['react/react.js#15.2.1'];
   
   var DEFAULT_TRANSITION_DURATION = 250;
   var TIMEOUT = 20;
@@ -5064,10 +5067,10 @@ _m_['@yr/component']=(function(module,exports){
   
   var assign = _m_['object-assign/index.js#4.1.0'];
   var Component = _m_['lib/Component.js'];
-  var runtime = _m_['@yr/runtime/index.js#1.2.0'];
+  var runtime = _m_['@yr/runtime/index.js#2.0.0'];
   // Use production build for server
   // Override with package.json "browser" field for client to enable debug during dev
-  var React = _m_['react/react.js#15.2.0'];
+  var React = _m_['react/react.js#15.2.1'];
   
   var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
   var PROXY_KEYS = ['componentWillUnmount', 'render', 'state'];
@@ -5201,7 +5204,7 @@ _m_['test/fixtures/testComponent.js']=(function(module,exports){
   'use strict';
   
   var component = _m_['@yr/component'];
-  var runtime = _m_['@yr/runtime/index.js#1.2.0'];
+  var runtime = _m_['@yr/runtime/index.js#2.0.0'];
   
   var el = component.el;
   var mixins = runtime.isBrowser ? [_m_['test/fixtures/testComponentMixin.js']] : [];
@@ -5269,7 +5272,7 @@ _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/shouldUpdateReactComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/shouldUpdateReactComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -5317,7 +5320,7 @@ _m_['react/lib/shouldUpdateReactComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.0']=(function(module,exports){
+_m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -5355,7 +5358,7 @@ _m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.0']=(function(module,e
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/DOMNamespaces.js#15.2.0']=(function(module,exports){
+_m_['react/lib/DOMNamespaces.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -5381,7 +5384,7 @@ _m_['react/lib/DOMNamespaces.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/setInnerHTML.js#15.2.0']=(function(module,exports){
+_m_['react/lib/setInnerHTML.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -5398,12 +5401,12 @@ _m_['react/lib/setInnerHTML.js#15.2.0']=(function(module,exports){
   'use strict';
   
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
-  var DOMNamespaces = _m_['react/lib/DOMNamespaces.js#15.2.0'];
+  var DOMNamespaces = _m_['react/lib/DOMNamespaces.js#15.2.1'];
   
   var WHITESPACE_TEST = /^[ \r\n\t\f]/;
   var NONVISIBLE_TEST = /<(!--|link|noscript|meta|script|style)[ \r\n\t\f\/>]/;
   
-  var createMicrosoftUnsafeLocalFunction = _m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.0'];
+  var createMicrosoftUnsafeLocalFunction = _m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.1'];
   
   // SVG temp container for IE lacking innerHTML
   var reusableSVGContainer;
@@ -5485,91 +5488,6 @@ _m_['react/lib/setInnerHTML.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactHostOperationHistoryDevtool.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2016-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule ReactHostOperationHistoryDevtool
-   */
-  
-  'use strict';
-  
-  var history = [];
-  
-  var ReactHostOperationHistoryDevtool = {
-    onHostOperation: function (debugID, type, payload) {
-      history.push({
-        instanceID: debugID,
-        type: type,
-        payload: payload
-      });
-    },
-    clearHistory: function () {
-      if (ReactHostOperationHistoryDevtool._preventClearing) {
-        // Should only be used for tests.
-        return;
-      }
-  
-      history = [];
-    },
-    getHistory: function () {
-      return history;
-    }
-  };
-  
-  module.exports = ReactHostOperationHistoryDevtool;
-
-  return module.exports;
-}).call({exports:{}});
-_m_['react/lib/ReactInvalidSetStateWarningDevTool.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2016-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule ReactInvalidSetStateWarningDevTool
-   */
-  
-  'use strict';
-  
-  var warning = _m_['fbjs/lib/warning.js#0.8.3'];
-  
-  if (process.env.NODE_ENV !== 'production') {
-    var processingChildContext = false;
-  
-    var warnInvalidSetState = function () {
-      process.env.NODE_ENV !== 'production' ? warning(!processingChildContext, 'setState(...): Cannot call setState() inside getChildContext()') : void 0;
-    };
-  }
-  
-  var ReactInvalidSetStateWarningDevTool = {
-    onBeginProcessingChildContext: function () {
-      processingChildContext = true;
-    },
-    onEndProcessingChildContext: function () {
-      processingChildContext = false;
-    },
-    onSetState: function () {
-      warnInvalidSetState();
-    }
-  };
-  
-  module.exports = ReactInvalidSetStateWarningDevTool;
-
-  return module.exports;
-}).call({exports:{}});
 _m_['fbjs/lib/performance.js#0.8.3']=(function(module,exports){
   module=this;exports=module.exports;
 
@@ -5637,7 +5555,92 @@ _m_['fbjs/lib/performanceNow.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactHostOperationHistoryDevtool.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2016-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactHostOperationHistoryDevtool
+   */
+  
+  'use strict';
+  
+  var history = [];
+  
+  var ReactHostOperationHistoryDevtool = {
+    onHostOperation: function (debugID, type, payload) {
+      history.push({
+        instanceID: debugID,
+        type: type,
+        payload: payload
+      });
+    },
+    clearHistory: function () {
+      if (ReactHostOperationHistoryDevtool._preventClearing) {
+        // Should only be used for tests.
+        return;
+      }
+  
+      history = [];
+    },
+    getHistory: function () {
+      return history;
+    }
+  };
+  
+  module.exports = ReactHostOperationHistoryDevtool;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/ReactInvalidSetStateWarningDevTool.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2016-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactInvalidSetStateWarningDevTool
+   */
+  
+  'use strict';
+  
+  var warning = _m_['fbjs/lib/warning.js#0.8.3'];
+  
+  if (process.env.NODE_ENV !== 'production') {
+    var processingChildContext = false;
+  
+    var warnInvalidSetState = function () {
+      process.env.NODE_ENV !== 'production' ? warning(!processingChildContext, 'setState(...): Cannot call setState() inside getChildContext()') : void 0;
+    };
+  }
+  
+  var ReactInvalidSetStateWarningDevTool = {
+    onBeginProcessingChildContext: function () {
+      processingChildContext = true;
+    },
+    onEndProcessingChildContext: function () {
+      processingChildContext = false;
+    },
+    onSetState: function () {
+      warnInvalidSetState();
+    }
+  };
+  
+  module.exports = ReactInvalidSetStateWarningDevTool;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/ReactDebugTool.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -5653,6 +5656,9 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
+  var ReactInvalidSetStateWarningDevTool = _m_['react/lib/ReactInvalidSetStateWarningDevTool.js#15.2.1'];
+  var ReactHostOperationHistoryDevtool = _m_['react/lib/ReactHostOperationHistoryDevtool.js#15.2.1'];
+  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.1'];
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
   
   var performanceNow = _m_['fbjs/lib/performanceNow.js#0.8.3'];
@@ -5662,18 +5668,16 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
   var handlerDoesThrowForEvent = {};
   
   function emitEvent(handlerFunctionName, arg1, arg2, arg3, arg4, arg5) {
-    if (process.env.NODE_ENV !== 'production') {
-      eventHandlers.forEach(function (handler) {
-        try {
-          if (handler[handlerFunctionName]) {
-            handler[handlerFunctionName](arg1, arg2, arg3, arg4, arg5);
-          }
-        } catch (e) {
-          process.env.NODE_ENV !== 'production' ? warning(handlerDoesThrowForEvent[handlerFunctionName], 'exception thrown by devtool while handling %s: %s', handlerFunctionName, e + '\n' + e.stack) : void 0;
-          handlerDoesThrowForEvent[handlerFunctionName] = true;
+    eventHandlers.forEach(function (handler) {
+      try {
+        if (handler[handlerFunctionName]) {
+          handler[handlerFunctionName](arg1, arg2, arg3, arg4, arg5);
         }
-      });
-    }
+      } catch (e) {
+        process.env.NODE_ENV !== 'production' ? warning(handlerDoesThrowForEvent[handlerFunctionName], 'exception thrown by devtool while handling %s: %s', handlerFunctionName, e + '\n' + e.stack) : void 0;
+        handlerDoesThrowForEvent[handlerFunctionName] = true;
+      }
+    });
   }
   
   var isProfiling = false;
@@ -5710,32 +5714,30 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
   }
   
   function resetMeasurements() {
-    if (process.env.NODE_ENV !== 'production') {
-      var previousStartTime = currentFlushStartTime;
-      var previousMeasurements = currentFlushMeasurements || [];
-      var previousOperations = ReactHostOperationHistoryDevtool.getHistory();
+    var previousStartTime = currentFlushStartTime;
+    var previousMeasurements = currentFlushMeasurements || [];
+    var previousOperations = ReactHostOperationHistoryDevtool.getHistory();
   
-      if (!isProfiling || currentFlushNesting === 0) {
-        currentFlushStartTime = null;
-        currentFlushMeasurements = null;
-        clearHistory();
-        return;
-      }
-  
-      if (previousMeasurements.length || previousOperations.length) {
-        var registeredIDs = ReactComponentTreeDevtool.getRegisteredIDs();
-        flushHistory.push({
-          duration: performanceNow() - previousStartTime,
-          measurements: previousMeasurements || [],
-          operations: previousOperations || [],
-          treeSnapshot: getTreeSnapshot(registeredIDs)
-        });
-      }
-  
+    if (currentFlushNesting === 0) {
+      currentFlushStartTime = null;
+      currentFlushMeasurements = null;
       clearHistory();
-      currentFlushStartTime = performanceNow();
-      currentFlushMeasurements = [];
+      return;
     }
+  
+    if (previousMeasurements.length || previousOperations.length) {
+      var registeredIDs = ReactComponentTreeDevtool.getRegisteredIDs();
+      flushHistory.push({
+        duration: performanceNow() - previousStartTime,
+        measurements: previousMeasurements || [],
+        operations: previousOperations || [],
+        treeSnapshot: getTreeSnapshot(registeredIDs)
+      });
+    }
+  
+    clearHistory();
+    currentFlushStartTime = performanceNow();
+    currentFlushMeasurements = [];
   }
   
   function checkDebugID(debugID) {
@@ -5743,7 +5745,7 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
   }
   
   function beginLifeCycleTimer(debugID, timerType) {
-    if (!isProfiling || currentFlushNesting === 0) {
+    if (currentFlushNesting === 0) {
       return;
     }
     process.env.NODE_ENV !== 'production' ? warning(!currentTimerType, 'There is an internal error in the React performance measurement code. ' + 'Did not expect %s timer to start while %s timer is still in ' + 'progress for %s instance.', timerType, currentTimerType || 'no', debugID === currentTimerDebugID ? 'the same' : 'another') : void 0;
@@ -5754,15 +5756,17 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
   }
   
   function endLifeCycleTimer(debugID, timerType) {
-    if (!isProfiling || currentFlushNesting === 0) {
+    if (currentFlushNesting === 0) {
       return;
     }
     process.env.NODE_ENV !== 'production' ? warning(currentTimerType === timerType, 'There is an internal error in the React performance measurement code. ' + 'We did not expect %s timer to stop while %s timer is still in ' + 'progress for %s instance. Please report this as a bug in React.', timerType, currentTimerType || 'no', debugID === currentTimerDebugID ? 'the same' : 'another') : void 0;
-    currentFlushMeasurements.push({
-      timerType: timerType,
-      instanceID: debugID,
-      duration: performanceNow() - currentTimerStartTime - currentTimerNestedFlushDuration
-    });
+    if (isProfiling) {
+      currentFlushMeasurements.push({
+        timerType: timerType,
+        instanceID: debugID,
+        duration: performanceNow() - currentTimerStartTime - currentTimerNestedFlushDuration
+      });
+    }
     currentTimerStartTime = null;
     currentTimerNestedFlushDuration = null;
     currentTimerDebugID = null;
@@ -5814,57 +5818,47 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
       return isProfiling;
     },
     beginProfiling: function () {
-      if (process.env.NODE_ENV !== 'production') {
-        if (isProfiling) {
-          return;
-        }
-  
-        isProfiling = true;
-        flushHistory.length = 0;
-        resetMeasurements();
+      if (isProfiling) {
+        return;
       }
+  
+      isProfiling = true;
+      flushHistory.length = 0;
+      resetMeasurements();
+      ReactDebugTool.addDevtool(ReactHostOperationHistoryDevtool);
     },
     endProfiling: function () {
-      if (process.env.NODE_ENV !== 'production') {
-        if (!isProfiling) {
-          return;
-        }
-  
-        isProfiling = false;
-        resetMeasurements();
+      if (!isProfiling) {
+        return;
       }
+  
+      isProfiling = false;
+      resetMeasurements();
+      ReactDebugTool.removeDevtool(ReactHostOperationHistoryDevtool);
     },
     getFlushHistory: function () {
       return flushHistory;
     },
     onBeginFlush: function () {
-      if (process.env.NODE_ENV !== 'production') {
-        currentFlushNesting++;
-        resetMeasurements();
-        pauseCurrentLifeCycleTimer();
-      }
+      currentFlushNesting++;
+      resetMeasurements();
+      pauseCurrentLifeCycleTimer();
       emitEvent('onBeginFlush');
     },
     onEndFlush: function () {
-      if (process.env.NODE_ENV !== 'production') {
-        resetMeasurements();
-        currentFlushNesting--;
-        resumeCurrentLifeCycleTimer();
-      }
+      resetMeasurements();
+      currentFlushNesting--;
+      resumeCurrentLifeCycleTimer();
       emitEvent('onEndFlush');
     },
     onBeginLifeCycleTimer: function (debugID, timerType) {
       checkDebugID(debugID);
       emitEvent('onBeginLifeCycleTimer', debugID, timerType);
-      if (process.env.NODE_ENV !== 'production') {
-        beginLifeCycleTimer(debugID, timerType);
-      }
+      beginLifeCycleTimer(debugID, timerType);
     },
     onEndLifeCycleTimer: function (debugID, timerType) {
       checkDebugID(debugID);
-      if (process.env.NODE_ENV !== 'production') {
-        endLifeCycleTimer(debugID, timerType);
-      }
+      endLifeCycleTimer(debugID, timerType);
       emitEvent('onEndLifeCycleTimer', debugID, timerType);
     },
     onBeginReconcilerTimer: function (debugID, timerType) {
@@ -5874,6 +5868,12 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
     onEndReconcilerTimer: function (debugID, timerType) {
       checkDebugID(debugID);
       emitEvent('onEndReconcilerTimer', debugID, timerType);
+    },
+    onError: function (debugID) {
+      if (currentTimerDebugID != null) {
+        endLifeCycleTimer(currentTimerDebugID, currentTimerType);
+      }
+      emitEvent('onError', debugID);
     },
     onBeginProcessingChildContext: function () {
       emitEvent('onBeginProcessingChildContext');
@@ -5894,6 +5894,7 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
     },
     onSetChildren: function (debugID, childDebugIDs) {
       checkDebugID(debugID);
+      childDebugIDs.forEach(checkDebugID);
       emitEvent('onSetChildren', debugID, childDebugIDs);
     },
     onSetOwner: function (debugID, ownerDebugID) {
@@ -5937,24 +5938,18 @@ _m_['react/lib/ReactDebugTool.js#15.2.0']=(function(module,exports){
     }
   };
   
-  if (process.env.NODE_ENV !== 'production') {
-    var ReactInvalidSetStateWarningDevTool = _m_['react/lib/ReactInvalidSetStateWarningDevTool.js#15.2.0'];
-    var ReactHostOperationHistoryDevtool = _m_['react/lib/ReactHostOperationHistoryDevtool.js#15.2.0'];
-    var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0'];
-    ReactDebugTool.addDevtool(ReactInvalidSetStateWarningDevTool);
-    ReactDebugTool.addDevtool(ReactComponentTreeDevtool);
-    ReactDebugTool.addDevtool(ReactHostOperationHistoryDevtool);
-    var url = ExecutionEnvironment.canUseDOM && window.location.href || '';
-    if (/[?&]react_perf\b/.test(url)) {
-      ReactDebugTool.beginProfiling();
-    }
+  ReactDebugTool.addDevtool(ReactInvalidSetStateWarningDevTool);
+  ReactDebugTool.addDevtool(ReactComponentTreeDevtool);
+  var url = ExecutionEnvironment.canUseDOM && window.location.href || '';
+  if (/[?&]react_perf\b/.test(url)) {
+    ReactDebugTool.beginProfiling();
   }
   
   module.exports = ReactDebugTool;
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactInstrumentation.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactInstrumentation.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -5970,13 +5965,18 @@ _m_['react/lib/ReactInstrumentation.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactDebugTool = _m_['react/lib/ReactDebugTool.js#15.2.0'];
+  var debugTool = null;
   
-  module.exports = { debugTool: ReactDebugTool };
+  if (process.env.NODE_ENV !== 'production') {
+    var ReactDebugTool = _m_['react/lib/ReactDebugTool.js#15.2.1'];
+    debugTool = ReactDebugTool;
+  }
+  
+  module.exports = { debugTool: debugTool };
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactHostComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactHostComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -5992,7 +5992,7 @@ _m_['react/lib/ReactHostComponent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
@@ -6058,7 +6058,7 @@ _m_['react/lib/ReactHostComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactEmptyComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactEmptyComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -6094,246 +6094,7 @@ _m_['react/lib/ReactEmptyComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/Transaction.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2013-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule Transaction
-   */
-  
-  'use strict';
-  
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
-  
-  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  
-  /**
-   * `Transaction` creates a black box that is able to wrap any method such that
-   * certain invariants are maintained before and after the method is invoked
-   * (Even if an exception is thrown while invoking the wrapped method). Whoever
-   * instantiates a transaction can provide enforcers of the invariants at
-   * creation time. The `Transaction` class itself will supply one additional
-   * automatic invariant for you - the invariant that any transaction instance
-   * should not be run while it is already being run. You would typically create a
-   * single instance of a `Transaction` for reuse multiple times, that potentially
-   * is used to wrap several different methods. Wrappers are extremely simple -
-   * they only require implementing two methods.
-   *
-   * <pre>
-   *                       wrappers (injected at creation time)
-   *                                      +        +
-   *                                      |        |
-   *                    +-----------------|--------|--------------+
-   *                    |                 v        |              |
-   *                    |      +---------------+   |              |
-   *                    |   +--|    wrapper1   |---|----+         |
-   *                    |   |  +---------------+   v    |         |
-   *                    |   |          +-------------+  |         |
-   *                    |   |     +----|   wrapper2  |--------+   |
-   *                    |   |     |    +-------------+  |     |   |
-   *                    |   |     |                     |     |   |
-   *                    |   v     v                     v     v   | wrapper
-   *                    | +---+ +---+   +---------+   +---+ +---+ | invariants
-   * perform(anyMethod) | |   | |   |   |         |   |   | |   | | maintained
-   * +----------------->|-|---|-|---|-->|anyMethod|---|---|-|---|-|-------->
-   *                    | |   | |   |   |         |   |   | |   | |
-   *                    | |   | |   |   |         |   |   | |   | |
-   *                    | |   | |   |   |         |   |   | |   | |
-   *                    | +---+ +---+   +---------+   +---+ +---+ |
-   *                    |  initialize                    close    |
-   *                    +-----------------------------------------+
-   * </pre>
-   *
-   * Use cases:
-   * - Preserving the input selection ranges before/after reconciliation.
-   *   Restoring selection even in the event of an unexpected error.
-   * - Deactivating events while rearranging the DOM, preventing blurs/focuses,
-   *   while guaranteeing that afterwards, the event system is reactivated.
-   * - Flushing a queue of collected DOM mutations to the main UI thread after a
-   *   reconciliation takes place in a worker thread.
-   * - Invoking any collected `componentDidUpdate` callbacks after rendering new
-   *   content.
-   * - (Future use case): Wrapping particular flushes of the `ReactWorker` queue
-   *   to preserve the `scrollTop` (an automatic scroll aware DOM).
-   * - (Future use case): Layout calculations before and after DOM updates.
-   *
-   * Transactional plugin API:
-   * - A module that has an `initialize` method that returns any precomputation.
-   * - and a `close` method that accepts the precomputation. `close` is invoked
-   *   when the wrapped process is completed, or has failed.
-   *
-   * @param {Array<TransactionalWrapper>} transactionWrapper Wrapper modules
-   * that implement `initialize` and `close`.
-   * @return {Transaction} Single transaction for reuse in thread.
-   *
-   * @class Transaction
-   */
-  var Mixin = {
-    /**
-     * Sets up this instance so that it is prepared for collecting metrics. Does
-     * so such that this setup method may be used on an instance that is already
-     * initialized, in a way that does not consume additional memory upon reuse.
-     * That can be useful if you decide to make your subclass of this mixin a
-     * "PooledClass".
-     */
-    reinitializeTransaction: function () {
-      this.transactionWrappers = this.getTransactionWrappers();
-      if (this.wrapperInitData) {
-        this.wrapperInitData.length = 0;
-      } else {
-        this.wrapperInitData = [];
-      }
-      this._isInTransaction = false;
-    },
-  
-    _isInTransaction: false,
-  
-    /**
-     * @abstract
-     * @return {Array<TransactionWrapper>} Array of transaction wrappers.
-     */
-    getTransactionWrappers: null,
-  
-    isInTransaction: function () {
-      return !!this._isInTransaction;
-    },
-  
-    /**
-     * Executes the function within a safety window. Use this for the top level
-     * methods that result in large amounts of computation/mutations that would
-     * need to be safety checked. The optional arguments helps prevent the need
-     * to bind in many cases.
-     *
-     * @param {function} method Member of scope to call.
-     * @param {Object} scope Scope to invoke from.
-     * @param {Object?=} a Argument to pass to the method.
-     * @param {Object?=} b Argument to pass to the method.
-     * @param {Object?=} c Argument to pass to the method.
-     * @param {Object?=} d Argument to pass to the method.
-     * @param {Object?=} e Argument to pass to the method.
-     * @param {Object?=} f Argument to pass to the method.
-     *
-     * @return {*} Return value from `method`.
-     */
-    perform: function (method, scope, a, b, c, d, e, f) {
-      !!this.isInTransaction() ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Transaction.perform(...): Cannot initialize a transaction when there is already an outstanding transaction.') : _prodInvariant('27') : void 0;
-      var errorThrown;
-      var ret;
-      try {
-        this._isInTransaction = true;
-        // Catching errors makes debugging more difficult, so we start with
-        // errorThrown set to true before setting it to false after calling
-        // close -- if it's still set to true in the finally block, it means
-        // one of these calls threw.
-        errorThrown = true;
-        this.initializeAll(0);
-        ret = method.call(scope, a, b, c, d, e, f);
-        errorThrown = false;
-      } finally {
-        try {
-          if (errorThrown) {
-            // If `method` throws, prefer to show that stack trace over any thrown
-            // by invoking `closeAll`.
-            try {
-              this.closeAll(0);
-            } catch (err) {}
-          } else {
-            // Since `method` didn't throw, we don't want to silence the exception
-            // here.
-            this.closeAll(0);
-          }
-        } finally {
-          this._isInTransaction = false;
-        }
-      }
-      return ret;
-    },
-  
-    initializeAll: function (startIndex) {
-      var transactionWrappers = this.transactionWrappers;
-      for (var i = startIndex; i < transactionWrappers.length; i++) {
-        var wrapper = transactionWrappers[i];
-        try {
-          // Catching errors makes debugging more difficult, so we start with the
-          // OBSERVED_ERROR state before overwriting it with the real return value
-          // of initialize -- if it's still set to OBSERVED_ERROR in the finally
-          // block, it means wrapper.initialize threw.
-          this.wrapperInitData[i] = Transaction.OBSERVED_ERROR;
-          this.wrapperInitData[i] = wrapper.initialize ? wrapper.initialize.call(this) : null;
-        } finally {
-          if (this.wrapperInitData[i] === Transaction.OBSERVED_ERROR) {
-            // The initializer for wrapper i threw an error; initialize the
-            // remaining wrappers but silence any exceptions from them to ensure
-            // that the first error is the one to bubble up.
-            try {
-              this.initializeAll(i + 1);
-            } catch (err) {}
-          }
-        }
-      }
-    },
-  
-    /**
-     * Invokes each of `this.transactionWrappers.close[i]` functions, passing into
-     * them the respective return values of `this.transactionWrappers.init[i]`
-     * (`close`rs that correspond to initializers that failed will not be
-     * invoked).
-     */
-    closeAll: function (startIndex) {
-      !this.isInTransaction() ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Transaction.closeAll(): Cannot close transaction when none are open.') : _prodInvariant('28') : void 0;
-      var transactionWrappers = this.transactionWrappers;
-      for (var i = startIndex; i < transactionWrappers.length; i++) {
-        var wrapper = transactionWrappers[i];
-        var initData = this.wrapperInitData[i];
-        var errorThrown;
-        try {
-          // Catching errors makes debugging more difficult, so we start with
-          // errorThrown set to true before setting it to false after calling
-          // close -- if it's still set to true in the finally block, it means
-          // wrapper.close threw.
-          errorThrown = true;
-          if (initData !== Transaction.OBSERVED_ERROR && wrapper.close) {
-            wrapper.close.call(this, initData);
-          }
-          errorThrown = false;
-        } finally {
-          if (errorThrown) {
-            // The closer for wrapper i threw an error; close the remaining
-            // wrappers but silence any exceptions from them to ensure that the
-            // first error is the one to bubble up.
-            try {
-              this.closeAll(i + 1);
-            } catch (e) {}
-          }
-        }
-      }
-      this.wrapperInitData.length = 0;
-    }
-  };
-  
-  var Transaction = {
-  
-    Mixin: Mixin,
-  
-    /**
-     * Token to look for to determine if an error occurred.
-     */
-    OBSERVED_ERROR: {}
-  
-  };
-  
-  module.exports = Transaction;
-
-  return module.exports;
-}).call({exports:{}});
-_m_['react/lib/ReactOwner.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactOwner.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -6349,7 +6110,7 @@ _m_['react/lib/ReactOwner.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -6433,7 +6194,7 @@ _m_['react/lib/ReactOwner.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactRef.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactRef.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -6449,7 +6210,7 @@ _m_['react/lib/ReactRef.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactOwner = _m_['react/lib/ReactOwner.js#15.2.0'];
+  var ReactOwner = _m_['react/lib/ReactOwner.js#15.2.1'];
   
   var ReactRef = {};
   
@@ -6517,7 +6278,7 @@ _m_['react/lib/ReactRef.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactReconciler.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactReconciler.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -6533,10 +6294,10 @@ _m_['react/lib/ReactReconciler.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactRef = _m_['react/lib/ReactRef.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
+  var ReactRef = _m_['react/lib/ReactRef.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -6699,7 +6460,7 @@ _m_['react/lib/ReactReconciler.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactFeatureFlags.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactNodeTypes.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -6710,401 +6471,42 @@ _m_['react/lib/ReactFeatureFlags.js#15.2.0']=(function(module,exports){
    * LICENSE file in the root directory of this source tree. An additional grant
    * of patent rights can be found in the PATENTS file in the same directory.
    *
-   * @providesModule ReactFeatureFlags
+   * @providesModule ReactNodeTypes
+   * 
    */
   
   'use strict';
   
-  var ReactFeatureFlags = {
-    // When true, call console.time() before and .timeEnd() after each top-level
-    // render (both initial renders and updates). Useful when looking at prod-mode
-    // timeline profiles in Chrome, for example.
-    logTopLevelRenders: false
-  };
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  module.exports = ReactFeatureFlags;
-
-  return module.exports;
-}).call({exports:{}});
-_m_['react/lib/CallbackQueue.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2013-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule CallbackQueue
-   */
-  
-  'use strict';
-  
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
-      _assign = _m_['object-assign/index.js#4.1.0'];
-  
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
-  /**
-   * A specialized pseudo-event module to help keep track of components waiting to
-   * be notified when their DOM representations are available for use.
-   *
-   * This implements `PooledClass`, so you should never need to instantiate this.
-   * Instead, use `CallbackQueue.getPooled()`.
-   *
-   * @class ReactMountReady
-   * @implements PooledClass
-   * @internal
-   */
-  function CallbackQueue() {
-    this._callbacks = null;
-    this._contexts = null;
-  }
+  var ReactNodeTypes = {
+    HOST: 0,
+    COMPOSITE: 1,
+    EMPTY: 2,
   
-  _assign(CallbackQueue.prototype, {
-  
-    /**
-     * Enqueues a callback to be invoked when `notifyAll` is invoked.
-     *
-     * @param {function} callback Invoked when `notifyAll` is invoked.
-     * @param {?object} context Context to call `callback` with.
-     * @internal
-     */
-    enqueue: function (callback, context) {
-      this._callbacks = this._callbacks || [];
-      this._contexts = this._contexts || [];
-      this._callbacks.push(callback);
-      this._contexts.push(context);
-    },
-  
-    /**
-     * Invokes all enqueued callbacks and clears the queue. This is invoked after
-     * the DOM representation of a component has been created or updated.
-     *
-     * @internal
-     */
-    notifyAll: function () {
-      var callbacks = this._callbacks;
-      var contexts = this._contexts;
-      if (callbacks) {
-        !(callbacks.length === contexts.length) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Mismatched list of contexts in callback queue') : _prodInvariant('24') : void 0;
-        this._callbacks = null;
-        this._contexts = null;
-        for (var i = 0; i < callbacks.length; i++) {
-          callbacks[i].call(contexts[i]);
+    getType: function (node) {
+      if (node === null || node === false) {
+        return ReactNodeTypes.EMPTY;
+      } else if (ReactElement.isValidElement(node)) {
+        if (typeof node.type === 'function') {
+          return ReactNodeTypes.COMPOSITE;
+        } else {
+          return ReactNodeTypes.HOST;
         }
-        callbacks.length = 0;
-        contexts.length = 0;
       }
-    },
-  
-    checkpoint: function () {
-      return this._callbacks ? this._callbacks.length : 0;
-    },
-  
-    rollback: function (len) {
-      if (this._callbacks) {
-        this._callbacks.length = len;
-        this._contexts.length = len;
-      }
-    },
-  
-    /**
-     * Resets the internal queue.
-     *
-     * @internal
-     */
-    reset: function () {
-      this._callbacks = null;
-      this._contexts = null;
-    },
-  
-    /**
-     * `PooledClass` looks for this.
-     */
-    destructor: function () {
-      this.reset();
+      !false ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Unexpected node: %s', node) : _prodInvariant('26', node) : void 0;
     }
+  };
   
-  });
-  
-  PooledClass.addPoolingTo(CallbackQueue);
-  
-  module.exports = CallbackQueue;
+  module.exports = ReactNodeTypes;
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactUpdates.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2013-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule ReactUpdates
-   */
-  
-  'use strict';
-  
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
-      _assign = _m_['object-assign/index.js#4.1.0'];
-  
-  var CallbackQueue = _m_['react/lib/CallbackQueue.js#15.2.0'];
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
-  var ReactFeatureFlags = _m_['react/lib/ReactFeatureFlags.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
-  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.0'];
-  var Transaction = _m_['react/lib/Transaction.js#15.2.0'];
-  
-  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  
-  var dirtyComponents = [];
-  var updateBatchNumber = 0;
-  var asapCallbackQueue = CallbackQueue.getPooled();
-  var asapEnqueued = false;
-  
-  var batchingStrategy = null;
-  
-  function ensureInjected() {
-    !(ReactUpdates.ReactReconcileTransaction && batchingStrategy) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must inject a reconcile transaction class and batching strategy') : _prodInvariant('123') : void 0;
-  }
-  
-  var NESTED_UPDATES = {
-    initialize: function () {
-      this.dirtyComponentsLength = dirtyComponents.length;
-    },
-    close: function () {
-      if (this.dirtyComponentsLength !== dirtyComponents.length) {
-        // Additional updates were enqueued by componentDidUpdate handlers or
-        // similar; before our own UPDATE_QUEUEING wrapper closes, we want to run
-        // these new updates so that if A's componentDidUpdate calls setState on
-        // B, B will update before the callback A's updater provided when calling
-        // setState.
-        dirtyComponents.splice(0, this.dirtyComponentsLength);
-        flushBatchedUpdates();
-      } else {
-        dirtyComponents.length = 0;
-      }
-    }
-  };
-  
-  var UPDATE_QUEUEING = {
-    initialize: function () {
-      this.callbackQueue.reset();
-    },
-    close: function () {
-      this.callbackQueue.notifyAll();
-    }
-  };
-  
-  var TRANSACTION_WRAPPERS = [NESTED_UPDATES, UPDATE_QUEUEING];
-  
-  function ReactUpdatesFlushTransaction() {
-    this.reinitializeTransaction();
-    this.dirtyComponentsLength = null;
-    this.callbackQueue = CallbackQueue.getPooled();
-    this.reconcileTransaction = ReactUpdates.ReactReconcileTransaction.getPooled(
-    /* useCreateElement */true);
-  }
-  
-  _assign(ReactUpdatesFlushTransaction.prototype, Transaction.Mixin, {
-    getTransactionWrappers: function () {
-      return TRANSACTION_WRAPPERS;
-    },
-  
-    destructor: function () {
-      this.dirtyComponentsLength = null;
-      CallbackQueue.release(this.callbackQueue);
-      this.callbackQueue = null;
-      ReactUpdates.ReactReconcileTransaction.release(this.reconcileTransaction);
-      this.reconcileTransaction = null;
-    },
-  
-    perform: function (method, scope, a) {
-      // Essentially calls `this.reconcileTransaction.perform(method, scope, a)`
-      // with this transaction's wrappers around it.
-      return Transaction.Mixin.perform.call(this, this.reconcileTransaction.perform, this.reconcileTransaction, method, scope, a);
-    }
-  });
-  
-  PooledClass.addPoolingTo(ReactUpdatesFlushTransaction);
-  
-  function batchedUpdates(callback, a, b, c, d, e) {
-    ensureInjected();
-    batchingStrategy.batchedUpdates(callback, a, b, c, d, e);
-  }
-  
-  /**
-   * Array comparator for ReactComponents by mount ordering.
-   *
-   * @param {ReactComponent} c1 first component you're comparing
-   * @param {ReactComponent} c2 second component you're comparing
-   * @return {number} Return value usable by Array.prototype.sort().
-   */
-  function mountOrderComparator(c1, c2) {
-    return c1._mountOrder - c2._mountOrder;
-  }
-  
-  function runBatchedUpdates(transaction) {
-    var len = transaction.dirtyComponentsLength;
-    !(len === dirtyComponents.length) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Expected flush transaction\'s stored dirty-components length (%s) to match dirty-components array length (%s).', len, dirtyComponents.length) : _prodInvariant('124', len, dirtyComponents.length) : void 0;
-  
-    // Since reconciling a component higher in the owner hierarchy usually (not
-    // always -- see shouldComponentUpdate()) will reconcile children, reconcile
-    // them before their children by sorting the array.
-    dirtyComponents.sort(mountOrderComparator);
-  
-    // Any updates enqueued while reconciling must be performed after this entire
-    // batch. Otherwise, if dirtyComponents is [A, B] where A has children B and
-    // C, B could update twice in a single batch if C's render enqueues an update
-    // to B (since B would have already updated, we should skip it, and the only
-    // way we can know to do so is by checking the batch counter).
-    updateBatchNumber++;
-  
-    for (var i = 0; i < len; i++) {
-      // If a component is unmounted before pending changes apply, it will still
-      // be here, but we assume that it has cleared its _pendingCallbacks and
-      // that performUpdateIfNecessary is a noop.
-      var component = dirtyComponents[i];
-  
-      // If performUpdateIfNecessary happens to enqueue any new updates, we
-      // shouldn't execute the callbacks until the next render happens, so
-      // stash the callbacks first
-      var callbacks = component._pendingCallbacks;
-      component._pendingCallbacks = null;
-  
-      var markerName;
-      if (ReactFeatureFlags.logTopLevelRenders) {
-        var namedComponent = component;
-        // Duck type TopLevelWrapper. This is probably always true.
-        if (component._currentElement.props === component._renderedComponent._currentElement) {
-          namedComponent = component._renderedComponent;
-        }
-        markerName = 'React update: ' + namedComponent.getName();
-        console.time(markerName);
-      }
-  
-      ReactReconciler.performUpdateIfNecessary(component, transaction.reconcileTransaction, updateBatchNumber);
-  
-      if (markerName) {
-        console.timeEnd(markerName);
-      }
-  
-      if (callbacks) {
-        for (var j = 0; j < callbacks.length; j++) {
-          transaction.callbackQueue.enqueue(callbacks[j], component.getPublicInstance());
-        }
-      }
-    }
-  }
-  
-  var flushBatchedUpdates = function () {
-    if (process.env.NODE_ENV !== 'production') {
-      ReactInstrumentation.debugTool.onBeginFlush();
-    }
-  
-    // ReactUpdatesFlushTransaction's wrappers will clear the dirtyComponents
-    // array and perform any updates enqueued by mount-ready handlers (i.e.,
-    // componentDidUpdate) but we need to check here too in order to catch
-    // updates enqueued by setState callbacks and asap calls.
-    while (dirtyComponents.length || asapEnqueued) {
-      if (dirtyComponents.length) {
-        var transaction = ReactUpdatesFlushTransaction.getPooled();
-        transaction.perform(runBatchedUpdates, null, transaction);
-        ReactUpdatesFlushTransaction.release(transaction);
-      }
-  
-      if (asapEnqueued) {
-        asapEnqueued = false;
-        var queue = asapCallbackQueue;
-        asapCallbackQueue = CallbackQueue.getPooled();
-        queue.notifyAll();
-        CallbackQueue.release(queue);
-      }
-    }
-  
-    if (process.env.NODE_ENV !== 'production') {
-      ReactInstrumentation.debugTool.onEndFlush();
-    }
-  };
-  
-  /**
-   * Mark a component as needing a rerender, adding an optional callback to a
-   * list of functions which will be executed once the rerender occurs.
-   */
-  function enqueueUpdate(component) {
-    ensureInjected();
-  
-    // Various parts of our code (such as ReactCompositeComponent's
-    // _renderValidatedComponent) assume that calls to render aren't nested;
-    // verify that that's the case. (This is called by each top-level update
-    // function, like setProps, setState, forceUpdate, etc.; creation and
-    // destruction of top-level components is guarded in ReactMount.)
-  
-    if (!batchingStrategy.isBatchingUpdates) {
-      batchingStrategy.batchedUpdates(enqueueUpdate, component);
-      return;
-    }
-  
-    dirtyComponents.push(component);
-    if (component._updateBatchNumber == null) {
-      component._updateBatchNumber = updateBatchNumber + 1;
-    }
-  }
-  
-  /**
-   * Enqueue a callback to be run at the end of the current batching cycle. Throws
-   * if no updates are currently being performed.
-   */
-  function asap(callback, context) {
-    !batchingStrategy.isBatchingUpdates ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates.asap: Can\'t enqueue an asap callback in a context whereupdates are not being batched.') : _prodInvariant('125') : void 0;
-    asapCallbackQueue.enqueue(callback, context);
-    asapEnqueued = true;
-  }
-  
-  var ReactUpdatesInjection = {
-    injectReconcileTransaction: function (ReconcileTransaction) {
-      !ReconcileTransaction ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide a reconcile transaction class') : _prodInvariant('126') : void 0;
-      ReactUpdates.ReactReconcileTransaction = ReconcileTransaction;
-    },
-  
-    injectBatchingStrategy: function (_batchingStrategy) {
-      !_batchingStrategy ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide a batching strategy') : _prodInvariant('127') : void 0;
-      !(typeof _batchingStrategy.batchedUpdates === 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide a batchedUpdates() function') : _prodInvariant('128') : void 0;
-      !(typeof _batchingStrategy.isBatchingUpdates === 'boolean') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide an isBatchingUpdates boolean attribute') : _prodInvariant('129') : void 0;
-      batchingStrategy = _batchingStrategy;
-    }
-  };
-  
-  var ReactUpdates = {
-    /**
-     * React references `ReactReconcileTransaction` using this property in order
-     * to allow dependency injection.
-     *
-     * @internal
-     */
-    ReactReconcileTransaction: null,
-  
-    batchedUpdates: batchedUpdates,
-    enqueueUpdate: enqueueUpdate,
-    flushBatchedUpdates: flushBatchedUpdates,
-    injection: ReactUpdatesInjection,
-    asap: asap
-  };
-  
-  module.exports = ReactUpdates;
-
-  return module.exports;
-}).call({exports:{}});
-_m_['react/lib/ReactInstanceMap.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactInstanceMap.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -7158,281 +6560,7 @@ _m_['react/lib/ReactInstanceMap.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactUpdateQueue.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2015-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule ReactUpdateQueue
-   */
-  
-  'use strict';
-  
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
-  
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
-  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
-  
-  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  var warning = _m_['fbjs/lib/warning.js#0.8.3'];
-  
-  function enqueueUpdate(internalInstance) {
-    ReactUpdates.enqueueUpdate(internalInstance);
-  }
-  
-  function formatUnexpectedArgument(arg) {
-    var type = typeof arg;
-    if (type !== 'object') {
-      return type;
-    }
-    var displayName = arg.constructor && arg.constructor.name || type;
-    var keys = Object.keys(arg);
-    if (keys.length > 0 && keys.length < 20) {
-      return displayName + ' (keys: ' + keys.join(', ') + ')';
-    }
-    return displayName;
-  }
-  
-  function getInternalInstanceReadyForUpdate(publicInstance, callerName) {
-    var internalInstance = ReactInstanceMap.get(publicInstance);
-    if (!internalInstance) {
-      if (process.env.NODE_ENV !== 'production') {
-        // Only warn when we have a callerName. Otherwise we should be silent.
-        // We're probably calling from enqueueCallback. We don't want to warn
-        // there because we already warned for the corresponding lifecycle method.
-        process.env.NODE_ENV !== 'production' ? warning(!callerName, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, publicInstance.constructor.displayName) : void 0;
-      }
-      return null;
-    }
-  
-    if (process.env.NODE_ENV !== 'production') {
-      process.env.NODE_ENV !== 'production' ? warning(ReactCurrentOwner.current == null, '%s(...): Cannot update during an existing state transition (such as ' + 'within `render` or another component\'s constructor). Render methods ' + 'should be a pure function of props and state; constructor ' + 'side-effects are an anti-pattern, but can be moved to ' + '`componentWillMount`.', callerName) : void 0;
-    }
-  
-    return internalInstance;
-  }
-  
-  /**
-   * ReactUpdateQueue allows for state updates to be scheduled into a later
-   * reconciliation step.
-   */
-  var ReactUpdateQueue = {
-  
-    /**
-     * Checks whether or not this composite component is mounted.
-     * @param {ReactClass} publicInstance The instance we want to test.
-     * @return {boolean} True if mounted, false otherwise.
-     * @protected
-     * @final
-     */
-    isMounted: function (publicInstance) {
-      if (process.env.NODE_ENV !== 'production') {
-        var owner = ReactCurrentOwner.current;
-        if (owner !== null) {
-          process.env.NODE_ENV !== 'production' ? warning(owner._warnedAboutRefsInRender, '%s is accessing isMounted inside its render() function. ' + 'render() should be a pure function of props and state. It should ' + 'never access something that requires stale data from the previous ' + 'render, such as refs. Move this logic to componentDidMount and ' + 'componentDidUpdate instead.', owner.getName() || 'A component') : void 0;
-          owner._warnedAboutRefsInRender = true;
-        }
-      }
-      var internalInstance = ReactInstanceMap.get(publicInstance);
-      if (internalInstance) {
-        // During componentWillMount and render this will still be null but after
-        // that will always render to something. At least for now. So we can use
-        // this hack.
-        return !!internalInstance._renderedComponent;
-      } else {
-        return false;
-      }
-    },
-  
-    /**
-     * Enqueue a callback that will be executed after all the pending updates
-     * have processed.
-     *
-     * @param {ReactClass} publicInstance The instance to use as `this` context.
-     * @param {?function} callback Called after state is updated.
-     * @param {string} callerName Name of the calling function in the public API.
-     * @internal
-     */
-    enqueueCallback: function (publicInstance, callback, callerName) {
-      ReactUpdateQueue.validateCallback(callback, callerName);
-      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance);
-  
-      // Previously we would throw an error if we didn't have an internal
-      // instance. Since we want to make it a no-op instead, we mirror the same
-      // behavior we have in other enqueue* methods.
-      // We also need to ignore callbacks in componentWillMount. See
-      // enqueueUpdates.
-      if (!internalInstance) {
-        return null;
-      }
-  
-      if (internalInstance._pendingCallbacks) {
-        internalInstance._pendingCallbacks.push(callback);
-      } else {
-        internalInstance._pendingCallbacks = [callback];
-      }
-      // TODO: The callback here is ignored when setState is called from
-      // componentWillMount. Either fix it or disallow doing so completely in
-      // favor of getInitialState. Alternatively, we can disallow
-      // componentWillMount during server-side rendering.
-      enqueueUpdate(internalInstance);
-    },
-  
-    enqueueCallbackInternal: function (internalInstance, callback) {
-      if (internalInstance._pendingCallbacks) {
-        internalInstance._pendingCallbacks.push(callback);
-      } else {
-        internalInstance._pendingCallbacks = [callback];
-      }
-      enqueueUpdate(internalInstance);
-    },
-  
-    /**
-     * Forces an update. This should only be invoked when it is known with
-     * certainty that we are **not** in a DOM transaction.
-     *
-     * You may want to call this when you know that some deeper aspect of the
-     * component's state has changed but `setState` was not called.
-     *
-     * This will not invoke `shouldComponentUpdate`, but it will invoke
-     * `componentWillUpdate` and `componentDidUpdate`.
-     *
-     * @param {ReactClass} publicInstance The instance that should rerender.
-     * @internal
-     */
-    enqueueForceUpdate: function (publicInstance) {
-      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'forceUpdate');
-  
-      if (!internalInstance) {
-        return;
-      }
-  
-      internalInstance._pendingForceUpdate = true;
-  
-      enqueueUpdate(internalInstance);
-    },
-  
-    /**
-     * Replaces all of the state. Always use this or `setState` to mutate state.
-     * You should treat `this.state` as immutable.
-     *
-     * There is no guarantee that `this.state` will be immediately updated, so
-     * accessing `this.state` after calling this method may return the old value.
-     *
-     * @param {ReactClass} publicInstance The instance that should rerender.
-     * @param {object} completeState Next state.
-     * @internal
-     */
-    enqueueReplaceState: function (publicInstance, completeState) {
-      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'replaceState');
-  
-      if (!internalInstance) {
-        return;
-      }
-  
-      internalInstance._pendingStateQueue = [completeState];
-      internalInstance._pendingReplaceState = true;
-  
-      enqueueUpdate(internalInstance);
-    },
-  
-    /**
-     * Sets a subset of the state. This only exists because _pendingState is
-     * internal. This provides a merging strategy that is not available to deep
-     * properties which is confusing. TODO: Expose pendingState or don't use it
-     * during the merge.
-     *
-     * @param {ReactClass} publicInstance The instance that should rerender.
-     * @param {object} partialState Next partial state to be merged with state.
-     * @internal
-     */
-    enqueueSetState: function (publicInstance, partialState) {
-      if (process.env.NODE_ENV !== 'production') {
-        ReactInstrumentation.debugTool.onSetState();
-        process.env.NODE_ENV !== 'production' ? warning(partialState != null, 'setState(...): You passed an undefined or null state object; ' + 'instead, use forceUpdate().') : void 0;
-      }
-  
-      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'setState');
-  
-      if (!internalInstance) {
-        return;
-      }
-  
-      var queue = internalInstance._pendingStateQueue || (internalInstance._pendingStateQueue = []);
-      queue.push(partialState);
-  
-      enqueueUpdate(internalInstance);
-    },
-  
-    enqueueElementInternal: function (internalInstance, newElement) {
-      internalInstance._pendingElement = newElement;
-      enqueueUpdate(internalInstance);
-    },
-  
-    validateCallback: function (callback, callerName) {
-      !(!callback || typeof callback === 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s(...): Expected the last optional `callback` argument to be a function. Instead received: %s.', callerName, formatUnexpectedArgument(callback)) : _prodInvariant('122', callerName, formatUnexpectedArgument(callback)) : void 0;
-    }
-  
-  };
-  
-  module.exports = ReactUpdateQueue;
-
-  return module.exports;
-}).call({exports:{}});
-_m_['react/lib/ReactNodeTypes.js#15.2.0']=(function(module,exports){
-  module=this;exports=module.exports;
-
-  /**
-   * Copyright 2013-present, Facebook, Inc.
-   * All rights reserved.
-   *
-   * This source code is licensed under the BSD-style license found in the
-   * LICENSE file in the root directory of this source tree. An additional grant
-   * of patent rights can be found in the PATENTS file in the same directory.
-   *
-   * @providesModule ReactNodeTypes
-   */
-  
-  'use strict';
-  
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
-  
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
-  
-  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  
-  var ReactNodeTypes = {
-    HOST: 0,
-    COMPOSITE: 1,
-    EMPTY: 2,
-  
-    getType: function (node) {
-      if (node === null || node === false) {
-        return ReactNodeTypes.EMPTY;
-      } else if (ReactElement.isValidElement(node)) {
-        if (typeof node.type === 'function') {
-          return ReactNodeTypes.COMPOSITE;
-        } else {
-          return ReactNodeTypes.HOST;
-        }
-      }
-      !false ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Unexpected node: %s', node) : _prodInvariant('26', node) : void 0;
-    }
-  };
-  
-  module.exports = ReactNodeTypes;
-
-  return module.exports;
-}).call({exports:{}});
-_m_['react/lib/ReactErrorUtils.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactErrorUtils.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -7514,7 +6642,7 @@ _m_['react/lib/ReactErrorUtils.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactComponentEnvironment.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactComponentEnvironment.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -7530,7 +6658,7 @@ _m_['react/lib/ReactComponentEnvironment.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -7573,7 +6701,7 @@ _m_['react/lib/ReactComponentEnvironment.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactCompositeComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -7589,25 +6717,24 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var ReactComponentEnvironment = _m_['react/lib/ReactComponentEnvironment.js#15.2.0'];
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
-  var ReactErrorUtils = _m_['react/lib/ReactErrorUtils.js#15.2.0'];
-  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
-  var ReactNodeTypes = _m_['react/lib/ReactNodeTypes.js#15.2.0'];
-  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.0'];
-  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.0'];
-  var ReactUpdateQueue = _m_['react/lib/ReactUpdateQueue.js#15.2.0'];
+  var ReactComponentEnvironment = _m_['react/lib/ReactComponentEnvironment.js#15.2.1'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
+  var ReactErrorUtils = _m_['react/lib/ReactErrorUtils.js#15.2.1'];
+  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
+  var ReactNodeTypes = _m_['react/lib/ReactNodeTypes.js#15.2.1'];
+  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.1'];
+  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.1'];
   
-  var checkReactTypeSpec = _m_['react/lib/checkReactTypeSpec.js#15.2.0'];
+  var checkReactTypeSpec = _m_['react/lib/checkReactTypeSpec.js#15.2.1'];
   
   var emptyObject = _m_['fbjs/lib/emptyObject.js#0.8.3'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  var shouldUpdateReactComponent = _m_['react/lib/shouldUpdateReactComponent.js#15.2.0'];
+  var shouldUpdateReactComponent = _m_['react/lib/shouldUpdateReactComponent.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   function StatelessComponent(Component) {}
@@ -7751,8 +6878,10 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
   
       var Component = this._currentElement.type;
   
+      var updateQueue = transaction.getUpdateQueue();
+  
       // Initialize the public class
-      var inst = this._constructComponent(publicProps, publicContext);
+      var inst = this._constructComponent(publicProps, publicContext, updateQueue);
       var renderedElement;
   
       // Support functional components
@@ -7781,7 +6910,7 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
       inst.props = publicProps;
       inst.context = publicContext;
       inst.refs = emptyObject;
-      inst.updater = ReactUpdateQueue;
+      inst.updater = updateQueue;
   
       this._instance = inst;
   
@@ -7829,20 +6958,20 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
       return markup;
     },
   
-    _constructComponent: function (publicProps, publicContext) {
+    _constructComponent: function (publicProps, publicContext, updateQueue) {
       if (process.env.NODE_ENV !== 'production') {
         ReactCurrentOwner.current = this;
         try {
-          return this._constructComponentWithoutOwner(publicProps, publicContext);
+          return this._constructComponentWithoutOwner(publicProps, publicContext, updateQueue);
         } finally {
           ReactCurrentOwner.current = null;
         }
       } else {
-        return this._constructComponentWithoutOwner(publicProps, publicContext);
+        return this._constructComponentWithoutOwner(publicProps, publicContext, updateQueue);
       }
     },
   
-    _constructComponentWithoutOwner: function (publicProps, publicContext) {
+    _constructComponentWithoutOwner: function (publicProps, publicContext, updateQueue) {
       var Component = this._currentElement.type;
       var instanceOrElement;
       if (shouldConstruct(Component)) {
@@ -7851,7 +6980,7 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
             ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'ctor');
           }
         }
-        instanceOrElement = new Component(publicProps, publicContext, ReactUpdateQueue);
+        instanceOrElement = new Component(publicProps, publicContext, updateQueue);
         if (process.env.NODE_ENV !== 'production') {
           if (this._debugID !== 0) {
             ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'ctor');
@@ -7865,7 +6994,7 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
             ReactInstrumentation.debugTool.onBeginLifeCycleTimer(this._debugID, 'render');
           }
         }
-        instanceOrElement = Component(publicProps, publicContext, ReactUpdateQueue);
+        instanceOrElement = Component(publicProps, publicContext, updateQueue);
         if (process.env.NODE_ENV !== 'production') {
           if (this._debugID !== 0) {
             ReactInstrumentation.debugTool.onEndLifeCycleTimer(this._debugID, 'render');
@@ -7881,6 +7010,11 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
       try {
         markup = this.performInitialMount(renderedElement, hostParent, hostContainerInfo, transaction, context);
       } catch (e) {
+        if (process.env.NODE_ENV !== 'production') {
+          if (this._debugID !== 0) {
+            ReactInstrumentation.debugTool.onError();
+          }
+        }
         // Roll back to checkpoint, handle error (which may add items to the transaction), and take a new checkpoint
         transaction.rollback(checkpoint);
         this._instance.unstable_handleError(e);
@@ -7925,8 +7059,10 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
         renderedElement = this._renderValidatedComponent();
       }
   
-      this._renderedNodeType = ReactNodeTypes.getType(renderedElement);
-      var child = this._instantiateReactComponent(renderedElement);
+      var nodeType = ReactNodeTypes.getType(renderedElement);
+      this._renderedNodeType = nodeType;
+      var child = this._instantiateReactComponent(renderedElement, nodeType !== ReactNodeTypes.EMPTY /* shouldHaveDebugID */
+      );
       this._renderedComponent = child;
       if (process.env.NODE_ENV !== 'production') {
         if (child._debugID !== 0 && this._debugID !== 0) {
@@ -8309,8 +7445,10 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
         var oldHostNode = ReactReconciler.getHostNode(prevComponentInstance);
         ReactReconciler.unmountComponent(prevComponentInstance, false);
   
-        this._renderedNodeType = ReactNodeTypes.getType(nextRenderedElement);
-        var child = this._instantiateReactComponent(nextRenderedElement);
+        var nodeType = ReactNodeTypes.getType(nextRenderedElement);
+        this._renderedNodeType = nodeType;
+        var child = this._instantiateReactComponent(nextRenderedElement, nodeType !== ReactNodeTypes.EMPTY /* shouldHaveDebugID */
+        );
         this._renderedComponent = child;
         if (process.env.NODE_ENV !== 'production') {
           if (child._debugID !== 0 && this._debugID !== 0) {
@@ -8462,7 +7600,7 @@ _m_['react/lib/ReactCompositeComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/instantiateReactComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/instantiateReactComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -8478,13 +7616,13 @@ _m_['react/lib/instantiateReactComponent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var ReactCompositeComponent = _m_['react/lib/ReactCompositeComponent.js#15.2.0'];
-  var ReactEmptyComponent = _m_['react/lib/ReactEmptyComponent.js#15.2.0'];
-  var ReactHostComponent = _m_['react/lib/ReactHostComponent.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
+  var ReactCompositeComponent = _m_['react/lib/ReactCompositeComponent.js#15.2.1'];
+  var ReactEmptyComponent = _m_['react/lib/ReactEmptyComponent.js#15.2.1'];
+  var ReactHostComponent = _m_['react/lib/ReactHostComponent.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -8539,14 +7677,14 @@ _m_['react/lib/instantiateReactComponent.js#15.2.0']=(function(module,exports){
    * Given a ReactNode, create an instance that will actually be mounted.
    *
    * @param {ReactNode} node
+   * @param {boolean} shouldHaveDebugID
    * @return {object} A new instance of the element's constructor.
    * @protected
    */
-  function instantiateReactComponent(node) {
+  function instantiateReactComponent(node, shouldHaveDebugID) {
     var instance;
   
-    var isEmpty = node === null || node === false;
-    if (isEmpty) {
+    if (node === null || node === false) {
       instance = ReactEmptyComponent.create(instantiateReactComponent);
     } else if (typeof node === 'object') {
       var element = node;
@@ -8585,16 +7723,17 @@ _m_['react/lib/instantiateReactComponent.js#15.2.0']=(function(module,exports){
     instance._mountImage = null;
   
     if (process.env.NODE_ENV !== 'production') {
-      var debugID = isEmpty ? 0 : nextDebugID++;
-      instance._debugID = debugID;
-  
-      if (debugID !== 0) {
+      if (shouldHaveDebugID) {
+        var debugID = nextDebugID++;
+        instance._debugID = debugID;
         var displayName = getDisplayName(instance);
         ReactInstrumentation.debugTool.onSetDisplayName(debugID, displayName);
         var owner = node && node._owner;
         if (owner) {
           ReactInstrumentation.debugTool.onSetOwner(debugID, owner._debugID);
         }
+      } else {
+        instance._debugID = 0;
       }
     }
   
@@ -8613,7 +7752,874 @@ _m_['react/lib/instantiateReactComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/adler32.js#15.2.0']=(function(module,exports){
+_m_['react/lib/Transaction.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2013-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule Transaction
+   */
+  
+  'use strict';
+  
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
+  
+  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
+  
+  /**
+   * `Transaction` creates a black box that is able to wrap any method such that
+   * certain invariants are maintained before and after the method is invoked
+   * (Even if an exception is thrown while invoking the wrapped method). Whoever
+   * instantiates a transaction can provide enforcers of the invariants at
+   * creation time. The `Transaction` class itself will supply one additional
+   * automatic invariant for you - the invariant that any transaction instance
+   * should not be run while it is already being run. You would typically create a
+   * single instance of a `Transaction` for reuse multiple times, that potentially
+   * is used to wrap several different methods. Wrappers are extremely simple -
+   * they only require implementing two methods.
+   *
+   * <pre>
+   *                       wrappers (injected at creation time)
+   *                                      +        +
+   *                                      |        |
+   *                    +-----------------|--------|--------------+
+   *                    |                 v        |              |
+   *                    |      +---------------+   |              |
+   *                    |   +--|    wrapper1   |---|----+         |
+   *                    |   |  +---------------+   v    |         |
+   *                    |   |          +-------------+  |         |
+   *                    |   |     +----|   wrapper2  |--------+   |
+   *                    |   |     |    +-------------+  |     |   |
+   *                    |   |     |                     |     |   |
+   *                    |   v     v                     v     v   | wrapper
+   *                    | +---+ +---+   +---------+   +---+ +---+ | invariants
+   * perform(anyMethod) | |   | |   |   |         |   |   | |   | | maintained
+   * +----------------->|-|---|-|---|-->|anyMethod|---|---|-|---|-|-------->
+   *                    | |   | |   |   |         |   |   | |   | |
+   *                    | |   | |   |   |         |   |   | |   | |
+   *                    | |   | |   |   |         |   |   | |   | |
+   *                    | +---+ +---+   +---------+   +---+ +---+ |
+   *                    |  initialize                    close    |
+   *                    +-----------------------------------------+
+   * </pre>
+   *
+   * Use cases:
+   * - Preserving the input selection ranges before/after reconciliation.
+   *   Restoring selection even in the event of an unexpected error.
+   * - Deactivating events while rearranging the DOM, preventing blurs/focuses,
+   *   while guaranteeing that afterwards, the event system is reactivated.
+   * - Flushing a queue of collected DOM mutations to the main UI thread after a
+   *   reconciliation takes place in a worker thread.
+   * - Invoking any collected `componentDidUpdate` callbacks after rendering new
+   *   content.
+   * - (Future use case): Wrapping particular flushes of the `ReactWorker` queue
+   *   to preserve the `scrollTop` (an automatic scroll aware DOM).
+   * - (Future use case): Layout calculations before and after DOM updates.
+   *
+   * Transactional plugin API:
+   * - A module that has an `initialize` method that returns any precomputation.
+   * - and a `close` method that accepts the precomputation. `close` is invoked
+   *   when the wrapped process is completed, or has failed.
+   *
+   * @param {Array<TransactionalWrapper>} transactionWrapper Wrapper modules
+   * that implement `initialize` and `close`.
+   * @return {Transaction} Single transaction for reuse in thread.
+   *
+   * @class Transaction
+   */
+  var Mixin = {
+    /**
+     * Sets up this instance so that it is prepared for collecting metrics. Does
+     * so such that this setup method may be used on an instance that is already
+     * initialized, in a way that does not consume additional memory upon reuse.
+     * That can be useful if you decide to make your subclass of this mixin a
+     * "PooledClass".
+     */
+    reinitializeTransaction: function () {
+      this.transactionWrappers = this.getTransactionWrappers();
+      if (this.wrapperInitData) {
+        this.wrapperInitData.length = 0;
+      } else {
+        this.wrapperInitData = [];
+      }
+      this._isInTransaction = false;
+    },
+  
+    _isInTransaction: false,
+  
+    /**
+     * @abstract
+     * @return {Array<TransactionWrapper>} Array of transaction wrappers.
+     */
+    getTransactionWrappers: null,
+  
+    isInTransaction: function () {
+      return !!this._isInTransaction;
+    },
+  
+    /**
+     * Executes the function within a safety window. Use this for the top level
+     * methods that result in large amounts of computation/mutations that would
+     * need to be safety checked. The optional arguments helps prevent the need
+     * to bind in many cases.
+     *
+     * @param {function} method Member of scope to call.
+     * @param {Object} scope Scope to invoke from.
+     * @param {Object?=} a Argument to pass to the method.
+     * @param {Object?=} b Argument to pass to the method.
+     * @param {Object?=} c Argument to pass to the method.
+     * @param {Object?=} d Argument to pass to the method.
+     * @param {Object?=} e Argument to pass to the method.
+     * @param {Object?=} f Argument to pass to the method.
+     *
+     * @return {*} Return value from `method`.
+     */
+    perform: function (method, scope, a, b, c, d, e, f) {
+      !!this.isInTransaction() ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Transaction.perform(...): Cannot initialize a transaction when there is already an outstanding transaction.') : _prodInvariant('27') : void 0;
+      var errorThrown;
+      var ret;
+      try {
+        this._isInTransaction = true;
+        // Catching errors makes debugging more difficult, so we start with
+        // errorThrown set to true before setting it to false after calling
+        // close -- if it's still set to true in the finally block, it means
+        // one of these calls threw.
+        errorThrown = true;
+        this.initializeAll(0);
+        ret = method.call(scope, a, b, c, d, e, f);
+        errorThrown = false;
+      } finally {
+        try {
+          if (errorThrown) {
+            // If `method` throws, prefer to show that stack trace over any thrown
+            // by invoking `closeAll`.
+            try {
+              this.closeAll(0);
+            } catch (err) {}
+          } else {
+            // Since `method` didn't throw, we don't want to silence the exception
+            // here.
+            this.closeAll(0);
+          }
+        } finally {
+          this._isInTransaction = false;
+        }
+      }
+      return ret;
+    },
+  
+    initializeAll: function (startIndex) {
+      var transactionWrappers = this.transactionWrappers;
+      for (var i = startIndex; i < transactionWrappers.length; i++) {
+        var wrapper = transactionWrappers[i];
+        try {
+          // Catching errors makes debugging more difficult, so we start with the
+          // OBSERVED_ERROR state before overwriting it with the real return value
+          // of initialize -- if it's still set to OBSERVED_ERROR in the finally
+          // block, it means wrapper.initialize threw.
+          this.wrapperInitData[i] = Transaction.OBSERVED_ERROR;
+          this.wrapperInitData[i] = wrapper.initialize ? wrapper.initialize.call(this) : null;
+        } finally {
+          if (this.wrapperInitData[i] === Transaction.OBSERVED_ERROR) {
+            // The initializer for wrapper i threw an error; initialize the
+            // remaining wrappers but silence any exceptions from them to ensure
+            // that the first error is the one to bubble up.
+            try {
+              this.initializeAll(i + 1);
+            } catch (err) {}
+          }
+        }
+      }
+    },
+  
+    /**
+     * Invokes each of `this.transactionWrappers.close[i]` functions, passing into
+     * them the respective return values of `this.transactionWrappers.init[i]`
+     * (`close`rs that correspond to initializers that failed will not be
+     * invoked).
+     */
+    closeAll: function (startIndex) {
+      !this.isInTransaction() ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Transaction.closeAll(): Cannot close transaction when none are open.') : _prodInvariant('28') : void 0;
+      var transactionWrappers = this.transactionWrappers;
+      for (var i = startIndex; i < transactionWrappers.length; i++) {
+        var wrapper = transactionWrappers[i];
+        var initData = this.wrapperInitData[i];
+        var errorThrown;
+        try {
+          // Catching errors makes debugging more difficult, so we start with
+          // errorThrown set to true before setting it to false after calling
+          // close -- if it's still set to true in the finally block, it means
+          // wrapper.close threw.
+          errorThrown = true;
+          if (initData !== Transaction.OBSERVED_ERROR && wrapper.close) {
+            wrapper.close.call(this, initData);
+          }
+          errorThrown = false;
+        } finally {
+          if (errorThrown) {
+            // The closer for wrapper i threw an error; close the remaining
+            // wrappers but silence any exceptions from them to ensure that the
+            // first error is the one to bubble up.
+            try {
+              this.closeAll(i + 1);
+            } catch (e) {}
+          }
+        }
+      }
+      this.wrapperInitData.length = 0;
+    }
+  };
+  
+  var Transaction = {
+  
+    Mixin: Mixin,
+  
+    /**
+     * Token to look for to determine if an error occurred.
+     */
+    OBSERVED_ERROR: {}
+  
+  };
+  
+  module.exports = Transaction;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/ReactFeatureFlags.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2013-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactFeatureFlags
+   * 
+   */
+  
+  'use strict';
+  
+  var ReactFeatureFlags = {
+    // When true, call console.time() before and .timeEnd() after each top-level
+    // render (both initial renders and updates). Useful when looking at prod-mode
+    // timeline profiles in Chrome, for example.
+    logTopLevelRenders: false
+  };
+  
+  module.exports = ReactFeatureFlags;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/CallbackQueue.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2013-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule CallbackQueue
+   */
+  
+  'use strict';
+  
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
+      _assign = _m_['object-assign/index.js#4.1.0'];
+  
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
+  
+  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
+  
+  /**
+   * A specialized pseudo-event module to help keep track of components waiting to
+   * be notified when their DOM representations are available for use.
+   *
+   * This implements `PooledClass`, so you should never need to instantiate this.
+   * Instead, use `CallbackQueue.getPooled()`.
+   *
+   * @class ReactMountReady
+   * @implements PooledClass
+   * @internal
+   */
+  function CallbackQueue() {
+    this._callbacks = null;
+    this._contexts = null;
+  }
+  
+  _assign(CallbackQueue.prototype, {
+  
+    /**
+     * Enqueues a callback to be invoked when `notifyAll` is invoked.
+     *
+     * @param {function} callback Invoked when `notifyAll` is invoked.
+     * @param {?object} context Context to call `callback` with.
+     * @internal
+     */
+    enqueue: function (callback, context) {
+      this._callbacks = this._callbacks || [];
+      this._contexts = this._contexts || [];
+      this._callbacks.push(callback);
+      this._contexts.push(context);
+    },
+  
+    /**
+     * Invokes all enqueued callbacks and clears the queue. This is invoked after
+     * the DOM representation of a component has been created or updated.
+     *
+     * @internal
+     */
+    notifyAll: function () {
+      var callbacks = this._callbacks;
+      var contexts = this._contexts;
+      if (callbacks) {
+        !(callbacks.length === contexts.length) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Mismatched list of contexts in callback queue') : _prodInvariant('24') : void 0;
+        this._callbacks = null;
+        this._contexts = null;
+        for (var i = 0; i < callbacks.length; i++) {
+          callbacks[i].call(contexts[i]);
+        }
+        callbacks.length = 0;
+        contexts.length = 0;
+      }
+    },
+  
+    checkpoint: function () {
+      return this._callbacks ? this._callbacks.length : 0;
+    },
+  
+    rollback: function (len) {
+      if (this._callbacks) {
+        this._callbacks.length = len;
+        this._contexts.length = len;
+      }
+    },
+  
+    /**
+     * Resets the internal queue.
+     *
+     * @internal
+     */
+    reset: function () {
+      this._callbacks = null;
+      this._contexts = null;
+    },
+  
+    /**
+     * `PooledClass` looks for this.
+     */
+    destructor: function () {
+      this.reset();
+    }
+  
+  });
+  
+  PooledClass.addPoolingTo(CallbackQueue);
+  
+  module.exports = CallbackQueue;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/ReactUpdates.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2013-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactUpdates
+   */
+  
+  'use strict';
+  
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
+      _assign = _m_['object-assign/index.js#4.1.0'];
+  
+  var CallbackQueue = _m_['react/lib/CallbackQueue.js#15.2.1'];
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
+  var ReactFeatureFlags = _m_['react/lib/ReactFeatureFlags.js#15.2.1'];
+  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.1'];
+  var Transaction = _m_['react/lib/Transaction.js#15.2.1'];
+  
+  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
+  
+  var dirtyComponents = [];
+  var updateBatchNumber = 0;
+  var asapCallbackQueue = CallbackQueue.getPooled();
+  var asapEnqueued = false;
+  
+  var batchingStrategy = null;
+  
+  function ensureInjected() {
+    !(ReactUpdates.ReactReconcileTransaction && batchingStrategy) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must inject a reconcile transaction class and batching strategy') : _prodInvariant('123') : void 0;
+  }
+  
+  var NESTED_UPDATES = {
+    initialize: function () {
+      this.dirtyComponentsLength = dirtyComponents.length;
+    },
+    close: function () {
+      if (this.dirtyComponentsLength !== dirtyComponents.length) {
+        // Additional updates were enqueued by componentDidUpdate handlers or
+        // similar; before our own UPDATE_QUEUEING wrapper closes, we want to run
+        // these new updates so that if A's componentDidUpdate calls setState on
+        // B, B will update before the callback A's updater provided when calling
+        // setState.
+        dirtyComponents.splice(0, this.dirtyComponentsLength);
+        flushBatchedUpdates();
+      } else {
+        dirtyComponents.length = 0;
+      }
+    }
+  };
+  
+  var UPDATE_QUEUEING = {
+    initialize: function () {
+      this.callbackQueue.reset();
+    },
+    close: function () {
+      this.callbackQueue.notifyAll();
+    }
+  };
+  
+  var TRANSACTION_WRAPPERS = [NESTED_UPDATES, UPDATE_QUEUEING];
+  
+  function ReactUpdatesFlushTransaction() {
+    this.reinitializeTransaction();
+    this.dirtyComponentsLength = null;
+    this.callbackQueue = CallbackQueue.getPooled();
+    this.reconcileTransaction = ReactUpdates.ReactReconcileTransaction.getPooled(
+    /* useCreateElement */true);
+  }
+  
+  _assign(ReactUpdatesFlushTransaction.prototype, Transaction.Mixin, {
+    getTransactionWrappers: function () {
+      return TRANSACTION_WRAPPERS;
+    },
+  
+    destructor: function () {
+      this.dirtyComponentsLength = null;
+      CallbackQueue.release(this.callbackQueue);
+      this.callbackQueue = null;
+      ReactUpdates.ReactReconcileTransaction.release(this.reconcileTransaction);
+      this.reconcileTransaction = null;
+    },
+  
+    perform: function (method, scope, a) {
+      // Essentially calls `this.reconcileTransaction.perform(method, scope, a)`
+      // with this transaction's wrappers around it.
+      return Transaction.Mixin.perform.call(this, this.reconcileTransaction.perform, this.reconcileTransaction, method, scope, a);
+    }
+  });
+  
+  PooledClass.addPoolingTo(ReactUpdatesFlushTransaction);
+  
+  function batchedUpdates(callback, a, b, c, d, e) {
+    ensureInjected();
+    batchingStrategy.batchedUpdates(callback, a, b, c, d, e);
+  }
+  
+  /**
+   * Array comparator for ReactComponents by mount ordering.
+   *
+   * @param {ReactComponent} c1 first component you're comparing
+   * @param {ReactComponent} c2 second component you're comparing
+   * @return {number} Return value usable by Array.prototype.sort().
+   */
+  function mountOrderComparator(c1, c2) {
+    return c1._mountOrder - c2._mountOrder;
+  }
+  
+  function runBatchedUpdates(transaction) {
+    var len = transaction.dirtyComponentsLength;
+    !(len === dirtyComponents.length) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Expected flush transaction\'s stored dirty-components length (%s) to match dirty-components array length (%s).', len, dirtyComponents.length) : _prodInvariant('124', len, dirtyComponents.length) : void 0;
+  
+    // Since reconciling a component higher in the owner hierarchy usually (not
+    // always -- see shouldComponentUpdate()) will reconcile children, reconcile
+    // them before their children by sorting the array.
+    dirtyComponents.sort(mountOrderComparator);
+  
+    // Any updates enqueued while reconciling must be performed after this entire
+    // batch. Otherwise, if dirtyComponents is [A, B] where A has children B and
+    // C, B could update twice in a single batch if C's render enqueues an update
+    // to B (since B would have already updated, we should skip it, and the only
+    // way we can know to do so is by checking the batch counter).
+    updateBatchNumber++;
+  
+    for (var i = 0; i < len; i++) {
+      // If a component is unmounted before pending changes apply, it will still
+      // be here, but we assume that it has cleared its _pendingCallbacks and
+      // that performUpdateIfNecessary is a noop.
+      var component = dirtyComponents[i];
+  
+      // If performUpdateIfNecessary happens to enqueue any new updates, we
+      // shouldn't execute the callbacks until the next render happens, so
+      // stash the callbacks first
+      var callbacks = component._pendingCallbacks;
+      component._pendingCallbacks = null;
+  
+      var markerName;
+      if (ReactFeatureFlags.logTopLevelRenders) {
+        var namedComponent = component;
+        // Duck type TopLevelWrapper. This is probably always true.
+        if (component._currentElement.props === component._renderedComponent._currentElement) {
+          namedComponent = component._renderedComponent;
+        }
+        markerName = 'React update: ' + namedComponent.getName();
+        console.time(markerName);
+      }
+  
+      ReactReconciler.performUpdateIfNecessary(component, transaction.reconcileTransaction, updateBatchNumber);
+  
+      if (markerName) {
+        console.timeEnd(markerName);
+      }
+  
+      if (callbacks) {
+        for (var j = 0; j < callbacks.length; j++) {
+          transaction.callbackQueue.enqueue(callbacks[j], component.getPublicInstance());
+        }
+      }
+    }
+  }
+  
+  var flushBatchedUpdates = function () {
+    // ReactUpdatesFlushTransaction's wrappers will clear the dirtyComponents
+    // array and perform any updates enqueued by mount-ready handlers (i.e.,
+    // componentDidUpdate) but we need to check here too in order to catch
+    // updates enqueued by setState callbacks and asap calls.
+    while (dirtyComponents.length || asapEnqueued) {
+      if (dirtyComponents.length) {
+        var transaction = ReactUpdatesFlushTransaction.getPooled();
+        transaction.perform(runBatchedUpdates, null, transaction);
+        ReactUpdatesFlushTransaction.release(transaction);
+      }
+  
+      if (asapEnqueued) {
+        asapEnqueued = false;
+        var queue = asapCallbackQueue;
+        asapCallbackQueue = CallbackQueue.getPooled();
+        queue.notifyAll();
+        CallbackQueue.release(queue);
+      }
+    }
+  };
+  
+  /**
+   * Mark a component as needing a rerender, adding an optional callback to a
+   * list of functions which will be executed once the rerender occurs.
+   */
+  function enqueueUpdate(component) {
+    ensureInjected();
+  
+    // Various parts of our code (such as ReactCompositeComponent's
+    // _renderValidatedComponent) assume that calls to render aren't nested;
+    // verify that that's the case. (This is called by each top-level update
+    // function, like setState, forceUpdate, etc.; creation and
+    // destruction of top-level components is guarded in ReactMount.)
+  
+    if (!batchingStrategy.isBatchingUpdates) {
+      batchingStrategy.batchedUpdates(enqueueUpdate, component);
+      return;
+    }
+  
+    dirtyComponents.push(component);
+    if (component._updateBatchNumber == null) {
+      component._updateBatchNumber = updateBatchNumber + 1;
+    }
+  }
+  
+  /**
+   * Enqueue a callback to be run at the end of the current batching cycle. Throws
+   * if no updates are currently being performed.
+   */
+  function asap(callback, context) {
+    !batchingStrategy.isBatchingUpdates ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates.asap: Can\'t enqueue an asap callback in a context whereupdates are not being batched.') : _prodInvariant('125') : void 0;
+    asapCallbackQueue.enqueue(callback, context);
+    asapEnqueued = true;
+  }
+  
+  var ReactUpdatesInjection = {
+    injectReconcileTransaction: function (ReconcileTransaction) {
+      !ReconcileTransaction ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide a reconcile transaction class') : _prodInvariant('126') : void 0;
+      ReactUpdates.ReactReconcileTransaction = ReconcileTransaction;
+    },
+  
+    injectBatchingStrategy: function (_batchingStrategy) {
+      !_batchingStrategy ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide a batching strategy') : _prodInvariant('127') : void 0;
+      !(typeof _batchingStrategy.batchedUpdates === 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide a batchedUpdates() function') : _prodInvariant('128') : void 0;
+      !(typeof _batchingStrategy.isBatchingUpdates === 'boolean') ? process.env.NODE_ENV !== 'production' ? invariant(false, 'ReactUpdates: must provide an isBatchingUpdates boolean attribute') : _prodInvariant('129') : void 0;
+      batchingStrategy = _batchingStrategy;
+    }
+  };
+  
+  var ReactUpdates = {
+    /**
+     * React references `ReactReconcileTransaction` using this property in order
+     * to allow dependency injection.
+     *
+     * @internal
+     */
+    ReactReconcileTransaction: null,
+  
+    batchedUpdates: batchedUpdates,
+    enqueueUpdate: enqueueUpdate,
+    flushBatchedUpdates: flushBatchedUpdates,
+    injection: ReactUpdatesInjection,
+    asap: asap
+  };
+  
+  module.exports = ReactUpdates;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/ReactUpdateQueue.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2015-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactUpdateQueue
+   */
+  
+  'use strict';
+  
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
+  
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
+  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
+  
+  var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
+  var warning = _m_['fbjs/lib/warning.js#0.8.3'];
+  
+  function enqueueUpdate(internalInstance) {
+    ReactUpdates.enqueueUpdate(internalInstance);
+  }
+  
+  function formatUnexpectedArgument(arg) {
+    var type = typeof arg;
+    if (type !== 'object') {
+      return type;
+    }
+    var displayName = arg.constructor && arg.constructor.name || type;
+    var keys = Object.keys(arg);
+    if (keys.length > 0 && keys.length < 20) {
+      return displayName + ' (keys: ' + keys.join(', ') + ')';
+    }
+    return displayName;
+  }
+  
+  function getInternalInstanceReadyForUpdate(publicInstance, callerName) {
+    var internalInstance = ReactInstanceMap.get(publicInstance);
+    if (!internalInstance) {
+      if (process.env.NODE_ENV !== 'production') {
+        // Only warn when we have a callerName. Otherwise we should be silent.
+        // We're probably calling from enqueueCallback. We don't want to warn
+        // there because we already warned for the corresponding lifecycle method.
+        process.env.NODE_ENV !== 'production' ? warning(!callerName, '%s(...): Can only update a mounted or mounting component. ' + 'This usually means you called %s() on an unmounted component. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, publicInstance.constructor.displayName) : void 0;
+      }
+      return null;
+    }
+  
+    if (process.env.NODE_ENV !== 'production') {
+      process.env.NODE_ENV !== 'production' ? warning(ReactCurrentOwner.current == null, '%s(...): Cannot update during an existing state transition (such as ' + 'within `render` or another component\'s constructor). Render methods ' + 'should be a pure function of props and state; constructor ' + 'side-effects are an anti-pattern, but can be moved to ' + '`componentWillMount`.', callerName) : void 0;
+    }
+  
+    return internalInstance;
+  }
+  
+  /**
+   * ReactUpdateQueue allows for state updates to be scheduled into a later
+   * reconciliation step.
+   */
+  var ReactUpdateQueue = {
+  
+    /**
+     * Checks whether or not this composite component is mounted.
+     * @param {ReactClass} publicInstance The instance we want to test.
+     * @return {boolean} True if mounted, false otherwise.
+     * @protected
+     * @final
+     */
+    isMounted: function (publicInstance) {
+      if (process.env.NODE_ENV !== 'production') {
+        var owner = ReactCurrentOwner.current;
+        if (owner !== null) {
+          process.env.NODE_ENV !== 'production' ? warning(owner._warnedAboutRefsInRender, '%s is accessing isMounted inside its render() function. ' + 'render() should be a pure function of props and state. It should ' + 'never access something that requires stale data from the previous ' + 'render, such as refs. Move this logic to componentDidMount and ' + 'componentDidUpdate instead.', owner.getName() || 'A component') : void 0;
+          owner._warnedAboutRefsInRender = true;
+        }
+      }
+      var internalInstance = ReactInstanceMap.get(publicInstance);
+      if (internalInstance) {
+        // During componentWillMount and render this will still be null but after
+        // that will always render to something. At least for now. So we can use
+        // this hack.
+        return !!internalInstance._renderedComponent;
+      } else {
+        return false;
+      }
+    },
+  
+    /**
+     * Enqueue a callback that will be executed after all the pending updates
+     * have processed.
+     *
+     * @param {ReactClass} publicInstance The instance to use as `this` context.
+     * @param {?function} callback Called after state is updated.
+     * @param {string} callerName Name of the calling function in the public API.
+     * @internal
+     */
+    enqueueCallback: function (publicInstance, callback, callerName) {
+      ReactUpdateQueue.validateCallback(callback, callerName);
+      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance);
+  
+      // Previously we would throw an error if we didn't have an internal
+      // instance. Since we want to make it a no-op instead, we mirror the same
+      // behavior we have in other enqueue* methods.
+      // We also need to ignore callbacks in componentWillMount. See
+      // enqueueUpdates.
+      if (!internalInstance) {
+        return null;
+      }
+  
+      if (internalInstance._pendingCallbacks) {
+        internalInstance._pendingCallbacks.push(callback);
+      } else {
+        internalInstance._pendingCallbacks = [callback];
+      }
+      // TODO: The callback here is ignored when setState is called from
+      // componentWillMount. Either fix it or disallow doing so completely in
+      // favor of getInitialState. Alternatively, we can disallow
+      // componentWillMount during server-side rendering.
+      enqueueUpdate(internalInstance);
+    },
+  
+    enqueueCallbackInternal: function (internalInstance, callback) {
+      if (internalInstance._pendingCallbacks) {
+        internalInstance._pendingCallbacks.push(callback);
+      } else {
+        internalInstance._pendingCallbacks = [callback];
+      }
+      enqueueUpdate(internalInstance);
+    },
+  
+    /**
+     * Forces an update. This should only be invoked when it is known with
+     * certainty that we are **not** in a DOM transaction.
+     *
+     * You may want to call this when you know that some deeper aspect of the
+     * component's state has changed but `setState` was not called.
+     *
+     * This will not invoke `shouldComponentUpdate`, but it will invoke
+     * `componentWillUpdate` and `componentDidUpdate`.
+     *
+     * @param {ReactClass} publicInstance The instance that should rerender.
+     * @internal
+     */
+    enqueueForceUpdate: function (publicInstance) {
+      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'forceUpdate');
+  
+      if (!internalInstance) {
+        return;
+      }
+  
+      internalInstance._pendingForceUpdate = true;
+  
+      enqueueUpdate(internalInstance);
+    },
+  
+    /**
+     * Replaces all of the state. Always use this or `setState` to mutate state.
+     * You should treat `this.state` as immutable.
+     *
+     * There is no guarantee that `this.state` will be immediately updated, so
+     * accessing `this.state` after calling this method may return the old value.
+     *
+     * @param {ReactClass} publicInstance The instance that should rerender.
+     * @param {object} completeState Next state.
+     * @internal
+     */
+    enqueueReplaceState: function (publicInstance, completeState) {
+      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'replaceState');
+  
+      if (!internalInstance) {
+        return;
+      }
+  
+      internalInstance._pendingStateQueue = [completeState];
+      internalInstance._pendingReplaceState = true;
+  
+      enqueueUpdate(internalInstance);
+    },
+  
+    /**
+     * Sets a subset of the state. This only exists because _pendingState is
+     * internal. This provides a merging strategy that is not available to deep
+     * properties which is confusing. TODO: Expose pendingState or don't use it
+     * during the merge.
+     *
+     * @param {ReactClass} publicInstance The instance that should rerender.
+     * @param {object} partialState Next partial state to be merged with state.
+     * @internal
+     */
+    enqueueSetState: function (publicInstance, partialState) {
+      if (process.env.NODE_ENV !== 'production') {
+        ReactInstrumentation.debugTool.onSetState();
+        process.env.NODE_ENV !== 'production' ? warning(partialState != null, 'setState(...): You passed an undefined or null state object; ' + 'instead, use forceUpdate().') : void 0;
+      }
+  
+      var internalInstance = getInternalInstanceReadyForUpdate(publicInstance, 'setState');
+  
+      if (!internalInstance) {
+        return;
+      }
+  
+      var queue = internalInstance._pendingStateQueue || (internalInstance._pendingStateQueue = []);
+      queue.push(partialState);
+  
+      enqueueUpdate(internalInstance);
+    },
+  
+    enqueueElementInternal: function (internalInstance, nextElement, nextContext) {
+      internalInstance._pendingElement = nextElement;
+      // TODO: introduce _pendingContext instead of setting it directly.
+      internalInstance._context = nextContext;
+      enqueueUpdate(internalInstance);
+    },
+  
+    validateCallback: function (callback, callerName) {
+      !(!callback || typeof callback === 'function') ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s(...): Expected the last optional `callback` argument to be a function. Instead received: %s.', callerName, formatUnexpectedArgument(callback)) : _prodInvariant('122', callerName, formatUnexpectedArgument(callback)) : void 0;
+    }
+  
+  };
+  
+  module.exports = ReactUpdateQueue;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/adler32.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -8625,6 +8631,7 @@ _m_['react/lib/adler32.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule adler32
+   * 
    */
   
   'use strict';
@@ -8662,7 +8669,7 @@ _m_['react/lib/adler32.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactMarkupChecksum.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactMarkupChecksum.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -8678,7 +8685,7 @@ _m_['react/lib/ReactMarkupChecksum.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var adler32 = _m_['react/lib/adler32.js#15.2.0'];
+  var adler32 = _m_['react/lib/adler32.js#15.2.1'];
   
   var TAG_END = /\/?>/;
   var COMMENT_START = /^<\!\-\-/;
@@ -8718,7 +8725,7 @@ _m_['react/lib/ReactMarkupChecksum.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMFeatureFlags.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMFeatureFlags.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -8742,7 +8749,7 @@ _m_['react/lib/ReactDOMFeatureFlags.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/validateDOMNesting.js#15.2.0']=(function(module,exports){
+_m_['react/lib/validateDOMNesting.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9117,7 +9124,7 @@ _m_['react/lib/validateDOMNesting.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMContainerInfo.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMContainerInfo.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9133,7 +9140,7 @@ _m_['react/lib/ReactDOMContainerInfo.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var validateDOMNesting = _m_['react/lib/validateDOMNesting.js#15.2.0'];
+  var validateDOMNesting = _m_['react/lib/validateDOMNesting.js#15.2.1'];
   
   var DOC_NODE_TYPE = 9;
   
@@ -9156,7 +9163,7 @@ _m_['react/lib/ReactDOMContainerInfo.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMComponentFlags.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMComponentFlags.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9180,7 +9187,7 @@ _m_['react/lib/ReactDOMComponentFlags.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/DOMProperty.js#15.2.0']=(function(module,exports){
+_m_['react/lib/DOMProperty.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9196,7 +9203,7 @@ _m_['react/lib/DOMProperty.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -9210,7 +9217,6 @@ _m_['react/lib/DOMProperty.js#15.2.0']=(function(module,exports){
      * specifies how the associated DOM property should be accessed or rendered.
      */
     MUST_USE_PROPERTY: 0x1,
-    HAS_SIDE_EFFECTS: 0x2,
     HAS_BOOLEAN_VALUE: 0x4,
     HAS_NUMERIC_VALUE: 0x8,
     HAS_POSITIVE_NUMERIC_VALUE: 0x10 | 0x8,
@@ -9269,14 +9275,11 @@ _m_['react/lib/DOMProperty.js#15.2.0']=(function(module,exports){
           mutationMethod: null,
   
           mustUseProperty: checkMask(propConfig, Injection.MUST_USE_PROPERTY),
-          hasSideEffects: checkMask(propConfig, Injection.HAS_SIDE_EFFECTS),
           hasBooleanValue: checkMask(propConfig, Injection.HAS_BOOLEAN_VALUE),
           hasNumericValue: checkMask(propConfig, Injection.HAS_NUMERIC_VALUE),
           hasPositiveNumericValue: checkMask(propConfig, Injection.HAS_POSITIVE_NUMERIC_VALUE),
           hasOverloadedBooleanValue: checkMask(propConfig, Injection.HAS_OVERLOADED_BOOLEAN_VALUE)
         };
-  
-        !(propertyInfo.mustUseProperty || !propertyInfo.hasSideEffects) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'DOMProperty: Properties that have side effects must use property: %s', propName) : _prodInvariant('49', propName) : void 0;
         !(propertyInfo.hasBooleanValue + propertyInfo.hasNumericValue + propertyInfo.hasOverloadedBooleanValue <= 1) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'DOMProperty: Value can be one of boolean, overloaded boolean, or numeric value, but not a combination: %s', propName) : _prodInvariant('50', propName) : void 0;
   
         if (process.env.NODE_ENV !== 'production') {
@@ -9348,11 +9351,6 @@ _m_['react/lib/DOMProperty.js#15.2.0']=(function(module,exports){
      *   initial render.
      * mustUseProperty:
      *   Whether the property must be accessed and mutated as an object property.
-     * hasSideEffects:
-     *   Whether or not setting a value causes side effects such as triggering
-     *   resources to be loaded or text selection changes. If true, we read from
-     *   the DOM before updating to ensure that the value is only set if it has
-     *   changed.
      * hasBooleanValue:
      *   Whether the property should be removed when set to a falsey value.
      * hasNumericValue:
@@ -9401,7 +9399,7 @@ _m_['react/lib/DOMProperty.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMComponentTree.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMComponentTree.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9417,10 +9415,10 @@ _m_['react/lib/ReactDOMComponentTree.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.0'];
-  var ReactDOMComponentFlags = _m_['react/lib/ReactDOMComponentFlags.js#15.2.0'];
+  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.1'];
+  var ReactDOMComponentFlags = _m_['react/lib/ReactDOMComponentFlags.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -9595,7 +9593,7 @@ _m_['react/lib/ReactDOMComponentTree.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/isEventSupported.js#15.2.0']=(function(module,exports){
+_m_['react/lib/isEventSupported.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9661,7 +9659,7 @@ _m_['react/lib/isEventSupported.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getVendorPrefixedEventName.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getVendorPrefixedEventName.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9768,7 +9766,7 @@ _m_['react/lib/getVendorPrefixedEventName.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ViewportMetrics.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ViewportMetrics.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9801,7 +9799,7 @@ _m_['react/lib/ViewportMetrics.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/forEachAccumulated.js#15.2.0']=(function(module,exports){
+_m_['react/lib/forEachAccumulated.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9813,6 +9811,7 @@ _m_['react/lib/forEachAccumulated.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule forEachAccumulated
+   * 
    */
   
   'use strict';
@@ -9825,19 +9824,19 @@ _m_['react/lib/forEachAccumulated.js#15.2.0']=(function(module,exports){
    * allocate an array).
    */
   
-  var forEachAccumulated = function (arr, cb, scope) {
+  function forEachAccumulated(arr, cb, scope) {
     if (Array.isArray(arr)) {
       arr.forEach(cb, scope);
     } else if (arr) {
       cb.call(scope, arr);
     }
-  };
+  }
   
   module.exports = forEachAccumulated;
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/accumulateInto.js#15.2.0']=(function(module,exports){
+_m_['react/lib/accumulateInto.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -9849,16 +9848,16 @@ _m_['react/lib/accumulateInto.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule accumulateInto
+   * 
    */
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
   /**
-   *
    * Accumulates items that must not be null or undefined into the first one. This
    * is used to conserve memory by avoiding array allocations, and thus sacrifices
    * API cleanness. Since `current` can be null before being passed in and not
@@ -9873,26 +9872,23 @@ _m_['react/lib/accumulateInto.js#15.2.0']=(function(module,exports){
   
   function accumulateInto(current, next) {
     !(next != null) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'accumulateInto(...): Accumulated items must not be null or undefined.') : _prodInvariant('30') : void 0;
+  
     if (current == null) {
       return next;
     }
   
     // Both are not empty. Warning: Never call x.concat(y) when you are not
     // certain that x is an Array (x could be a string with concat method).
-    var currentIsArray = Array.isArray(current);
-    var nextIsArray = Array.isArray(next);
-  
-    if (currentIsArray && nextIsArray) {
-      current.push.apply(current, next);
-      return current;
-    }
-  
-    if (currentIsArray) {
+    if (Array.isArray(current)) {
+      if (Array.isArray(next)) {
+        current.push.apply(current, next);
+        return current;
+      }
       current.push(next);
       return current;
     }
   
-    if (nextIsArray) {
+    if (Array.isArray(next)) {
       // A bit too dangerous to mutate `next`.
       return [current].concat(next);
     }
@@ -9904,7 +9900,7 @@ _m_['react/lib/accumulateInto.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/EventConstants.js#15.2.0']=(function(module,exports){
+_m_['react/lib/EventConstants.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -10007,7 +10003,7 @@ _m_['react/lib/EventConstants.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/EventPluginUtils.js#15.2.0']=(function(module,exports){
+_m_['react/lib/EventPluginUtils.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -10023,10 +10019,10 @@ _m_['react/lib/EventPluginUtils.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var ReactErrorUtils = _m_['react/lib/ReactErrorUtils.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var ReactErrorUtils = _m_['react/lib/ReactErrorUtils.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -10242,7 +10238,7 @@ _m_['react/lib/EventPluginUtils.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/EventPluginRegistry.js#15.2.0']=(function(module,exports){
+_m_['react/lib/EventPluginRegistry.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -10258,7 +10254,7 @@ _m_['react/lib/EventPluginRegistry.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -10495,7 +10491,7 @@ _m_['react/lib/EventPluginRegistry.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/EventPluginHub.js#15.2.0']=(function(module,exports){
+_m_['react/lib/EventPluginHub.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -10511,14 +10507,14 @@ _m_['react/lib/EventPluginHub.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.0'];
-  var EventPluginUtils = _m_['react/lib/EventPluginUtils.js#15.2.0'];
-  var ReactErrorUtils = _m_['react/lib/ReactErrorUtils.js#15.2.0'];
+  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.1'];
+  var EventPluginUtils = _m_['react/lib/EventPluginUtils.js#15.2.1'];
+  var ReactErrorUtils = _m_['react/lib/ReactErrorUtils.js#15.2.1'];
   
-  var accumulateInto = _m_['react/lib/accumulateInto.js#15.2.0'];
-  var forEachAccumulated = _m_['react/lib/forEachAccumulated.js#15.2.0'];
+  var accumulateInto = _m_['react/lib/accumulateInto.js#15.2.1'];
+  var forEachAccumulated = _m_['react/lib/forEachAccumulated.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
   /**
@@ -10742,7 +10738,7 @@ _m_['react/lib/EventPluginHub.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactEventEmitterMixin.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactEventEmitterMixin.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -10758,7 +10754,7 @@ _m_['react/lib/ReactEventEmitterMixin.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.0'];
+  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.1'];
   
   function runEventQueueInBatch(events) {
     EventPluginHub.enqueueEvents(events);
@@ -10781,7 +10777,7 @@ _m_['react/lib/ReactEventEmitterMixin.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactBrowserEventEmitter.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactBrowserEventEmitter.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -10799,13 +10795,13 @@ _m_['react/lib/ReactBrowserEventEmitter.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.0'];
-  var ReactEventEmitterMixin = _m_['react/lib/ReactEventEmitterMixin.js#15.2.0'];
-  var ViewportMetrics = _m_['react/lib/ViewportMetrics.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.1'];
+  var ReactEventEmitterMixin = _m_['react/lib/ReactEventEmitterMixin.js#15.2.1'];
+  var ViewportMetrics = _m_['react/lib/ViewportMetrics.js#15.2.1'];
   
-  var getVendorPrefixedEventName = _m_['react/lib/getVendorPrefixedEventName.js#15.2.0'];
-  var isEventSupported = _m_['react/lib/isEventSupported.js#15.2.0'];
+  var getVendorPrefixedEventName = _m_['react/lib/getVendorPrefixedEventName.js#15.2.1'];
+  var isEventSupported = _m_['react/lib/isEventSupported.js#15.2.1'];
   
   /**
    * Summary of `ReactBrowserEventEmitter` event handling:
@@ -11104,7 +11100,7 @@ _m_['react/lib/ReactBrowserEventEmitter.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/escapeTextContentForBrowser.js#15.2.0']=(function(module,exports){
+_m_['react/lib/escapeTextContentForBrowser.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -11232,7 +11228,7 @@ _m_['react/lib/escapeTextContentForBrowser.js#15.2.0']=(function(module,exports)
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/setTextContent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/setTextContent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -11249,8 +11245,8 @@ _m_['react/lib/setTextContent.js#15.2.0']=(function(module,exports){
   'use strict';
   
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
-  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.0'];
-  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.0'];
+  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.1'];
+  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.1'];
   
   /**
    * Set the textContent property of a node, ensuring that whitespace is preserved
@@ -11286,7 +11282,7 @@ _m_['react/lib/setTextContent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/DOMLazyTree.js#15.2.0']=(function(module,exports){
+_m_['react/lib/DOMLazyTree.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -11302,11 +11298,11 @@ _m_['react/lib/DOMLazyTree.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var DOMNamespaces = _m_['react/lib/DOMNamespaces.js#15.2.0'];
-  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.0'];
+  var DOMNamespaces = _m_['react/lib/DOMNamespaces.js#15.2.1'];
+  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.1'];
   
-  var createMicrosoftUnsafeLocalFunction = _m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.0'];
-  var setTextContent = _m_['react/lib/setTextContent.js#15.2.0'];
+  var createMicrosoftUnsafeLocalFunction = _m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.1'];
+  var setTextContent = _m_['react/lib/setTextContent.js#15.2.1'];
   
   var ELEMENT_NODE_TYPE = 1;
   var DOCUMENT_FRAGMENT_NODE_TYPE = 11;
@@ -11410,7 +11406,7 @@ _m_['react/lib/DOMLazyTree.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactMount.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -11426,28 +11422,29 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.0'];
-  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.0'];
-  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.0'];
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactDOMContainerInfo = _m_['react/lib/ReactDOMContainerInfo.js#15.2.0'];
-  var ReactDOMFeatureFlags = _m_['react/lib/ReactDOMFeatureFlags.js#15.2.0'];
-  var ReactElement = _m_['react/lib/ReactElement.js#15.2.0'];
-  var ReactFeatureFlags = _m_['react/lib/ReactFeatureFlags.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
-  var ReactMarkupChecksum = _m_['react/lib/ReactMarkupChecksum.js#15.2.0'];
-  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.0'];
-  var ReactUpdateQueue = _m_['react/lib/ReactUpdateQueue.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
+  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.1'];
+  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.1'];
+  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.1'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactDOMContainerInfo = _m_['react/lib/ReactDOMContainerInfo.js#15.2.1'];
+  var ReactDOMFeatureFlags = _m_['react/lib/ReactDOMFeatureFlags.js#15.2.1'];
+  var ReactElement = _m_['react/lib/ReactElement.js#15.2.1'];
+  var ReactFeatureFlags = _m_['react/lib/ReactFeatureFlags.js#15.2.1'];
+  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
+  var ReactMarkupChecksum = _m_['react/lib/ReactMarkupChecksum.js#15.2.1'];
+  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.1'];
+  var ReactUpdateQueue = _m_['react/lib/ReactUpdateQueue.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
   
   var emptyObject = _m_['fbjs/lib/emptyObject.js#0.8.3'];
-  var instantiateReactComponent = _m_['react/lib/instantiateReactComponent.js#15.2.0'];
+  var instantiateReactComponent = _m_['react/lib/instantiateReactComponent.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.0'];
-  var shouldUpdateReactComponent = _m_['react/lib/shouldUpdateReactComponent.js#15.2.0'];
+  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.1'];
+  var shouldUpdateReactComponent = _m_['react/lib/shouldUpdateReactComponent.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var ATTR_NAME = DOMProperty.ID_ATTRIBUTE_NAME;
@@ -11662,9 +11659,9 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
      * @param {DOMElement} container container to render into
      * @param {?function} callback function triggered on completion
      */
-    _updateRootComponent: function (prevComponent, nextElement, container, callback) {
+    _updateRootComponent: function (prevComponent, nextElement, nextContext, container, callback) {
       ReactMount.scrollMonitor(container, function () {
-        ReactUpdateQueue.enqueueElementInternal(prevComponent, nextElement);
+        ReactUpdateQueue.enqueueElementInternal(prevComponent, nextElement, nextContext);
         if (callback) {
           ReactUpdateQueue.enqueueCallbackInternal(prevComponent, callback);
         }
@@ -11682,10 +11679,6 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
      * @return {ReactComponent} nextComponent
      */
     _renderNewRootComponent: function (nextElement, container, shouldReuseMarkup, context) {
-      if (process.env.NODE_ENV !== 'production') {
-        ReactInstrumentation.debugTool.onBeginFlush();
-      }
-  
       // Various parts of our code (such as ReactCompositeComponent's
       // _renderValidatedComponent) assume that calls to render aren't nested;
       // verify that that's the case.
@@ -11694,13 +11687,7 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
       !(container && (container.nodeType === ELEMENT_NODE_TYPE || container.nodeType === DOC_NODE_TYPE || container.nodeType === DOCUMENT_FRAGMENT_NODE_TYPE)) ? process.env.NODE_ENV !== 'production' ? invariant(false, '_registerComponent(...): Target container is not a DOM element.') : _prodInvariant('37') : void 0;
   
       ReactBrowserEventEmitter.ensureScrollValueMonitoring();
-      var componentInstance = instantiateReactComponent(nextElement);
-  
-      if (process.env.NODE_ENV !== 'production') {
-        // Mute future events from the top level wrapper.
-        // It is an implementation detail that devtools should not know about.
-        componentInstance._debugID = 0;
-      }
+      var componentInstance = instantiateReactComponent(nextElement, false);
   
       // The initial render is synchronous but any updates that happen during
       // rendering, in componentWillMount or componentDidMount, will be batched
@@ -11714,7 +11701,6 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
       if (process.env.NODE_ENV !== 'production') {
         // The instance here is TopLevelWrapper so we report mount for its child.
         ReactInstrumentation.debugTool.onMountRootComponent(componentInstance._renderedComponent._debugID);
-        ReactInstrumentation.debugTool.onEndFlush();
       }
   
       return componentInstance;
@@ -11734,7 +11720,7 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
      * @return {ReactComponent} Component instance rendered in `container`.
      */
     renderSubtreeIntoContainer: function (parentComponent, nextElement, container, callback) {
-      !(parentComponent != null && parentComponent._reactInternalInstance != null) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'parentComponent must be a valid React Component') : _prodInvariant('38') : void 0;
+      !(parentComponent != null && ReactInstanceMap.has(parentComponent)) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'parentComponent must be a valid React Component') : _prodInvariant('38') : void 0;
       return ReactMount._renderSubtreeIntoContainer(parentComponent, nextElement, container, callback);
     },
   
@@ -11748,6 +11734,14 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
   
       var nextWrappedElement = ReactElement(TopLevelWrapper, null, null, null, null, null, nextElement);
   
+      var nextContext;
+      if (parentComponent) {
+        var parentInst = ReactInstanceMap.get(parentComponent);
+        nextContext = parentInst._processChildContext(parentInst._context);
+      } else {
+        nextContext = emptyObject;
+      }
+  
       var prevComponent = getTopLevelWrapperInContainer(container);
   
       if (prevComponent) {
@@ -11758,7 +11752,7 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
           var updatedCallback = callback && function () {
             callback.call(publicInst);
           };
-          ReactMount._updateRootComponent(prevComponent, nextWrappedElement, container, updatedCallback);
+          ReactMount._updateRootComponent(prevComponent, nextWrappedElement, nextContext, container, updatedCallback);
           return publicInst;
         } else {
           ReactMount.unmountComponentAtNode(container);
@@ -11785,7 +11779,7 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
       }
   
       var shouldReuseMarkup = containerHasReactMarkup && !prevComponent && !containerHasNonRootReactChild;
-      var component = ReactMount._renderNewRootComponent(nextWrappedElement, container, shouldReuseMarkup, parentComponent != null ? parentComponent._reactInternalInstance._processChildContext(parentComponent._reactInternalInstance._context) : emptyObject)._renderedComponent.getPublicInstance();
+      var component = ReactMount._renderNewRootComponent(nextWrappedElement, container, shouldReuseMarkup, nextContext)._renderedComponent.getPublicInstance();
       if (callback) {
         callback.call(component);
       }
@@ -11917,7 +11911,7 @@ _m_['react/lib/ReactMount.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/renderSubtreeIntoContainer.js#15.2.0']=(function(module,exports){
+_m_['react/lib/renderSubtreeIntoContainer.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -11933,13 +11927,13 @@ _m_['react/lib/renderSubtreeIntoContainer.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactMount = _m_['react/lib/ReactMount.js#15.2.0'];
+  var ReactMount = _m_['react/lib/ReactMount.js#15.2.1'];
   
   module.exports = ReactMount.renderSubtreeIntoContainer;
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getHostComponentFromComposite.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getHostComponentFromComposite.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -11955,7 +11949,7 @@ _m_['react/lib/getHostComponentFromComposite.js#15.2.0']=(function(module,export
   
   'use strict';
   
-  var ReactNodeTypes = _m_['react/lib/ReactNodeTypes.js#15.2.0'];
+  var ReactNodeTypes = _m_['react/lib/ReactNodeTypes.js#15.2.1'];
   
   function getHostComponentFromComposite(inst) {
     var type;
@@ -11975,7 +11969,7 @@ _m_['react/lib/getHostComponentFromComposite.js#15.2.0']=(function(module,export
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/findDOMNode.js#15.2.0']=(function(module,exports){
+_m_['react/lib/findDOMNode.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -11991,13 +11985,13 @@ _m_['react/lib/findDOMNode.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.0'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.1'];
   
-  var getHostComponentFromComposite = _m_['react/lib/getHostComponentFromComposite.js#15.2.0'];
+  var getHostComponentFromComposite = _m_['react/lib/getHostComponentFromComposite.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
@@ -12041,7 +12035,7 @@ _m_['react/lib/findDOMNode.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getEventCharCode.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getEventCharCode.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12097,7 +12091,7 @@ _m_['react/lib/getEventCharCode.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getEventModifierState.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getEventModifierState.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12146,7 +12140,7 @@ _m_['react/lib/getEventModifierState.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getEventTarget.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getEventTarget.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12187,7 +12181,7 @@ _m_['react/lib/getEventTarget.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12205,7 +12199,7 @@ _m_['react/lib/SyntheticEvent.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
   
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -12453,7 +12447,7 @@ _m_['react/lib/SyntheticEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticUIEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticUIEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12469,9 +12463,9 @@ _m_['react/lib/SyntheticUIEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
-  var getEventTarget = _m_['react/lib/getEventTarget.js#15.2.0'];
+  var getEventTarget = _m_['react/lib/getEventTarget.js#15.2.1'];
   
   /**
    * @interface UIEvent
@@ -12518,7 +12512,7 @@ _m_['react/lib/SyntheticUIEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticMouseEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticMouseEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12534,10 +12528,10 @@ _m_['react/lib/SyntheticMouseEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.0'];
-  var ViewportMetrics = _m_['react/lib/ViewportMetrics.js#15.2.0'];
+  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.1'];
+  var ViewportMetrics = _m_['react/lib/ViewportMetrics.js#15.2.1'];
   
-  var getEventModifierState = _m_['react/lib/getEventModifierState.js#15.2.0'];
+  var getEventModifierState = _m_['react/lib/getEventModifierState.js#15.2.1'];
   
   /**
    * @interface MouseEvent
@@ -12596,7 +12590,7 @@ _m_['react/lib/SyntheticMouseEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticWheelEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticWheelEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12612,7 +12606,7 @@ _m_['react/lib/SyntheticWheelEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.0'];
+  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.1'];
   
   /**
    * @interface WheelEvent
@@ -12656,7 +12650,7 @@ _m_['react/lib/SyntheticWheelEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticTransitionEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticTransitionEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12672,7 +12666,7 @@ _m_['react/lib/SyntheticTransitionEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
   /**
    * @interface Event
@@ -12701,7 +12695,7 @@ _m_['react/lib/SyntheticTransitionEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticTouchEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticTouchEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12717,9 +12711,9 @@ _m_['react/lib/SyntheticTouchEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.0'];
+  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.1'];
   
-  var getEventModifierState = _m_['react/lib/getEventModifierState.js#15.2.0'];
+  var getEventModifierState = _m_['react/lib/getEventModifierState.js#15.2.1'];
   
   /**
    * @interface TouchEvent
@@ -12752,7 +12746,7 @@ _m_['react/lib/SyntheticTouchEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticDragEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticDragEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12768,7 +12762,7 @@ _m_['react/lib/SyntheticDragEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.0'];
+  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.1'];
   
   /**
    * @interface DragEvent
@@ -12794,7 +12788,7 @@ _m_['react/lib/SyntheticDragEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getEventKey.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getEventKey.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12810,7 +12804,7 @@ _m_['react/lib/getEventKey.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var getEventCharCode = _m_['react/lib/getEventCharCode.js#15.2.0'];
+  var getEventCharCode = _m_['react/lib/getEventCharCode.js#15.2.1'];
   
   /**
    * Normalization of deprecated HTML5 `key` values
@@ -12902,7 +12896,7 @@ _m_['react/lib/getEventKey.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticKeyboardEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticKeyboardEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -12918,11 +12912,11 @@ _m_['react/lib/SyntheticKeyboardEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.0'];
+  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.1'];
   
-  var getEventCharCode = _m_['react/lib/getEventCharCode.js#15.2.0'];
-  var getEventKey = _m_['react/lib/getEventKey.js#15.2.0'];
-  var getEventModifierState = _m_['react/lib/getEventModifierState.js#15.2.0'];
+  var getEventCharCode = _m_['react/lib/getEventCharCode.js#15.2.1'];
+  var getEventKey = _m_['react/lib/getEventKey.js#15.2.1'];
+  var getEventModifierState = _m_['react/lib/getEventModifierState.js#15.2.1'];
   
   /**
    * @interface KeyboardEvent
@@ -12992,7 +12986,7 @@ _m_['react/lib/SyntheticKeyboardEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticFocusEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticFocusEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -13008,7 +13002,7 @@ _m_['react/lib/SyntheticFocusEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.0'];
+  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.1'];
   
   /**
    * @interface FocusEvent
@@ -13034,7 +13028,7 @@ _m_['react/lib/SyntheticFocusEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticClipboardEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticClipboardEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -13050,7 +13044,7 @@ _m_['react/lib/SyntheticClipboardEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
   /**
    * @interface Event
@@ -13078,7 +13072,7 @@ _m_['react/lib/SyntheticClipboardEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticAnimationEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticAnimationEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -13094,7 +13088,7 @@ _m_['react/lib/SyntheticAnimationEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
   /**
    * @interface Event
@@ -13123,7 +13117,7 @@ _m_['react/lib/SyntheticAnimationEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/EventPropagators.js#15.2.0']=(function(module,exports){
+_m_['react/lib/EventPropagators.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -13139,12 +13133,12 @@ _m_['react/lib/EventPropagators.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.0'];
-  var EventPluginUtils = _m_['react/lib/EventPluginUtils.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.1'];
+  var EventPluginUtils = _m_['react/lib/EventPluginUtils.js#15.2.1'];
   
-  var accumulateInto = _m_['react/lib/accumulateInto.js#15.2.0'];
-  var forEachAccumulated = _m_['react/lib/forEachAccumulated.js#15.2.0'];
+  var accumulateInto = _m_['react/lib/accumulateInto.js#15.2.1'];
+  var forEachAccumulated = _m_['react/lib/forEachAccumulated.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var PropagationPhases = EventConstants.PropagationPhases;
@@ -13355,7 +13349,7 @@ _m_['fbjs/lib/EventListener.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SimpleEventPlugin.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SimpleEventPlugin.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -13371,26 +13365,26 @@ _m_['react/lib/SimpleEventPlugin.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
   var EventListener = _m_['fbjs/lib/EventListener.js#0.8.3'];
-  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var SyntheticAnimationEvent = _m_['react/lib/SyntheticAnimationEvent.js#15.2.0'];
-  var SyntheticClipboardEvent = _m_['react/lib/SyntheticClipboardEvent.js#15.2.0'];
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
-  var SyntheticFocusEvent = _m_['react/lib/SyntheticFocusEvent.js#15.2.0'];
-  var SyntheticKeyboardEvent = _m_['react/lib/SyntheticKeyboardEvent.js#15.2.0'];
-  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.0'];
-  var SyntheticDragEvent = _m_['react/lib/SyntheticDragEvent.js#15.2.0'];
-  var SyntheticTouchEvent = _m_['react/lib/SyntheticTouchEvent.js#15.2.0'];
-  var SyntheticTransitionEvent = _m_['react/lib/SyntheticTransitionEvent.js#15.2.0'];
-  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.0'];
-  var SyntheticWheelEvent = _m_['react/lib/SyntheticWheelEvent.js#15.2.0'];
+  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var SyntheticAnimationEvent = _m_['react/lib/SyntheticAnimationEvent.js#15.2.1'];
+  var SyntheticClipboardEvent = _m_['react/lib/SyntheticClipboardEvent.js#15.2.1'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
+  var SyntheticFocusEvent = _m_['react/lib/SyntheticFocusEvent.js#15.2.1'];
+  var SyntheticKeyboardEvent = _m_['react/lib/SyntheticKeyboardEvent.js#15.2.1'];
+  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.1'];
+  var SyntheticDragEvent = _m_['react/lib/SyntheticDragEvent.js#15.2.1'];
+  var SyntheticTouchEvent = _m_['react/lib/SyntheticTouchEvent.js#15.2.1'];
+  var SyntheticTransitionEvent = _m_['react/lib/SyntheticTransitionEvent.js#15.2.1'];
+  var SyntheticUIEvent = _m_['react/lib/SyntheticUIEvent.js#15.2.1'];
+  var SyntheticWheelEvent = _m_['react/lib/SyntheticWheelEvent.js#15.2.1'];
   
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
-  var getEventCharCode = _m_['react/lib/getEventCharCode.js#15.2.0'];
+  var getEventCharCode = _m_['react/lib/getEventCharCode.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var keyOf = _m_['fbjs/lib/keyOf.js#0.8.3'];
   
@@ -14062,7 +14056,7 @@ _m_['fbjs/lib/shallowEqual.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/isTextInputElement.js#15.2.0']=(function(module,exports){
+_m_['react/lib/isTextInputElement.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -14074,6 +14068,7 @@ _m_['react/lib/isTextInputElement.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule isTextInputElement
+   * 
    */
   
   'use strict';
@@ -14102,7 +14097,16 @@ _m_['react/lib/isTextInputElement.js#15.2.0']=(function(module,exports){
   
   function isTextInputElement(elem) {
     var nodeName = elem && elem.nodeName && elem.nodeName.toLowerCase();
-    return nodeName && (nodeName === 'input' && supportedInputTypes[elem.type] || nodeName === 'textarea');
+  
+    if (nodeName === 'input') {
+      return !!supportedInputTypes[elem.type];
+    }
+  
+    if (nodeName === 'textarea') {
+      return true;
+    }
+  
+    return false;
   }
   
   module.exports = isTextInputElement;
@@ -14284,7 +14288,7 @@ _m_['fbjs/lib/containsNode.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getTextContentAccessor.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getTextContentAccessor.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -14323,7 +14327,7 @@ _m_['react/lib/getTextContentAccessor.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/getNodeForCharacterOffset.js#15.2.0']=(function(module,exports){
+_m_['react/lib/getNodeForCharacterOffset.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -14403,7 +14407,7 @@ _m_['react/lib/getNodeForCharacterOffset.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMSelection.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMSelection.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -14421,8 +14425,8 @@ _m_['react/lib/ReactDOMSelection.js#15.2.0']=(function(module,exports){
   
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
   
-  var getNodeForCharacterOffset = _m_['react/lib/getNodeForCharacterOffset.js#15.2.0'];
-  var getTextContentAccessor = _m_['react/lib/getTextContentAccessor.js#15.2.0'];
+  var getNodeForCharacterOffset = _m_['react/lib/getNodeForCharacterOffset.js#15.2.1'];
+  var getTextContentAccessor = _m_['react/lib/getTextContentAccessor.js#15.2.1'];
   
   /**
    * While `isCollapsed` is available on the Selection object and `collapsed`
@@ -14621,7 +14625,7 @@ _m_['react/lib/ReactDOMSelection.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactInputSelection.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactInputSelection.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -14637,7 +14641,7 @@ _m_['react/lib/ReactInputSelection.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactDOMSelection = _m_['react/lib/ReactDOMSelection.js#15.2.0'];
+  var ReactDOMSelection = _m_['react/lib/ReactDOMSelection.js#15.2.1'];
   
   var containsNode = _m_['fbjs/lib/containsNode.js#0.8.3'];
   var focusNode = _m_['fbjs/lib/focusNode.js#0.8.3'];
@@ -14751,7 +14755,7 @@ _m_['react/lib/ReactInputSelection.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SelectEventPlugin.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SelectEventPlugin.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -14767,15 +14771,15 @@ _m_['react/lib/SelectEventPlugin.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.1'];
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactInputSelection = _m_['react/lib/ReactInputSelection.js#15.2.0'];
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactInputSelection = _m_['react/lib/ReactInputSelection.js#15.2.1'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
   var getActiveElement = _m_['fbjs/lib/getActiveElement.js#0.8.3'];
-  var isTextInputElement = _m_['react/lib/isTextInputElement.js#15.2.0'];
+  var isTextInputElement = _m_['react/lib/isTextInputElement.js#15.2.1'];
   var keyOf = _m_['fbjs/lib/keyOf.js#0.8.3'];
   var shallowEqual = _m_['fbjs/lib/shallowEqual.js#0.8.3'];
   
@@ -14953,7 +14957,7 @@ _m_['react/lib/SelectEventPlugin.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SVGDOMPropertyConfig.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SVGDOMPropertyConfig.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -15259,7 +15263,7 @@ _m_['react/lib/SVGDOMPropertyConfig.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactReconcileTransaction.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactReconcileTransaction.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -15277,11 +15281,13 @@ _m_['react/lib/ReactReconcileTransaction.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var CallbackQueue = _m_['react/lib/CallbackQueue.js#15.2.0'];
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
-  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.0'];
-  var ReactInputSelection = _m_['react/lib/ReactInputSelection.js#15.2.0'];
-  var Transaction = _m_['react/lib/Transaction.js#15.2.0'];
+  var CallbackQueue = _m_['react/lib/CallbackQueue.js#15.2.1'];
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
+  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.1'];
+  var ReactInputSelection = _m_['react/lib/ReactInputSelection.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
+  var Transaction = _m_['react/lib/Transaction.js#15.2.1'];
+  var ReactUpdateQueue = _m_['react/lib/ReactUpdateQueue.js#15.2.1'];
   
   /**
    * Ensures that, when possible, the selection range (currently selected text
@@ -15351,6 +15357,13 @@ _m_['react/lib/ReactReconcileTransaction.js#15.2.0']=(function(module,exports){
    */
   var TRANSACTION_WRAPPERS = [SELECTION_RESTORATION, EVENT_SUPPRESSION, ON_DOM_READY_QUEUEING];
   
+  if (process.env.NODE_ENV !== 'production') {
+    TRANSACTION_WRAPPERS.push({
+      initialize: ReactInstrumentation.debugTool.onBeginFlush,
+      close: ReactInstrumentation.debugTool.onEndFlush
+    });
+  }
+  
   /**
    * Currently:
    * - The order that these are listed in the transaction is critical:
@@ -15397,6 +15410,13 @@ _m_['react/lib/ReactReconcileTransaction.js#15.2.0']=(function(module,exports){
     },
   
     /**
+     * @return {object} The queue to collect React async events.
+     */
+    getUpdateQueue: function () {
+      return ReactUpdateQueue;
+    },
+  
+    /**
      * Save current transaction state -- if the return value from this method is
      * passed to `rollback`, the transaction will be reset to that state.
      */
@@ -15427,7 +15447,7 @@ _m_['react/lib/ReactReconcileTransaction.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactInjection.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactInjection.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -15443,15 +15463,15 @@ _m_['react/lib/ReactInjection.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.0'];
-  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.0'];
-  var EventPluginUtils = _m_['react/lib/EventPluginUtils.js#15.2.0'];
-  var ReactComponentEnvironment = _m_['react/lib/ReactComponentEnvironment.js#15.2.0'];
-  var ReactClass = _m_['react/lib/ReactClass.js#15.2.0'];
-  var ReactEmptyComponent = _m_['react/lib/ReactEmptyComponent.js#15.2.0'];
-  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.0'];
-  var ReactHostComponent = _m_['react/lib/ReactHostComponent.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
+  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.1'];
+  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.1'];
+  var EventPluginUtils = _m_['react/lib/EventPluginUtils.js#15.2.1'];
+  var ReactComponentEnvironment = _m_['react/lib/ReactComponentEnvironment.js#15.2.1'];
+  var ReactClass = _m_['react/lib/ReactClass.js#15.2.1'];
+  var ReactEmptyComponent = _m_['react/lib/ReactEmptyComponent.js#15.2.1'];
+  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.1'];
+  var ReactHostComponent = _m_['react/lib/ReactHostComponent.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
   
   var ReactInjection = {
     Component: ReactComponentEnvironment.injection,
@@ -15513,7 +15533,7 @@ _m_['fbjs/lib/getUnboundedScrollPosition.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactEventListener.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactEventListener.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -15533,11 +15553,11 @@ _m_['react/lib/ReactEventListener.js#15.2.0']=(function(module,exports){
   
   var EventListener = _m_['fbjs/lib/EventListener.js#0.8.3'];
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
   
-  var getEventTarget = _m_['react/lib/getEventTarget.js#15.2.0'];
+  var getEventTarget = _m_['react/lib/getEventTarget.js#15.2.1'];
   var getUnboundedScrollPosition = _m_['fbjs/lib/getUnboundedScrollPosition.js#0.8.3'];
   
   /**
@@ -15676,7 +15696,7 @@ _m_['react/lib/ReactEventListener.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDefaultBatchingStrategy.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDefaultBatchingStrategy.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -15694,8 +15714,8 @@ _m_['react/lib/ReactDefaultBatchingStrategy.js#15.2.0']=(function(module,exports
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
-  var Transaction = _m_['react/lib/Transaction.js#15.2.0'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
+  var Transaction = _m_['react/lib/Transaction.js#15.2.1'];
   
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
   
@@ -15750,7 +15770,7 @@ _m_['react/lib/ReactDefaultBatchingStrategy.js#15.2.0']=(function(module,exports
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactMultiChildUpdateTypes.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactMultiChildUpdateTypes.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16109,7 +16129,7 @@ _m_['fbjs/lib/createNodesFromMarkup.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/Danger.js#15.2.0']=(function(module,exports){
+_m_['react/lib/Danger.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16125,114 +16145,16 @@ _m_['react/lib/Danger.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.0'];
+  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.1'];
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
   
   var createNodesFromMarkup = _m_['fbjs/lib/createNodesFromMarkup.js#0.8.3'];
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
-  var getMarkupWrap = _m_['fbjs/lib/getMarkupWrap.js#0.8.3'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
-  var OPEN_TAG_NAME_EXP = /^(<[^ \/>]+)/;
-  var RESULT_INDEX_ATTR = 'data-danger-index';
-  
-  /**
-   * Extracts the `nodeName` from a string of markup.
-   *
-   * NOTE: Extracting the `nodeName` does not require a regular expression match
-   * because we make assumptions about React-generated markup (i.e. there are no
-   * spaces surrounding the opening tag and there is at least one attribute).
-   *
-   * @param {string} markup String of markup.
-   * @return {string} Node name of the supplied markup.
-   * @see http://jsperf.com/extract-nodename
-   */
-  function getNodeName(markup) {
-    return markup.substring(1, markup.indexOf(' '));
-  }
-  
   var Danger = {
-  
-    /**
-     * Renders markup into an array of nodes. The markup is expected to render
-     * into a list of root nodes. Also, the length of `resultList` and
-     * `markupList` should be the same.
-     *
-     * @param {array<string>} markupList List of markup strings to render.
-     * @return {array<DOMElement>} List of rendered nodes.
-     * @internal
-     */
-    dangerouslyRenderMarkup: function (markupList) {
-      !ExecutionEnvironment.canUseDOM ? process.env.NODE_ENV !== 'production' ? invariant(false, 'dangerouslyRenderMarkup(...): Cannot render markup in a worker thread. Make sure `window` and `document` are available globally before requiring React when unit testing or use ReactDOMServer.renderToString for server rendering.') : _prodInvariant('51') : void 0;
-      var nodeName;
-      var markupByNodeName = {};
-      // Group markup by `nodeName` if a wrap is necessary, else by '*'.
-      for (var i = 0; i < markupList.length; i++) {
-        !markupList[i] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'dangerouslyRenderMarkup(...): Missing markup.') : _prodInvariant('52') : void 0;
-        nodeName = getNodeName(markupList[i]);
-        nodeName = getMarkupWrap(nodeName) ? nodeName : '*';
-        markupByNodeName[nodeName] = markupByNodeName[nodeName] || [];
-        markupByNodeName[nodeName][i] = markupList[i];
-      }
-      var resultList = [];
-      var resultListAssignmentCount = 0;
-      for (nodeName in markupByNodeName) {
-        if (!markupByNodeName.hasOwnProperty(nodeName)) {
-          continue;
-        }
-        var markupListByNodeName = markupByNodeName[nodeName];
-  
-        // This for-in loop skips the holes of the sparse array. The order of
-        // iteration should follow the order of assignment, which happens to match
-        // numerical index order, but we don't rely on that.
-        var resultIndex;
-        for (resultIndex in markupListByNodeName) {
-          if (markupListByNodeName.hasOwnProperty(resultIndex)) {
-            var markup = markupListByNodeName[resultIndex];
-  
-            // Push the requested markup with an additional RESULT_INDEX_ATTR
-            // attribute.  If the markup does not start with a < character, it
-            // will be discarded below (with an appropriate console.error).
-            markupListByNodeName[resultIndex] = markup.replace(OPEN_TAG_NAME_EXP,
-            // This index will be parsed back out below.
-            '$1 ' + RESULT_INDEX_ATTR + '="' + resultIndex + '" ');
-          }
-        }
-  
-        // Render each group of markup with similar wrapping `nodeName`.
-        var renderNodes = createNodesFromMarkup(markupListByNodeName.join(''), emptyFunction // Do nothing special with <script> tags.
-        );
-  
-        for (var j = 0; j < renderNodes.length; ++j) {
-          var renderNode = renderNodes[j];
-          if (renderNode.hasAttribute && renderNode.hasAttribute(RESULT_INDEX_ATTR)) {
-  
-            resultIndex = +renderNode.getAttribute(RESULT_INDEX_ATTR);
-            renderNode.removeAttribute(RESULT_INDEX_ATTR);
-  
-            !!resultList.hasOwnProperty(resultIndex) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Danger: Assigning to an already-occupied result index.') : _prodInvariant('53') : void 0;
-  
-            resultList[resultIndex] = renderNode;
-  
-            // This should match resultList.length and markupList.length when
-            // we're done.
-            resultListAssignmentCount += 1;
-          } else if (process.env.NODE_ENV !== 'production') {
-            console.error('Danger: Discarding unexpected node:', renderNode);
-          }
-        }
-      }
-  
-      // Although resultList was populated out of order, it should now be a dense
-      // array.
-      !(resultListAssignmentCount === resultList.length) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Danger: Did not assign to every index of resultList.') : _prodInvariant('54') : void 0;
-  
-      !(resultList.length === markupList.length) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Danger: Expected markup to render %s nodes, but rendered %s.', markupList.length, resultList.length) : _prodInvariant('55', markupList.length, resultList.length) : void 0;
-  
-      return resultList;
-    },
   
     /**
      * Replaces a node with a string of markup at its current position within its
@@ -16261,7 +16183,7 @@ _m_['react/lib/Danger.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/DOMChildrenOperations.js#15.2.0']=(function(module,exports){
+_m_['react/lib/DOMChildrenOperations.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16277,15 +16199,15 @@ _m_['react/lib/DOMChildrenOperations.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.0'];
-  var Danger = _m_['react/lib/Danger.js#15.2.0'];
-  var ReactMultiChildUpdateTypes = _m_['react/lib/ReactMultiChildUpdateTypes.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
+  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.1'];
+  var Danger = _m_['react/lib/Danger.js#15.2.1'];
+  var ReactMultiChildUpdateTypes = _m_['react/lib/ReactMultiChildUpdateTypes.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
   
-  var createMicrosoftUnsafeLocalFunction = _m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.0'];
-  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.0'];
-  var setTextContent = _m_['react/lib/setTextContent.js#15.2.0'];
+  var createMicrosoftUnsafeLocalFunction = _m_['react/lib/createMicrosoftUnsafeLocalFunction.js#15.2.1'];
+  var setInnerHTML = _m_['react/lib/setInnerHTML.js#15.2.1'];
+  var setTextContent = _m_['react/lib/setTextContent.js#15.2.1'];
   
   function getNodeAfter(parentNode, node) {
     // Special case for text components, which return [open, close] comments
@@ -16461,7 +16383,7 @@ _m_['react/lib/DOMChildrenOperations.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMTextComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMTextComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16477,17 +16399,17 @@ _m_['react/lib/ReactDOMTextComponent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var DOMChildrenOperations = _m_['react/lib/DOMChildrenOperations.js#15.2.0'];
-  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
+  var DOMChildrenOperations = _m_['react/lib/DOMChildrenOperations.js#15.2.1'];
+  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
   
-  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.0'];
+  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  var validateDOMNesting = _m_['react/lib/validateDOMNesting.js#15.2.0'];
+  var validateDOMNesting = _m_['react/lib/validateDOMNesting.js#15.2.1'];
   
   /**
    * Text nodes violate a couple assumptions that React makes about components:
@@ -16638,7 +16560,7 @@ _m_['react/lib/ReactDOMTextComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMTreeTraversal.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMTreeTraversal.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16654,7 +16576,7 @@ _m_['react/lib/ReactDOMTreeTraversal.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
@@ -16780,7 +16702,7 @@ _m_['react/lib/ReactDOMTreeTraversal.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMEmptyComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMEmptyComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16798,8 +16720,8 @@ _m_['react/lib/ReactDOMEmptyComponent.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
+  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
   
   var ReactDOMEmptyComponent = function (instantiate) {
     // ReactCompositeComponent uses this:
@@ -16846,7 +16768,154 @@ _m_['react/lib/ReactDOMEmptyComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactServerRenderingTransaction.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactServerUpdateQueue.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2015-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactServerUpdateQueue
+   * 
+   */
+  
+  'use strict';
+  
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  
+  var ReactUpdateQueue = _m_['react/lib/ReactUpdateQueue.js#15.2.1'];
+  var Transaction = _m_['react/lib/Transaction.js#15.2.1'];
+  var warning = _m_['fbjs/lib/warning.js#0.8.3'];
+  
+  function warnNoop(publicInstance, callerName) {
+    if (process.env.NODE_ENV !== 'production') {
+      var constructor = publicInstance.constructor;
+      process.env.NODE_ENV !== 'production' ? warning(false, '%s(...): Can only update a mounting component. ' + 'This usually means you called %s() outside componentWillMount() on the server. ' + 'This is a no-op. Please check the code for the %s component.', callerName, callerName, constructor && (constructor.displayName || constructor.name) || 'ReactClass') : void 0;
+    }
+  }
+  
+  /**
+   * This is the update queue used for server rendering.
+   * It delegates to ReactUpdateQueue while server rendering is in progress and
+   * switches to ReactNoopUpdateQueue after the transaction has completed.
+   * @class ReactServerUpdateQueue
+   * @param {Transaction} transaction
+   */
+  
+  var ReactServerUpdateQueue = function () {
+    /* :: transaction: Transaction; */
+  
+    function ReactServerUpdateQueue(transaction) {
+      _classCallCheck(this, ReactServerUpdateQueue);
+  
+      this.transaction = transaction;
+    }
+  
+    /**
+     * Checks whether or not this composite component is mounted.
+     * @param {ReactClass} publicInstance The instance we want to test.
+     * @return {boolean} True if mounted, false otherwise.
+     * @protected
+     * @final
+     */
+  
+  
+    ReactServerUpdateQueue.prototype.isMounted = function isMounted(publicInstance) {
+      return false;
+    };
+  
+    /**
+     * Enqueue a callback that will be executed after all the pending updates
+     * have processed.
+     *
+     * @param {ReactClass} publicInstance The instance to use as `this` context.
+     * @param {?function} callback Called after state is updated.
+     * @internal
+     */
+  
+  
+    ReactServerUpdateQueue.prototype.enqueueCallback = function enqueueCallback(publicInstance, callback, callerName) {
+      if (this.transaction.isInTransaction()) {
+        ReactUpdateQueue.enqueueCallback(publicInstance, callback, callerName);
+      }
+    };
+  
+    /**
+     * Forces an update. This should only be invoked when it is known with
+     * certainty that we are **not** in a DOM transaction.
+     *
+     * You may want to call this when you know that some deeper aspect of the
+     * component's state has changed but `setState` was not called.
+     *
+     * This will not invoke `shouldComponentUpdate`, but it will invoke
+     * `componentWillUpdate` and `componentDidUpdate`.
+     *
+     * @param {ReactClass} publicInstance The instance that should rerender.
+     * @internal
+     */
+  
+  
+    ReactServerUpdateQueue.prototype.enqueueForceUpdate = function enqueueForceUpdate(publicInstance) {
+      if (this.transaction.isInTransaction()) {
+        ReactUpdateQueue.enqueueForceUpdate(publicInstance);
+      } else {
+        warnNoop(publicInstance, 'forceUpdate');
+      }
+    };
+  
+    /**
+     * Replaces all of the state. Always use this or `setState` to mutate state.
+     * You should treat `this.state` as immutable.
+     *
+     * There is no guarantee that `this.state` will be immediately updated, so
+     * accessing `this.state` after calling this method may return the old value.
+     *
+     * @param {ReactClass} publicInstance The instance that should rerender.
+     * @param {object|function} completeState Next state.
+     * @internal
+     */
+  
+  
+    ReactServerUpdateQueue.prototype.enqueueReplaceState = function enqueueReplaceState(publicInstance, completeState) {
+      if (this.transaction.isInTransaction()) {
+        ReactUpdateQueue.enqueueReplaceState(publicInstance, completeState);
+      } else {
+        warnNoop(publicInstance, 'replaceState');
+      }
+    };
+  
+    /**
+     * Sets a subset of the state. This only exists because _pendingState is
+     * internal. This provides a merging strategy that is not available to deep
+     * properties which is confusing. TODO: Expose pendingState or don't use it
+     * during the merge.
+     *
+     * @param {ReactClass} publicInstance The instance that should rerender.
+     * @param {object|function} partialState Next partial state to be merged with state.
+     * @internal
+     */
+  
+  
+    ReactServerUpdateQueue.prototype.enqueueSetState = function enqueueSetState(publicInstance, partialState) {
+      if (this.transaction.isInTransaction()) {
+        ReactUpdateQueue.enqueueSetState(publicInstance, partialState);
+      } else {
+        warnNoop(publicInstance, 'setState');
+      }
+    };
+  
+    return ReactServerUpdateQueue;
+  }();
+  
+  module.exports = ReactServerUpdateQueue;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/ReactServerRenderingTransaction.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16864,8 +16933,10 @@ _m_['react/lib/ReactServerRenderingTransaction.js#15.2.0']=(function(module,expo
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
-  var Transaction = _m_['react/lib/Transaction.js#15.2.0'];
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
+  var Transaction = _m_['react/lib/Transaction.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
+  var ReactServerUpdateQueue = _m_['react/lib/ReactServerUpdateQueue.js#15.2.1'];
   
   /**
    * Executed within the scope of the `Transaction` instance. Consider these as
@@ -16873,6 +16944,13 @@ _m_['react/lib/ReactServerRenderingTransaction.js#15.2.0']=(function(module,expo
    * each other.
    */
   var TRANSACTION_WRAPPERS = [];
+  
+  if (process.env.NODE_ENV !== 'production') {
+    TRANSACTION_WRAPPERS.push({
+      initialize: ReactInstrumentation.debugTool.onBeginFlush,
+      close: ReactInstrumentation.debugTool.onEndFlush
+    });
+  }
   
   var noopCallbackQueue = {
     enqueue: function () {}
@@ -16886,6 +16964,7 @@ _m_['react/lib/ReactServerRenderingTransaction.js#15.2.0']=(function(module,expo
     this.reinitializeTransaction();
     this.renderToStaticMarkup = renderToStaticMarkup;
     this.useCreateElement = false;
+    this.updateQueue = new ReactServerUpdateQueue(this);
   }
   
   var Mixin = {
@@ -16907,6 +16986,13 @@ _m_['react/lib/ReactServerRenderingTransaction.js#15.2.0']=(function(module,expo
     },
   
     /**
+     * @return {object} The queue to collect React async events.
+     */
+    getUpdateQueue: function () {
+      return this.updateQueue;
+    },
+  
+    /**
      * `PooledClass` looks for this, and will invoke this before allowing this
      * instance to be reused.
      */
@@ -16925,7 +17011,7 @@ _m_['react/lib/ReactServerRenderingTransaction.js#15.2.0']=(function(module,expo
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/flattenChildren.js#15.2.0']=(function(module,exports){
+_m_['react/lib/flattenChildren.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -16937,13 +17023,13 @@ _m_['react/lib/flattenChildren.js#15.2.0']=(function(module,exports){
    * of patent rights can be found in the PATENTS file in the same directory.
    *
    * @providesModule flattenChildren
+   * 
    */
   
   'use strict';
   
-  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0'];
-  var KeyEscapeUtils = _m_['react/lib/KeyEscapeUtils.js#15.2.0'];
-  var traverseAllChildren = _m_['react/lib/traverseAllChildren.js#15.2.0'];
+  var KeyEscapeUtils = _m_['react/lib/KeyEscapeUtils.js#15.2.1'];
+  var traverseAllChildren = _m_['react/lib/traverseAllChildren.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   /**
@@ -16954,13 +17040,16 @@ _m_['react/lib/flattenChildren.js#15.2.0']=(function(module,exports){
    */
   function flattenSingleChildIntoContext(traverseContext, child, name, selfDebugID) {
     // We found a component instance.
-    var result = traverseContext;
-    var keyUnique = result[name] === undefined;
-    if (process.env.NODE_ENV !== 'production') {
-      process.env.NODE_ENV !== 'production' ? warning(keyUnique, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils.unescape(name), ReactComponentTreeDevtool.getStackAddendumByID(selfDebugID)) : void 0;
-    }
-    if (keyUnique && child != null) {
-      result[name] = child;
+    if (traverseContext && typeof traverseContext === 'object') {
+      var result = traverseContext;
+      var keyUnique = result[name] === undefined;
+      if (process.env.NODE_ENV !== 'production') {
+        var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.1'];
+        process.env.NODE_ENV !== 'production' ? warning(keyUnique, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils.unescape(name), ReactComponentTreeDevtool.getStackAddendumByID(selfDebugID)) : void 0;
+      }
+      if (keyUnique && child != null) {
+        result[name] = child;
+      }
     }
   }
   
@@ -16989,7 +17078,7 @@ _m_['react/lib/flattenChildren.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactChildReconciler.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactChildReconciler.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -17005,23 +17094,23 @@ _m_['react/lib/ReactChildReconciler.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.0'];
+  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.1'];
   
-  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0'];
-  var instantiateReactComponent = _m_['react/lib/instantiateReactComponent.js#15.2.0'];
-  var KeyEscapeUtils = _m_['react/lib/KeyEscapeUtils.js#15.2.0'];
-  var shouldUpdateReactComponent = _m_['react/lib/shouldUpdateReactComponent.js#15.2.0'];
-  var traverseAllChildren = _m_['react/lib/traverseAllChildren.js#15.2.0'];
+  var instantiateReactComponent = _m_['react/lib/instantiateReactComponent.js#15.2.1'];
+  var KeyEscapeUtils = _m_['react/lib/KeyEscapeUtils.js#15.2.1'];
+  var shouldUpdateReactComponent = _m_['react/lib/shouldUpdateReactComponent.js#15.2.1'];
+  var traverseAllChildren = _m_['react/lib/traverseAllChildren.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   function instantiateChild(childInstances, child, name, selfDebugID) {
     // We found a component instance.
     var keyUnique = childInstances[name] === undefined;
     if (process.env.NODE_ENV !== 'production') {
+      var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.1'];
       process.env.NODE_ENV !== 'production' ? warning(keyUnique, 'flattenChildren(...): Encountered two children with the same key, ' + '`%s`. Child keys must be unique; when two children share a key, only ' + 'the first child will be used.%s', KeyEscapeUtils.unescape(name), ReactComponentTreeDevtool.getStackAddendumByID(selfDebugID)) : void 0;
     }
     if (child != null && keyUnique) {
-      childInstances[name] = instantiateReactComponent(child);
+      childInstances[name] = instantiateReactComponent(child, true);
     }
   }
   
@@ -17093,7 +17182,7 @@ _m_['react/lib/ReactChildReconciler.js#15.2.0']=(function(module,exports){
             ReactReconciler.unmountComponent(prevChild, false);
           }
           // The child must be instantiated before it's mounted.
-          var nextChildInstance = instantiateReactComponent(nextElement);
+          var nextChildInstance = instantiateReactComponent(nextElement, true);
           nextChildren[name] = nextChildInstance;
         }
       }
@@ -17129,7 +17218,7 @@ _m_['react/lib/ReactChildReconciler.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactMultiChild.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactMultiChild.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -17145,19 +17234,19 @@ _m_['react/lib/ReactMultiChild.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactComponentEnvironment = _m_['react/lib/ReactComponentEnvironment.js#15.2.0'];
-  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
-  var ReactMultiChildUpdateTypes = _m_['react/lib/ReactMultiChildUpdateTypes.js#15.2.0'];
+  var ReactComponentEnvironment = _m_['react/lib/ReactComponentEnvironment.js#15.2.1'];
+  var ReactInstanceMap = _m_['react/lib/ReactInstanceMap.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
+  var ReactMultiChildUpdateTypes = _m_['react/lib/ReactMultiChildUpdateTypes.js#15.2.1'];
   
-  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.0'];
-  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.0'];
-  var ReactChildReconciler = _m_['react/lib/ReactChildReconciler.js#15.2.0'];
+  var ReactCurrentOwner = _m_['react/lib/ReactCurrentOwner.js#15.2.1'];
+  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.1'];
+  var ReactChildReconciler = _m_['react/lib/ReactChildReconciler.js#15.2.1'];
   
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
-  var flattenChildren = _m_['react/lib/flattenChildren.js#15.2.0'];
+  var flattenChildren = _m_['react/lib/flattenChildren.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   
   /**
@@ -17292,9 +17381,14 @@ _m_['react/lib/ReactMultiChild.js#15.2.0']=(function(module,exports){
       }
     };
     setChildrenForInstrumentation = function (children) {
-      ReactInstrumentation.debugTool.onSetChildren(getDebugID(this), children ? Object.keys(children).map(function (key) {
-        return children[key]._debugID;
-      }) : []);
+      var debugID = getDebugID(this);
+      // TODO: React Native empty components are also multichild.
+      // This means they still get into this method but don't have _debugID.
+      if (debugID !== 0) {
+        ReactInstrumentation.debugTool.onSetChildren(debugID, children ? Object.keys(children).map(function (key) {
+          return children[key]._debugID;
+        }) : []);
+      }
     };
   }
   
@@ -17580,7 +17674,7 @@ _m_['react/lib/ReactMultiChild.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/LinkedValueUtils.js#15.2.0']=(function(module,exports){
+_m_['react/lib/LinkedValueUtils.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -17596,10 +17690,10 @@ _m_['react/lib/LinkedValueUtils.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'];
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'];
   
-  var ReactPropTypes = _m_['react/lib/ReactPropTypes.js#15.2.0'];
-  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.0'];
+  var ReactPropTypes = _m_['react/lib/ReactPropTypes.js#15.2.1'];
+  var ReactPropTypeLocations = _m_['react/lib/ReactPropTypeLocations.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -17721,7 +17815,7 @@ _m_['react/lib/LinkedValueUtils.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/DisabledInputUtils.js#15.2.0']=(function(module,exports){
+_m_['react/lib/DisabledInputUtils.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -17777,7 +17871,7 @@ _m_['react/lib/DisabledInputUtils.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMTextarea.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMTextarea.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -17793,33 +17887,24 @@ _m_['react/lib/ReactDOMTextarea.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.0'];
-  var LinkedValueUtils = _m_['react/lib/LinkedValueUtils.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
+  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.1'];
+  var LinkedValueUtils = _m_['react/lib/LinkedValueUtils.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var didWarnValueLink = false;
-  var didWarnValueNull = false;
   var didWarnValDefaultVal = false;
   
   function forceUpdateIfMounted() {
     if (this._rootNodeID) {
       // DOM component is still mounted; update
       ReactDOMTextarea.updateWrapper(this);
-    }
-  }
-  
-  function warnIfValueIsNull(props) {
-    if (props != null && props.value === null && !didWarnValueNull) {
-      process.env.NODE_ENV !== 'production' ? warning(false, '`value` prop on `textarea` should not be null. ' + 'Consider using the empty string to clear the component or `undefined` ' + 'for uncontrolled components.') : void 0;
-  
-      didWarnValueNull = true;
     }
   }
   
@@ -17868,7 +17953,6 @@ _m_['react/lib/ReactDOMTextarea.js#15.2.0']=(function(module,exports){
           process.env.NODE_ENV !== 'production' ? warning(false, 'Textarea elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled textarea ' + 'and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components') : void 0;
           didWarnValDefaultVal = true;
         }
-        warnIfValueIsNull(props);
       }
   
       var value = LinkedValueUtils.getValue(props);
@@ -17906,10 +17990,6 @@ _m_['react/lib/ReactDOMTextarea.js#15.2.0']=(function(module,exports){
   
     updateWrapper: function (inst) {
       var props = inst._currentElement.props;
-  
-      if (process.env.NODE_ENV !== 'production') {
-        warnIfValueIsNull(props);
-      }
   
       var node = ReactDOMComponentTree.getNodeFromInstance(inst);
       var value = LinkedValueUtils.getValue(props);
@@ -17952,7 +18032,7 @@ _m_['react/lib/ReactDOMTextarea.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMSelect.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMSelect.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -17970,15 +18050,14 @@ _m_['react/lib/ReactDOMSelect.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.0'];
-  var LinkedValueUtils = _m_['react/lib/LinkedValueUtils.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
+  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.1'];
+  var LinkedValueUtils = _m_['react/lib/LinkedValueUtils.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
   
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var didWarnValueLink = false;
-  var didWarnValueNull = false;
   var didWarnValueDefaultValue = false;
   
   function updateOptionsIfPendingUpdateAndMounted() {
@@ -18002,14 +18081,6 @@ _m_['react/lib/ReactDOMSelect.js#15.2.0']=(function(module,exports){
       }
     }
     return '';
-  }
-  
-  function warnIfValueIsNull(props) {
-    if (props != null && props.value === null && !didWarnValueNull) {
-      process.env.NODE_ENV !== 'production' ? warning(false, '`value` prop on `select` should not be null. ' + 'Consider using the empty string to clear the component or `undefined` ' + 'for uncontrolled components.') : void 0;
-  
-      didWarnValueNull = true;
-    }
   }
   
   var valuePropNames = ['value', 'defaultValue'];
@@ -18103,7 +18174,6 @@ _m_['react/lib/ReactDOMSelect.js#15.2.0']=(function(module,exports){
     mountWrapper: function (inst, props) {
       if (process.env.NODE_ENV !== 'production') {
         checkSelectPropTypes(inst, props);
-        warnIfValueIsNull(props);
       }
   
       var value = LinkedValueUtils.getValue(props);
@@ -18129,9 +18199,6 @@ _m_['react/lib/ReactDOMSelect.js#15.2.0']=(function(module,exports){
   
     postUpdateWrapper: function (inst) {
       var props = inst._currentElement.props;
-      if (process.env.NODE_ENV !== 'production') {
-        warnIfValueIsNull(props);
-      }
   
       // After the initial mount, we control selected-ness manually so don't pass
       // this value down
@@ -18171,7 +18238,7 @@ _m_['react/lib/ReactDOMSelect.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMOption.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMOption.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -18189,9 +18256,9 @@ _m_['react/lib/ReactDOMOption.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var ReactChildren = _m_['react/lib/ReactChildren.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactDOMSelect = _m_['react/lib/ReactDOMSelect.js#15.2.0'];
+  var ReactChildren = _m_['react/lib/ReactChildren.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactDOMSelect = _m_['react/lib/ReactDOMSelect.js#15.2.1'];
   
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   var didWarnInvalidOptionChildren = false;
@@ -18300,7 +18367,7 @@ _m_['react/lib/ReactDOMOption.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/quoteAttributeValueForBrowser.js#15.2.0']=(function(module,exports){
+_m_['react/lib/quoteAttributeValueForBrowser.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -18316,7 +18383,7 @@ _m_['react/lib/quoteAttributeValueForBrowser.js#15.2.0']=(function(module,export
   
   'use strict';
   
-  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.0'];
+  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.1'];
   
   /**
    * Escapes attribute value to prevent scripting attacks.
@@ -18332,7 +18399,7 @@ _m_['react/lib/quoteAttributeValueForBrowser.js#15.2.0']=(function(module,export
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMUnknownPropertyDevtool.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMUnknownPropertyDevtool.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -18348,9 +18415,9 @@ _m_['react/lib/ReactDOMUnknownPropertyDevtool.js#15.2.0']=(function(module,expor
   
   'use strict';
   
-  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.0'];
-  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.0'];
-  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.0'];
+  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.1'];
+  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.1'];
+  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.1'];
   
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
@@ -18450,7 +18517,56 @@ _m_['react/lib/ReactDOMUnknownPropertyDevtool.js#15.2.0']=(function(module,expor
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMDebugTool.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMNullInputValuePropDevtool.js#15.2.1']=(function(module,exports){
+  module=this;exports=module.exports;
+
+  /**
+   * Copyright 2013-present, Facebook, Inc.
+   * All rights reserved.
+   *
+   * This source code is licensed under the BSD-style license found in the
+   * LICENSE file in the root directory of this source tree. An additional grant
+   * of patent rights can be found in the PATENTS file in the same directory.
+   *
+   * @providesModule ReactDOMNullInputValuePropDevtool
+   */
+  
+  'use strict';
+  
+  var ReactComponentTreeDevtool = _m_['react/lib/ReactComponentTreeDevtool.js#15.2.1'];
+  
+  var warning = _m_['fbjs/lib/warning.js#0.8.3'];
+  
+  var didWarnValueNull = false;
+  
+  function handleElement(debugID, element) {
+    if (element == null) {
+      return;
+    }
+    if (element.type !== 'input' && element.type !== 'textarea' && element.type !== 'select') {
+      return;
+    }
+    if (element.props != null && element.props.value === null && !didWarnValueNull) {
+      process.env.NODE_ENV !== 'production' ? warning(false, '`value` prop on `%s` should not be null. ' + 'Consider using the empty string to clear the component or `undefined` ' + 'for uncontrolled components.%s', element.type, ReactComponentTreeDevtool.getStackAddendumByID(debugID)) : void 0;
+  
+      didWarnValueNull = true;
+    }
+  }
+  
+  var ReactDOMUnknownPropertyDevtool = {
+    onBeforeMountComponent: function (debugID, element) {
+      handleElement(debugID, element);
+    },
+    onBeforeUpdateComponent: function (debugID, element) {
+      handleElement(debugID, element);
+    }
+  };
+  
+  module.exports = ReactDOMUnknownPropertyDevtool;
+
+  return module.exports;
+}).call({exports:{}});
+_m_['react/lib/ReactDOMDebugTool.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -18466,8 +18582,9 @@ _m_['react/lib/ReactDOMDebugTool.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactDOMUnknownPropertyDevtool = _m_['react/lib/ReactDOMUnknownPropertyDevtool.js#15.2.0'];
-  var ReactDebugTool = _m_['react/lib/ReactDebugTool.js#15.2.0'];
+  var ReactDOMNullInputValuePropDevtool = _m_['react/lib/ReactDOMNullInputValuePropDevtool.js#15.2.1'];
+  var ReactDOMUnknownPropertyDevtool = _m_['react/lib/ReactDOMUnknownPropertyDevtool.js#15.2.1'];
+  var ReactDebugTool = _m_['react/lib/ReactDebugTool.js#15.2.1'];
   
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
@@ -18475,18 +18592,16 @@ _m_['react/lib/ReactDOMDebugTool.js#15.2.0']=(function(module,exports){
   var handlerDoesThrowForEvent = {};
   
   function emitEvent(handlerFunctionName, arg1, arg2, arg3, arg4, arg5) {
-    if (process.env.NODE_ENV !== 'production') {
-      eventHandlers.forEach(function (handler) {
-        try {
-          if (handler[handlerFunctionName]) {
-            handler[handlerFunctionName](arg1, arg2, arg3, arg4, arg5);
-          }
-        } catch (e) {
-          process.env.NODE_ENV !== 'production' ? warning(handlerDoesThrowForEvent[handlerFunctionName], 'exception thrown by devtool while handling %s: %s', handlerFunctionName, e + '\n' + e.stack) : void 0;
-          handlerDoesThrowForEvent[handlerFunctionName] = true;
+    eventHandlers.forEach(function (handler) {
+      try {
+        if (handler[handlerFunctionName]) {
+          handler[handlerFunctionName](arg1, arg2, arg3, arg4, arg5);
         }
-      });
-    }
+      } catch (e) {
+        process.env.NODE_ENV !== 'production' ? warning(handlerDoesThrowForEvent[handlerFunctionName], 'exception thrown by devtool while handling %s: %s', handlerFunctionName, e + '\n' + e.stack) : void 0;
+        handlerDoesThrowForEvent[handlerFunctionName] = true;
+      }
+    });
   }
   
   var ReactDOMDebugTool = {
@@ -18518,12 +18633,13 @@ _m_['react/lib/ReactDOMDebugTool.js#15.2.0']=(function(module,exports){
   };
   
   ReactDOMDebugTool.addDevtool(ReactDOMUnknownPropertyDevtool);
+  ReactDOMDebugTool.addDevtool(ReactDOMNullInputValuePropDevtool);
   
   module.exports = ReactDOMDebugTool;
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMInstrumentation.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMInstrumentation.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -18539,13 +18655,18 @@ _m_['react/lib/ReactDOMInstrumentation.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactDOMDebugTool = _m_['react/lib/ReactDOMDebugTool.js#15.2.0'];
+  var debugTool = null;
   
-  module.exports = { debugTool: ReactDOMDebugTool };
+  if (process.env.NODE_ENV !== 'production') {
+    var ReactDOMDebugTool = _m_['react/lib/ReactDOMDebugTool.js#15.2.1'];
+    debugTool = ReactDOMDebugTool;
+  }
+  
+  module.exports = { debugTool: debugTool };
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/DOMPropertyOperations.js#15.2.0']=(function(module,exports){
+_m_['react/lib/DOMPropertyOperations.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -18561,12 +18682,12 @@ _m_['react/lib/DOMPropertyOperations.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactDOMInstrumentation = _m_['react/lib/ReactDOMInstrumentation.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
+  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactDOMInstrumentation = _m_['react/lib/ReactDOMInstrumentation.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
   
-  var quoteAttributeValueForBrowser = _m_['react/lib/quoteAttributeValueForBrowser.js#15.2.0'];
+  var quoteAttributeValueForBrowser = _m_['react/lib/quoteAttributeValueForBrowser.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var VALID_ATTRIBUTE_NAME_REGEX = new RegExp('^[' + DOMProperty.ATTRIBUTE_NAME_START_CHAR + '][' + DOMProperty.ATTRIBUTE_NAME_CHAR + ']*$');
@@ -18681,14 +18802,9 @@ _m_['react/lib/DOMPropertyOperations.js#15.2.0']=(function(module,exports){
           this.deleteValueForProperty(node, name);
           return;
         } else if (propertyInfo.mustUseProperty) {
-          var propName = propertyInfo.propertyName;
-          // Must explicitly cast values for HAS_SIDE_EFFECTS-properties to the
-          // property type before comparing; only `value` does and is string.
-          if (!propertyInfo.hasSideEffects || '' + node[propName] !== '' + value) {
-            // Contrary to `setAttribute`, object properties are properly
-            // `toString`ed by IE8/9.
-            node[propName] = value;
-          }
+          // Contrary to `setAttribute`, object properties are properly
+          // `toString`ed by IE8/9.
+          node[propertyInfo.propertyName] = value;
         } else {
           var attributeName = propertyInfo.attributeName;
           var namespace = propertyInfo.attributeNamespace;
@@ -18761,12 +18877,9 @@ _m_['react/lib/DOMPropertyOperations.js#15.2.0']=(function(module,exports){
         } else if (propertyInfo.mustUseProperty) {
           var propName = propertyInfo.propertyName;
           if (propertyInfo.hasBooleanValue) {
-            // No HAS_SIDE_EFFECTS logic here, only `value` has it and is string.
             node[propName] = false;
           } else {
-            if (!propertyInfo.hasSideEffects || '' + node[propName] !== '') {
-              node[propName] = '';
-            }
+            node[propName] = '';
           }
         } else {
           node.removeAttribute(propertyInfo.attributeName);
@@ -18787,7 +18900,7 @@ _m_['react/lib/DOMPropertyOperations.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMInput.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -18803,21 +18916,20 @@ _m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.0'];
-  var DOMPropertyOperations = _m_['react/lib/DOMPropertyOperations.js#15.2.0'];
-  var LinkedValueUtils = _m_['react/lib/LinkedValueUtils.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
+  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.1'];
+  var DOMPropertyOperations = _m_['react/lib/DOMPropertyOperations.js#15.2.1'];
+  var LinkedValueUtils = _m_['react/lib/LinkedValueUtils.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
   
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var didWarnValueLink = false;
   var didWarnCheckedLink = false;
-  var didWarnValueNull = false;
   var didWarnValueDefaultValue = false;
   var didWarnCheckedDefaultChecked = false;
   var didWarnControlledToUncontrolled = false;
@@ -18827,14 +18939,6 @@ _m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
     if (this._rootNodeID) {
       // DOM component is still mounted; update
       ReactDOMInput.updateWrapper(this);
-    }
-  }
-  
-  function warnIfValueIsNull(props) {
-    if (props != null && props.value === null && !didWarnValueNull) {
-      process.env.NODE_ENV !== 'production' ? warning(false, '`value` prop on `input` should not be null. ' + 'Consider using the empty string to clear the component or `undefined` ' + 'for uncontrolled components.') : void 0;
-  
-      didWarnValueNull = true;
     }
   }
   
@@ -18901,7 +19005,6 @@ _m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
           process.env.NODE_ENV !== 'production' ? warning(false, '%s contains an input of type %s with both value and defaultValue props. ' + 'Input elements must be either controlled or uncontrolled ' + '(specify either the value prop, or the defaultValue prop, but not ' + 'both). Decide between using a controlled or uncontrolled input ' + 'element and remove one of these props. More info: ' + 'https://fb.me/react-controlled-components', owner && owner.getName() || 'A component', props.type) : void 0;
           didWarnValueDefaultValue = true;
         }
-        warnIfValueIsNull(props);
       }
   
       var defaultValue = props.defaultValue;
@@ -18921,8 +19024,6 @@ _m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
       var props = inst._currentElement.props;
   
       if (process.env.NODE_ENV !== 'production') {
-        warnIfValueIsNull(props);
-  
         var controlled = isControlled(props);
         var owner = inst._currentElement._owner;
   
@@ -18965,10 +19066,20 @@ _m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
     },
   
     postMountWrapper: function (inst) {
+      var props = inst._currentElement.props;
+  
       // This is in postMount because we need access to the DOM node, which is not
       // available until after the component has mounted.
       var node = ReactDOMComponentTree.getNodeFromInstance(inst);
-      node.value = node.value; // Detach value from defaultValue
+  
+      // Detach value from defaultValue. We won't do anything if we're working on
+      // submit or reset inputs as those values & defaultValues are linked. They
+      // are not resetable nodes so this operation doesn't matter and actually
+      // removes browser-default values (eg "Submit Query") when no value is
+      // provided.
+      if (props.type !== 'submit' && props.type !== 'reset') {
+        node.value = node.value;
+      }
   
       // Normally, we'd just do `node.checked = node.checked` upon initial mount, less this bug
       // this is needed to work around a chrome bug where setting defaultChecked
@@ -18976,10 +19087,14 @@ _m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
       // Reference: https://bugs.chromium.org/p/chromium/issues/detail?id=608416
       // We need to temporarily unset name to avoid disrupting radio button groups.
       var name = node.name;
-      node.name = undefined;
+      if (name !== '') {
+        node.name = '';
+      }
       node.defaultChecked = !node.defaultChecked;
       node.defaultChecked = !node.defaultChecked;
-      node.name = name;
+      if (name !== '') {
+        node.name = name;
+      }
     }
   };
   
@@ -19035,7 +19150,7 @@ _m_['react/lib/ReactDOMInput.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMButton.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMButton.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19051,7 +19166,7 @@ _m_['react/lib/ReactDOMButton.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.0'];
+  var DisabledInputUtils = _m_['react/lib/DisabledInputUtils.js#15.2.1'];
   
   /**
    * Implements a <button> host component that does not receive mouse events
@@ -19065,7 +19180,7 @@ _m_['react/lib/ReactDOMButton.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMIDOperations.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMIDOperations.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19081,8 +19196,8 @@ _m_['react/lib/ReactDOMIDOperations.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var DOMChildrenOperations = _m_['react/lib/DOMChildrenOperations.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
+  var DOMChildrenOperations = _m_['react/lib/DOMChildrenOperations.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
   
   /**
    * Operations used to process updates to DOM nodes.
@@ -19105,7 +19220,7 @@ _m_['react/lib/ReactDOMIDOperations.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactComponentBrowserEnvironment.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactComponentBrowserEnvironment.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19121,8 +19236,8 @@ _m_['react/lib/ReactComponentBrowserEnvironment.js#15.2.0']=(function(module,exp
   
   'use strict';
   
-  var DOMChildrenOperations = _m_['react/lib/DOMChildrenOperations.js#15.2.0'];
-  var ReactDOMIDOperations = _m_['react/lib/ReactDOMIDOperations.js#15.2.0'];
+  var DOMChildrenOperations = _m_['react/lib/DOMChildrenOperations.js#15.2.1'];
+  var ReactDOMIDOperations = _m_['react/lib/ReactDOMIDOperations.js#15.2.1'];
   
   /**
    * Abstracts away all functionality of the reconciler that requires knowledge of
@@ -19267,7 +19382,7 @@ _m_['fbjs/lib/hyphenateStyleName.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/CSSProperty.js#15.2.0']=(function(module,exports){
+_m_['react/lib/CSSProperty.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19421,7 +19536,7 @@ _m_['react/lib/CSSProperty.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/dangerousStyleValue.js#15.2.0']=(function(module,exports){
+_m_['react/lib/dangerousStyleValue.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19437,7 +19552,7 @@ _m_['react/lib/dangerousStyleValue.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var CSSProperty = _m_['react/lib/CSSProperty.js#15.2.0'];
+  var CSSProperty = _m_['react/lib/CSSProperty.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var isUnitlessNumber = CSSProperty.isUnitlessNumber;
@@ -19588,7 +19703,7 @@ _m_['fbjs/lib/camelizeStyleName.js#0.8.3']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/CSSPropertyOperations.js#15.2.0']=(function(module,exports){
+_m_['react/lib/CSSPropertyOperations.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19604,12 +19719,12 @@ _m_['react/lib/CSSPropertyOperations.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var CSSProperty = _m_['react/lib/CSSProperty.js#15.2.0'];
+  var CSSProperty = _m_['react/lib/CSSProperty.js#15.2.1'];
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
   
   var camelizeStyleName = _m_['fbjs/lib/camelizeStyleName.js#0.8.3'];
-  var dangerousStyleValue = _m_['react/lib/dangerousStyleValue.js#15.2.0'];
+  var dangerousStyleValue = _m_['react/lib/dangerousStyleValue.js#15.2.1'];
   var hyphenateStyleName = _m_['fbjs/lib/hyphenateStyleName.js#0.8.3'];
   var memoizeStringOnly = _m_['fbjs/lib/memoizeStringOnly.js#0.8.3'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
@@ -19799,7 +19914,7 @@ _m_['react/lib/CSSPropertyOperations.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/AutoFocusUtils.js#15.2.0']=(function(module,exports){
+_m_['react/lib/AutoFocusUtils.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19815,7 +19930,7 @@ _m_['react/lib/AutoFocusUtils.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
   
   var focusNode = _m_['fbjs/lib/focusNode.js#0.8.3'];
   
@@ -19829,7 +19944,7 @@ _m_['react/lib/AutoFocusUtils.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOMComponent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOMComponent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -19847,38 +19962,38 @@ _m_['react/lib/ReactDOMComponent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.0'],
+  var _prodInvariant = _m_['react/lib/reactProdInvariant.js#15.2.1'],
       _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var AutoFocusUtils = _m_['react/lib/AutoFocusUtils.js#15.2.0'];
-  var CSSPropertyOperations = _m_['react/lib/CSSPropertyOperations.js#15.2.0'];
-  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.0'];
-  var DOMNamespaces = _m_['react/lib/DOMNamespaces.js#15.2.0'];
-  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.0'];
-  var DOMPropertyOperations = _m_['react/lib/DOMPropertyOperations.js#15.2.0'];
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.0'];
-  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.0'];
-  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.0'];
-  var ReactComponentBrowserEnvironment = _m_['react/lib/ReactComponentBrowserEnvironment.js#15.2.0'];
-  var ReactDOMButton = _m_['react/lib/ReactDOMButton.js#15.2.0'];
-  var ReactDOMComponentFlags = _m_['react/lib/ReactDOMComponentFlags.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactDOMInput = _m_['react/lib/ReactDOMInput.js#15.2.0'];
-  var ReactDOMOption = _m_['react/lib/ReactDOMOption.js#15.2.0'];
-  var ReactDOMSelect = _m_['react/lib/ReactDOMSelect.js#15.2.0'];
-  var ReactDOMTextarea = _m_['react/lib/ReactDOMTextarea.js#15.2.0'];
-  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.0'];
-  var ReactMultiChild = _m_['react/lib/ReactMultiChild.js#15.2.0'];
-  var ReactServerRenderingTransaction = _m_['react/lib/ReactServerRenderingTransaction.js#15.2.0'];
+  var AutoFocusUtils = _m_['react/lib/AutoFocusUtils.js#15.2.1'];
+  var CSSPropertyOperations = _m_['react/lib/CSSPropertyOperations.js#15.2.1'];
+  var DOMLazyTree = _m_['react/lib/DOMLazyTree.js#15.2.1'];
+  var DOMNamespaces = _m_['react/lib/DOMNamespaces.js#15.2.1'];
+  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.1'];
+  var DOMPropertyOperations = _m_['react/lib/DOMPropertyOperations.js#15.2.1'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.1'];
+  var EventPluginRegistry = _m_['react/lib/EventPluginRegistry.js#15.2.1'];
+  var ReactBrowserEventEmitter = _m_['react/lib/ReactBrowserEventEmitter.js#15.2.1'];
+  var ReactComponentBrowserEnvironment = _m_['react/lib/ReactComponentBrowserEnvironment.js#15.2.1'];
+  var ReactDOMButton = _m_['react/lib/ReactDOMButton.js#15.2.1'];
+  var ReactDOMComponentFlags = _m_['react/lib/ReactDOMComponentFlags.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactDOMInput = _m_['react/lib/ReactDOMInput.js#15.2.1'];
+  var ReactDOMOption = _m_['react/lib/ReactDOMOption.js#15.2.1'];
+  var ReactDOMSelect = _m_['react/lib/ReactDOMSelect.js#15.2.1'];
+  var ReactDOMTextarea = _m_['react/lib/ReactDOMTextarea.js#15.2.1'];
+  var ReactInstrumentation = _m_['react/lib/ReactInstrumentation.js#15.2.1'];
+  var ReactMultiChild = _m_['react/lib/ReactMultiChild.js#15.2.1'];
+  var ReactServerRenderingTransaction = _m_['react/lib/ReactServerRenderingTransaction.js#15.2.1'];
   
   var emptyFunction = _m_['fbjs/lib/emptyFunction.js#0.8.3'];
-  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.0'];
+  var escapeTextContentForBrowser = _m_['react/lib/escapeTextContentForBrowser.js#15.2.1'];
   var invariant = _m_['fbjs/lib/invariant.js#0.8.3'];
-  var isEventSupported = _m_['react/lib/isEventSupported.js#15.2.0'];
+  var isEventSupported = _m_['react/lib/isEventSupported.js#15.2.1'];
   var keyOf = _m_['fbjs/lib/keyOf.js#0.8.3'];
   var shallowEqual = _m_['fbjs/lib/shallowEqual.js#0.8.3'];
-  var validateDOMNesting = _m_['react/lib/validateDOMNesting.js#15.2.0'];
+  var validateDOMNesting = _m_['react/lib/validateDOMNesting.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   var Flags = ReactDOMComponentFlags;
@@ -19976,7 +20091,7 @@ _m_['react/lib/ReactDOMComponent.js#15.2.0']=(function(module,exports){
     }
     // Note the use of `==` which checks for null or undefined.
     if (voidElementTags[component._tag]) {
-      !(props.children == null && props.dangerouslySetInnerHTML == null) ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s is a void element tag and must not have `children` or use `props.dangerouslySetInnerHTML`.%s', component._tag, component._currentElement._owner ? ' Check the render method of ' + component._currentElement._owner.getName() + '.' : '') : _prodInvariant('59', component._tag, component._currentElement._owner ? ' Check the render method of ' + component._currentElement._owner.getName() + '.' : '') : void 0;
+      !(props.children == null && props.dangerouslySetInnerHTML == null) ? process.env.NODE_ENV !== 'production' ? invariant(false, '%s is a void element tag and must neither have `children` nor use `dangerouslySetInnerHTML`.%s', component._tag, component._currentElement._owner ? ' Check the render method of ' + component._currentElement._owner.getName() + '.' : '') : _prodInvariant('137', component._tag, component._currentElement._owner ? ' Check the render method of ' + component._currentElement._owner.getName() + '.' : '') : void 0;
     }
     if (props.dangerouslySetInnerHTML != null) {
       !(props.children == null) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Can only set one of `children` or `props.dangerouslySetInnerHTML`.') : _prodInvariant('60') : void 0;
@@ -20838,7 +20953,7 @@ _m_['react/lib/ReactDOMComponent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/HTMLDOMPropertyConfig.js#15.2.0']=(function(module,exports){
+_m_['react/lib/HTMLDOMPropertyConfig.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -20854,7 +20969,7 @@ _m_['react/lib/HTMLDOMPropertyConfig.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.0'];
+  var DOMProperty = _m_['react/lib/DOMProperty.js#15.2.1'];
   
   var MUST_USE_PROPERTY = DOMProperty.injection.MUST_USE_PROPERTY;
   var HAS_BOOLEAN_VALUE = DOMProperty.injection.HAS_BOOLEAN_VALUE;
@@ -21052,7 +21167,7 @@ _m_['react/lib/HTMLDOMPropertyConfig.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/EnterLeaveEventPlugin.js#15.2.0']=(function(module,exports){
+_m_['react/lib/EnterLeaveEventPlugin.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -21068,10 +21183,10 @@ _m_['react/lib/EnterLeaveEventPlugin.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var SyntheticMouseEvent = _m_['react/lib/SyntheticMouseEvent.js#15.2.1'];
   
   var keyOf = _m_['fbjs/lib/keyOf.js#0.8.3'];
   
@@ -21163,7 +21278,7 @@ _m_['react/lib/EnterLeaveEventPlugin.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/DefaultEventPluginOrder.js#15.2.0']=(function(module,exports){
+_m_['react/lib/DefaultEventPluginOrder.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -21196,7 +21311,7 @@ _m_['react/lib/DefaultEventPluginOrder.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ChangeEventPlugin.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ChangeEventPlugin.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -21212,17 +21327,17 @@ _m_['react/lib/ChangeEventPlugin.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.0'];
-  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var EventPluginHub = _m_['react/lib/EventPluginHub.js#15.2.1'];
+  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.1'];
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
-  var getEventTarget = _m_['react/lib/getEventTarget.js#15.2.0'];
-  var isEventSupported = _m_['react/lib/isEventSupported.js#15.2.0'];
-  var isTextInputElement = _m_['react/lib/isTextInputElement.js#15.2.0'];
+  var getEventTarget = _m_['react/lib/getEventTarget.js#15.2.1'];
+  var isEventSupported = _m_['react/lib/isEventSupported.js#15.2.1'];
+  var isTextInputElement = _m_['react/lib/isTextInputElement.js#15.2.1'];
   var keyOf = _m_['fbjs/lib/keyOf.js#0.8.3'];
   
   var topLevelTypes = EventConstants.topLevelTypes;
@@ -21527,7 +21642,7 @@ _m_['react/lib/ChangeEventPlugin.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticInputEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticInputEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -21543,7 +21658,7 @@ _m_['react/lib/SyntheticInputEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
   /**
    * @interface Event
@@ -21570,7 +21685,7 @@ _m_['react/lib/SyntheticInputEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/SyntheticCompositionEvent.js#15.2.0']=(function(module,exports){
+_m_['react/lib/SyntheticCompositionEvent.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -21586,7 +21701,7 @@ _m_['react/lib/SyntheticCompositionEvent.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.0'];
+  var SyntheticEvent = _m_['react/lib/SyntheticEvent.js#15.2.1'];
   
   /**
    * @interface Event
@@ -21612,7 +21727,7 @@ _m_['react/lib/SyntheticCompositionEvent.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/FallbackCompositionState.js#15.2.0']=(function(module,exports){
+_m_['react/lib/FallbackCompositionState.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -21630,9 +21745,9 @@ _m_['react/lib/FallbackCompositionState.js#15.2.0']=(function(module,exports){
   
   var _assign = _m_['object-assign/index.js#4.1.0'];
   
-  var PooledClass = _m_['react/lib/PooledClass.js#15.2.0'];
+  var PooledClass = _m_['react/lib/PooledClass.js#15.2.1'];
   
-  var getTextContentAccessor = _m_['react/lib/getTextContentAccessor.js#15.2.0'];
+  var getTextContentAccessor = _m_['react/lib/getTextContentAccessor.js#15.2.1'];
   
   /**
    * This helper class stores information about text content of a target node,
@@ -21713,7 +21828,7 @@ _m_['react/lib/FallbackCompositionState.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/BeforeInputEventPlugin.js#15.2.0']=(function(module,exports){
+_m_['react/lib/BeforeInputEventPlugin.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -21729,12 +21844,12 @@ _m_['react/lib/BeforeInputEventPlugin.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var EventConstants = _m_['react/lib/EventConstants.js#15.2.0'];
-  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.0'];
+  var EventConstants = _m_['react/lib/EventConstants.js#15.2.1'];
+  var EventPropagators = _m_['react/lib/EventPropagators.js#15.2.1'];
   var ExecutionEnvironment = _m_['fbjs/lib/ExecutionEnvironment.js#0.8.3'];
-  var FallbackCompositionState = _m_['react/lib/FallbackCompositionState.js#15.2.0'];
-  var SyntheticCompositionEvent = _m_['react/lib/SyntheticCompositionEvent.js#15.2.0'];
-  var SyntheticInputEvent = _m_['react/lib/SyntheticInputEvent.js#15.2.0'];
+  var FallbackCompositionState = _m_['react/lib/FallbackCompositionState.js#15.2.1'];
+  var SyntheticCompositionEvent = _m_['react/lib/SyntheticCompositionEvent.js#15.2.1'];
+  var SyntheticInputEvent = _m_['react/lib/SyntheticInputEvent.js#15.2.1'];
   
   var keyOf = _m_['fbjs/lib/keyOf.js#0.8.3'];
   
@@ -22107,7 +22222,7 @@ _m_['react/lib/BeforeInputEventPlugin.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDefaultInjection.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDefaultInjection.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -22123,24 +22238,24 @@ _m_['react/lib/ReactDefaultInjection.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var BeforeInputEventPlugin = _m_['react/lib/BeforeInputEventPlugin.js#15.2.0'];
-  var ChangeEventPlugin = _m_['react/lib/ChangeEventPlugin.js#15.2.0'];
-  var DefaultEventPluginOrder = _m_['react/lib/DefaultEventPluginOrder.js#15.2.0'];
-  var EnterLeaveEventPlugin = _m_['react/lib/EnterLeaveEventPlugin.js#15.2.0'];
-  var HTMLDOMPropertyConfig = _m_['react/lib/HTMLDOMPropertyConfig.js#15.2.0'];
-  var ReactComponentBrowserEnvironment = _m_['react/lib/ReactComponentBrowserEnvironment.js#15.2.0'];
-  var ReactDOMComponent = _m_['react/lib/ReactDOMComponent.js#15.2.0'];
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactDOMEmptyComponent = _m_['react/lib/ReactDOMEmptyComponent.js#15.2.0'];
-  var ReactDOMTreeTraversal = _m_['react/lib/ReactDOMTreeTraversal.js#15.2.0'];
-  var ReactDOMTextComponent = _m_['react/lib/ReactDOMTextComponent.js#15.2.0'];
-  var ReactDefaultBatchingStrategy = _m_['react/lib/ReactDefaultBatchingStrategy.js#15.2.0'];
-  var ReactEventListener = _m_['react/lib/ReactEventListener.js#15.2.0'];
-  var ReactInjection = _m_['react/lib/ReactInjection.js#15.2.0'];
-  var ReactReconcileTransaction = _m_['react/lib/ReactReconcileTransaction.js#15.2.0'];
-  var SVGDOMPropertyConfig = _m_['react/lib/SVGDOMPropertyConfig.js#15.2.0'];
-  var SelectEventPlugin = _m_['react/lib/SelectEventPlugin.js#15.2.0'];
-  var SimpleEventPlugin = _m_['react/lib/SimpleEventPlugin.js#15.2.0'];
+  var BeforeInputEventPlugin = _m_['react/lib/BeforeInputEventPlugin.js#15.2.1'];
+  var ChangeEventPlugin = _m_['react/lib/ChangeEventPlugin.js#15.2.1'];
+  var DefaultEventPluginOrder = _m_['react/lib/DefaultEventPluginOrder.js#15.2.1'];
+  var EnterLeaveEventPlugin = _m_['react/lib/EnterLeaveEventPlugin.js#15.2.1'];
+  var HTMLDOMPropertyConfig = _m_['react/lib/HTMLDOMPropertyConfig.js#15.2.1'];
+  var ReactComponentBrowserEnvironment = _m_['react/lib/ReactComponentBrowserEnvironment.js#15.2.1'];
+  var ReactDOMComponent = _m_['react/lib/ReactDOMComponent.js#15.2.1'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactDOMEmptyComponent = _m_['react/lib/ReactDOMEmptyComponent.js#15.2.1'];
+  var ReactDOMTreeTraversal = _m_['react/lib/ReactDOMTreeTraversal.js#15.2.1'];
+  var ReactDOMTextComponent = _m_['react/lib/ReactDOMTextComponent.js#15.2.1'];
+  var ReactDefaultBatchingStrategy = _m_['react/lib/ReactDefaultBatchingStrategy.js#15.2.1'];
+  var ReactEventListener = _m_['react/lib/ReactEventListener.js#15.2.1'];
+  var ReactInjection = _m_['react/lib/ReactInjection.js#15.2.1'];
+  var ReactReconcileTransaction = _m_['react/lib/ReactReconcileTransaction.js#15.2.1'];
+  var SVGDOMPropertyConfig = _m_['react/lib/SVGDOMPropertyConfig.js#15.2.1'];
+  var SelectEventPlugin = _m_['react/lib/SelectEventPlugin.js#15.2.1'];
+  var SimpleEventPlugin = _m_['react/lib/SimpleEventPlugin.js#15.2.1'];
   
   var alreadyInjected = false;
   
@@ -22197,7 +22312,7 @@ _m_['react/lib/ReactDefaultInjection.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react/lib/ReactDOM.js#15.2.0']=(function(module,exports){
+_m_['react/lib/ReactDOM.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   /**
@@ -22215,16 +22330,16 @@ _m_['react/lib/ReactDOM.js#15.2.0']=(function(module,exports){
   
   'use strict';
   
-  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.0'];
-  var ReactDefaultInjection = _m_['react/lib/ReactDefaultInjection.js#15.2.0'];
-  var ReactMount = _m_['react/lib/ReactMount.js#15.2.0'];
-  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.0'];
-  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.0'];
-  var ReactVersion = _m_['react/lib/ReactVersion.js#15.2.0'];
+  var ReactDOMComponentTree = _m_['react/lib/ReactDOMComponentTree.js#15.2.1'];
+  var ReactDefaultInjection = _m_['react/lib/ReactDefaultInjection.js#15.2.1'];
+  var ReactMount = _m_['react/lib/ReactMount.js#15.2.1'];
+  var ReactReconciler = _m_['react/lib/ReactReconciler.js#15.2.1'];
+  var ReactUpdates = _m_['react/lib/ReactUpdates.js#15.2.1'];
+  var ReactVersion = _m_['react/lib/ReactVersion.js#15.2.1'];
   
-  var findDOMNode = _m_['react/lib/findDOMNode.js#15.2.0'];
-  var getHostComponentFromComposite = _m_['react/lib/getHostComponentFromComposite.js#15.2.0'];
-  var renderSubtreeIntoContainer = _m_['react/lib/renderSubtreeIntoContainer.js#15.2.0'];
+  var findDOMNode = _m_['react/lib/findDOMNode.js#15.2.1'];
+  var getHostComponentFromComposite = _m_['react/lib/getHostComponentFromComposite.js#15.2.1'];
+  var renderSubtreeIntoContainer = _m_['react/lib/renderSubtreeIntoContainer.js#15.2.1'];
   var warning = _m_['fbjs/lib/warning.js#0.8.3'];
   
   ReactDefaultInjection.inject();
@@ -22304,12 +22419,12 @@ _m_['react/lib/ReactDOM.js#15.2.0']=(function(module,exports){
 
   return module.exports;
 }).call({exports:{}});
-_m_['react-dom/index.js#15.2.0']=(function(module,exports){
+_m_['react-dom/index.js#15.2.1']=(function(module,exports){
   module=this;exports=module.exports;
 
   'use strict';
   
-  module.exports = _m_['react/lib/ReactDOM.js#15.2.0'];
+  module.exports = _m_['react/lib/ReactDOM.js#15.2.1'];
   
 
   return module.exports;
@@ -22319,7 +22434,7 @@ _m_['test/fixtures/test-client.js']=(function(module,exports){
 
   'use strict';
   
-  var ReactDom = _m_['react-dom/index.js#15.2.0'];
+  var ReactDom = _m_['react-dom/index.js#15.2.1'];
   var testComponent = _m_['test/fixtures/testComponent.js'];
   
   var comp = testComponent.create();
