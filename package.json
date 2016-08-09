@@ -14,7 +14,7 @@
   "devDependencies": {
     "benchmark": "2.1.x",
     "buddy": "5.1.x",
-    "buddy-plugin-babel": "6.10.x",
+    "buddy-plugin-babel": "6.13.x",
     "expect.js": "*",
     "mocha": "*",
     "react-addons-test-utils": "15.3.0",
