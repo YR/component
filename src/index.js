@@ -13,6 +13,7 @@ const runtime = require('@yr/runtime');
 // Use production build for server
 // Override with package.json "browser" field for client to enable debug during dev
 const React = require('react/dist/react.min');
+const ReactSecret = require('react/lib/ReactPropTypesSecret');
 
 const LIFECYCLE_METHODS = [
   'componentWillMount',
@@ -33,8 +34,6 @@ const RESERVED_METHODS = LIFECYCLE_METHODS.concat([
   'shouldComponentTransition',
   'getTransitionDuration'
 ]);
-
-const isProduction = process.env.NODE_ENV == 'production';
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -130,12 +129,14 @@ function processProps (props, specification) {
     }
   }
 
-  if (isProduction || !data) return;
+  if (!data) return;
 
-  // Validate prop types
-  for (const key in data) {
-    const err = data[key](props, key, displayName, 'prop');
+  if (process.env.NODE_ENV == 'development') {
+    // Validate prop types
+    for (const key in data) {
+      const err = data[key](props, key, displayName, 'data property', key, ReactSecret);
 
-    if (err) console.error(err);
+      if (err) console.error(err);
+    }
   }
 }
