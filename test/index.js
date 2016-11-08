@@ -1937,14 +1937,20 @@ var ms__y = ms__d * 365.25;
  *
  * @param {String|Number} val
  * @param {Object} options
+ * @throws {Error} throw an error if val is not a non-empty string or a number
  * @return {String|Number}
  * @api public
  */
 
 $m['ms'].exports = function (val, options) {
   options = options || {};
-  if ('string' == typeof val) return ms__parse(val);
-  return options.long ? ms__long(val) : ms__short(val);
+  var type = typeof val;
+  if (type === 'string' && val.length > 0) {
+    return ms__parse(val);
+  } else if (type === 'number' && isNaN(val) === false) {
+    return options.long ? ms__fmtLong(val) : ms__fmtShort(val);
+  }
+  throw new Error('val is not a non-empty string or a valid number. val=' + JSON.stringify(val));
 };
 
 /**
@@ -1956,10 +1962,14 @@ $m['ms'].exports = function (val, options) {
  */
 
 function ms__parse(str) {
-  str = '' + str;
-  if (str.length > 10000) return;
+  str = String(str);
+  if (str.length > 10000) {
+    return;
+  }
   var match = /^((?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|years?|yrs?|y)?$/i.exec(str);
-  if (!match) return;
+  if (!match) {
+    return;
+  }
   var n = parseFloat(match[1]);
   var type = (match[2] || 'ms').toLowerCase();
   switch (type) {
@@ -1997,6 +2007,8 @@ function ms__parse(str) {
     case 'msec':
     case 'ms':
       return n;
+    default:
+      return undefined;
   }
 }
 
@@ -2008,11 +2020,19 @@ function ms__parse(str) {
  * @api private
  */
 
-function ms__short(ms) {
-  if (ms >= ms__d) return Math.round(ms / ms__d) + 'd';
-  if (ms >= ms__h) return Math.round(ms / ms__h) + 'h';
-  if (ms >= ms__m) return Math.round(ms / ms__m) + 'm';
-  if (ms >= ms__s) return Math.round(ms / ms__s) + 's';
+function ms__fmtShort(ms) {
+  if (ms >= ms__d) {
+    return Math.round(ms / ms__d) + 'd';
+  }
+  if (ms >= ms__h) {
+    return Math.round(ms / ms__h) + 'h';
+  }
+  if (ms >= ms__m) {
+    return Math.round(ms / ms__m) + 'm';
+  }
+  if (ms >= ms__s) {
+    return Math.round(ms / ms__s) + 's';
+  }
   return ms + 'ms';
 }
 
@@ -2024,7 +2044,7 @@ function ms__short(ms) {
  * @api private
  */
 
-function ms__long(ms) {
+function ms__fmtLong(ms) {
   return ms__plural(ms, ms__d, 'day') || ms__plural(ms, ms__h, 'hour') || ms__plural(ms, ms__m, 'minute') || ms__plural(ms, ms__s, 'second') || ms + ' ms';
 }
 
@@ -2033,8 +2053,12 @@ function ms__long(ms) {
  */
 
 function ms__plural(ms, n, name) {
-  if (ms < n) return;
-  if (ms < n * 1.5) return Math.floor(ms / n) + ' ' + name;
+  if (ms < n) {
+    return;
+  }
+  if (ms < n * 1.5) {
+    return Math.floor(ms / n) + ' ' + name;
+  }
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 /*≠≠ node_modules/ms/index.js ≠≠*/
@@ -6005,7 +6029,7 @@ $m['debug/debug'] = { exports: {} };
  * Expose `debug()` as the module.
  */
 
-$m['debug/debug'].exports = $m['debug/debug'].exports = debugdebug__debug;
+$m['debug/debug'].exports = $m['debug/debug'].exports = debugdebug__debug.debug = debugdebug__debug;
 $m['debug/debug'].exports.coerce = debugdebug__coerce;
 $m['debug/debug'].exports.disable = debugdebug__disable;
 $m['debug/debug'].exports.enable = debugdebug__enable;
@@ -6139,7 +6163,7 @@ function debugdebug__enable(namespaces) {
 
   for (var i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/\*/g, '.*?');
+    namespaces = split[i].replace(/[\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
       $m['debug/debug'].exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
     } else {
@@ -6228,7 +6252,8 @@ $m['debug'].exports.colors = ['lightseagreen', 'forestgreen', 'goldenrod', 'dodg
 
 function debug__useColors() {
   // is webkit? http://stackoverflow.com/a/16459606/376773
-  return 'WebkitAppearance' in document.documentElement.style ||
+  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
+  return typeof document !== 'undefined' && 'WebkitAppearance' in document.documentElement.style ||
   // is firebug? http://stackoverflow.com/a/398120/376773
   window.console && (console.firebug || console.exception && console.table) ||
   // is firefox >= v31?
@@ -6460,7 +6485,6 @@ $m['@yr/clock'].exports = {
    * Initialize with visibility api "features"
    * @param {Object} features
    */
-
   initialize: function initialize(features) {
     var hidden = features.hidden;
     var visibilityChange = features.visibilityChange;
@@ -6500,7 +6524,7 @@ $m['@yr/clock'].exports = {
    * @returns {Number}
    */
   immediate: function immediate(fn) {
-    return yrclock__hasImmediate ? setImmediate(fn) : yrclock__raf(fn);
+    return yrclock__hasImmediate ? setImmediate(fn) : setTimeout(fn, 0);
   },
 
   /**
@@ -6554,9 +6578,10 @@ $m['@yr/clock'].exports = {
           delete yrclock__queue[id];
         }
         return '';
-      // Immediate raf
+      // Frame raf or immediate setTimeout
       case 'number':
         yrclock__raf.cancel(id);
+        clearTimeout(id);
         return 0;
       // Immediate setImmediate
       case 'object':
