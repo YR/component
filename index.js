@@ -13,12 +13,11 @@ var runtime = require('@yr/runtime');
 // Use production build for server
 // Override with package.json "browser" field for client to enable debug during dev
 var React = require('react/dist/react.min');
+var ReactSecret = require('react/lib/ReactPropTypesSecret');
 
 var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
 var PROXY_KEYS = ['componentWillUnmount', 'render', 'state'];
 var RESERVED_METHODS = LIFECYCLE_METHODS.concat(['render', 'shouldComponentUpdate', 'shouldComponentTransition', 'getTransitionDuration']);
-
-var isProduction = process.env.NODE_ENV == 'production';
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -114,9 +113,9 @@ function proxyKeys(obj, keys) {
  */
 function processProps(props, specification) {
   props = props || {};
-  var data = specification.data;
-  var defaultProps = specification.defaultProps;
-  var displayName = specification.displayName;
+  var data = specification.data,
+      defaultProps = specification.defaultProps,
+      displayName = specification.displayName;
 
   // Extract missing props defined in 'data'
 
@@ -129,12 +128,14 @@ function processProps(props, specification) {
     }
   }
 
-  if (isProduction || !data) return;
+  if (!data) return;
 
-  // Validate prop types
-  for (var key in data) {
-    var err = data[key](props, key, displayName, 'prop');
+  if (process.env.NODE_ENV == 'development') {
+    // Validate prop types
+    for (var key in data) {
+      var err = data[key](props, key, displayName, 'data property', key, ReactSecret);
 
-    if (err) console.error(err);
+      if (err) console.error(err);
+    }
   }
 }
