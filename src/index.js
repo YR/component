@@ -7,13 +7,10 @@
  * @license MIT
  */
 
+const { React, ReactDOM } = require('./lib/react');
 const assign = require('object-assign');
 const Component = require('./lib/Component');
 const runtime = require('@yr/runtime');
-// Use production build for server
-// Override with package.json "browser" field for client to enable debug during dev
-const React = require('react/dist/react.min');
-const ReactSecret = require('react/lib/ReactPropTypesSecret');
 
 const LIFECYCLE_METHODS = [
   'componentWillMount',
@@ -40,6 +37,9 @@ module.exports = {
   WILL_TRANSITION: 1,
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
+
+  React,
+  ReactDOM,
 
   dataTypes: React.PropTypes,
   el: React.createElement,
@@ -133,7 +133,9 @@ function processProps (props, specification) {
 
   if (!data) return;
 
-  if (process.env.NODE_ENV == 'development') {
+  if (process.env.NODE_ENV == 'development' && process.env.RUNTIME == 'browser') {
+    const ReactSecret = require('react/lib/ReactPropTypesSecret');
+
     // Validate prop types
     for (const key in data) {
       const err = data[key](props, key, displayName, 'data property', key, ReactSecret);

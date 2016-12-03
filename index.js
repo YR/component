@@ -7,13 +7,13 @@
  * @license MIT
  */
 
+var _require = require('./lib/react'),
+    React = _require.React,
+    ReactDOM = _require.ReactDOM;
+
 var assign = require('object-assign');
 var Component = require('./lib/Component');
 var runtime = require('@yr/runtime');
-// Use production build for server
-// Override with package.json "browser" field for client to enable debug during dev
-var React = require('react/dist/react.min');
-var ReactSecret = require('react/lib/ReactPropTypesSecret');
 
 var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
 var PROXY_KEYS = ['componentWillUnmount', 'render', 'state'];
@@ -24,6 +24,9 @@ module.exports = {
   WILL_TRANSITION: 1,
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
+
+  React: React,
+  ReactDOM: ReactDOM,
 
   dataTypes: React.PropTypes,
   el: React.createElement,
@@ -59,6 +62,8 @@ module.exports = {
       });
       specification = assign(specification, mixins);
     }
+    comp.displayName = specification.displayName || '<component>';
+    delete specification.displayName;
 
     // Rename select keys to prevent overwriting
     proxyKeys(specification, PROXY_KEYS);
@@ -130,7 +135,9 @@ function processProps(props, specification) {
 
   if (!data) return;
 
-  if (process.env.NODE_ENV == 'development') {
+  if (process.env.NODE_ENV == 'development' && 'browser' == 'browser') {
+    var ReactSecret = require('react/lib/ReactPropTypesSecret');
+
     // Validate prop types
     for (var key in data) {
       var err = data[key](props, key, displayName, 'data property', key, ReactSecret);
