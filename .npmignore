@@ -2,3 +2,5 @@
 .git*
 test
 yarn.lock
+buddy-*
+.travis.yml
