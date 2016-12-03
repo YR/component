@@ -68,6 +68,8 @@ module.exports = {
         });
       specification = assign(specification, mixins);
     }
+    comp.displayName = specification.displayName || '<component>';
+    delete specification.displayName;
 
     // Rename select keys to prevent overwriting
     proxyKeys(specification, PROXY_KEYS);
