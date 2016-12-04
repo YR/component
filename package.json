@@ -47,7 +47,7 @@
   "scripts": {
     "build": "buddy deploy buddy-react-bundle.js",
     "perf": "NODE_ENV=production node test/perf.js",
-    "prepublish": "yarn run build && buddy build && rm -f lib/react.js",
+    "prepublish": "yarn run build && buddy build",
     "test": "NODE_ENV=test mocha test/test.js --reporter spec",
     "watch": "buddy -rs watch"
   },
