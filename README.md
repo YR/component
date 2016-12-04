@@ -6,9 +6,9 @@ A utility for creating performant React.js components. Includes default handling
 ## Usage
 
 ```js
-const component = require('@yr/component')
-  , dataTypes = component.dataTypes
-  , el = component.el;
+const component = require('@yr/component');
+const dataTypes = component.dataTypes
+const el = component.el;
 
 const comp = component.create({
   displayName: 'myComponent',
@@ -57,7 +57,7 @@ const comp = component.create({
 
 Due to the synchronous, blocking nature of React's `renderToString()`, it is important to optimize component rendering as much as possible when rendering on the server. The following steps have been taken to speed up rendering:
 
-- use minified production bundle of `React` (available as `component.React`) to avoid calls to `process.env.NODE_ENV` and other costly development-only code
+- use minified production bundle of `React` and `ReactDOM` (available as `component.React` and `component.ReactDOM`) to avoid calls to `process.env.NODE_ENV` and other costly development-only code
 - treat all components as *stateless functions*, avoiding the costs of instantiation via `class` inheritance or `React.createClass`
 
 > Check out this presentation by [Sasha Aickin](https://www.youtube.com/watch?feature=player_embedded&v=PnpfGy7q96U) for more great performance tips.
@@ -88,6 +88,10 @@ component.create({
 ```
 
 ## API
+
+**React**: reference to `React` library (minified bundle on server).
+
+**ReactDOM**: reference to `ReactDOM` library (minified bundle and `ReactDOM/server` on server).
 
 **create(specification, mixins)**: returns a factory function for creating React elements based on `specification` and `mixins`. The following apply:
 
