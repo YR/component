@@ -4,11 +4,11 @@
  * Base component class (client)
  */
 
+const { React } = require('./react');
 const assign = require('object-assign');
 const clock = require('@yr/clock');
 const Debug = require('debug');
 const isEqual = require('@yr/is-equal');
-const React = require('react');
 
 const DEFAULT_TRANSITION_DURATION = 250;
 const TIMEOUT = 20;
