@@ -4,18 +4,18 @@
  * Base component class (client)
  */
 
+const Preact = require('preact');
 const assign = require('object-assign');
 const clock = require('@yr/clock');
 const Debug = require('debug');
 const isEqual = require('@yr/is-equal');
-const React = require('react');
 
 const DEFAULT_TRANSITION_DURATION = 250;
 const TIMEOUT = 20;
 
 const debug = Debug('yr:component');
 
-module.exports = class Component extends React.Component {
+module.exports = class Component extends Preact.Component {
   /**
    * Constructor
    * @param {Object} props
@@ -38,15 +38,17 @@ module.exports = class Component extends React.Component {
   }
 
   /**
-   * React: render
-   * @returns {React}
+   * Render
+   * @param {Object} props
+   * @param {Object} state
+   * @returns {Component}
    */
-  render () {
-    return this.__render(this.props, this.state);
+  render (props, state) {
+    return this.__render(props, state);
   }
 
   /**
-   * React: shouldComponentUpdate
+   * Determine if component should update based on incoming props/state
    * @param {Object} nextProps
    * @param {Object} nextState
    * @returns {Boolean}
@@ -121,7 +123,7 @@ module.exports = class Component extends React.Component {
   }
 
   /**
-   * React: componentWillUnmount
+   * Hook during component unmount
    */
   componentWillUnmount () {
     // Reset

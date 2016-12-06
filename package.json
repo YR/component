@@ -9,8 +9,9 @@
     "@yr/runtime": "2.0.x",
     "debug": "2.3.x",
     "object-assign": "4.1.x",
-    "react": "15.4.1",
-    "react-dom": "15.4.1"
+    "preact": "7.1.0",
+    "preact-render-to-string": "3.3.0",
+    "proptypes": "0.14.3"
   },
   "devDependencies": {
     "babel-plugin-syntax-trailing-function-commas": "6.13.0",
@@ -38,16 +39,14 @@
     "buddy": "6.x.x",
     "buddy-server": "*",
     "expect.js": "*",
-    "mocha": "*",
-    "react-addons-test-utils": "15.4.1"
+    "mocha": "*"
   },
   "main": "./src/index.js",
   "repository": "https://github.com/YR/component.git",
   "license": "MIT",
   "scripts": {
-    "build": "buddy deploy buddy-react-bundle.js",
     "perf": "NODE_ENV=production node test/perf.js",
-    "prepublish": "yarn run build && buddy build",
+    "prepublish": "buddy build",
     "test": "NODE_ENV=test mocha test/test.js --reporter spec",
     "watch": "buddy -rs watch"
   },
