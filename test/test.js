@@ -1,7 +1,8 @@
 'use strict';
 
-const { create, el, ReactDOM, stateless } = require('../src/index');
+const { create, el, stateless } = require('../src/index');
 const expect = require('expect.js');
+const render = require('preact-render-to-string');
 const runtime = require('@yr/runtime');
 
 describe('component', function () {
@@ -20,7 +21,7 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
     });
     it('should return a renderable element factory for a component with defaultProps', function () {
       const foo = create({
@@ -32,7 +33,7 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
     });
     it('should return a renderable element factory for a component with state', function () {
       const foo = create({
@@ -44,14 +45,14 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
     });
     it('should return a renderable element factory for an svg component', function () {
       const foo = create({
         render (props, state) {
           return el('svg', {},
             el('use', {
-              xlinkHref: '#foo',
+              'xlink:href': '#foo',
               x: 0,
               y: 0,
               width: 100,
@@ -62,7 +63,7 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<svg><use xlink:href="#foo" x="0" y="0" width="100" height="100"></use><text>foo</text></svg>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<svg><use xlink:href="#foo" x="0" y="0" width="100" height="100"></use><text>foo</text></svg>');
     });
     it('should return a renderable element factory for a component with mixins', function () {
       let fired = false;
@@ -73,7 +74,7 @@ describe('component', function () {
         }
       }, [{ onClick () { fired = true; } }]);
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<a>foo</a>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<a>foo</a>');
       expect(fired).to.be(true);
     });
   });
@@ -86,7 +87,7 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
     });
     it('should return a stateless renderable element factory for a component with defaultProps', function () {
       const foo = stateless({
@@ -98,7 +99,7 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
     });
     it('should return a stateless renderable element factory, passing initial state', function () {
       const foo = stateless({
@@ -110,7 +111,7 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div class="bar">foo</div>');
+      expect(render(foo({ text: 'foo' }))).to.eql('<div class="bar">foo</div>');
     });
   });
 });

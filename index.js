@@ -7,12 +7,15 @@
  * @license MIT
  */
 
-var _require = require('./lib/react'),
-    React = _require.React,
-    ReactDOM = _require.ReactDOM;
+var _require = require('preact'),
+    el = _require.h,
+    render = _require.render;
 
 var assign = require('object-assign');
 var Component = require('./lib/Component');
+var dataTypes = require('./lib/dataTypes');
+// This will be an empty object for browser
+var renderToString = {};
 var runtime = require('@yr/runtime');
 
 var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
@@ -25,11 +28,9 @@ module.exports = {
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
 
-  React: React,
-  ReactDOM: ReactDOM,
-
-  dataTypes: React.PropTypes,
-  el: React.createElement,
+  dataTypes: dataTypes,
+  el: el,
+  render: 'function' == typeof renderToString ? renderToString : render,
 
   /**
    * Convert 'specification' into React component class,
@@ -77,7 +78,7 @@ module.exports = {
         children[_key - 1] = arguments[_key];
       }
 
-      return React.createElement.apply(React, [comp, props].concat(children));
+      return el.apply(undefined, [comp, props].concat(children));
     };
   },
 
@@ -119,8 +120,7 @@ function proxyKeys(obj, keys) {
 function processProps(props, specification) {
   props = props || {};
   var data = specification.data,
-      defaultProps = specification.defaultProps,
-      displayName = specification.displayName;
+      defaultProps = specification.defaultProps;
 
   // Extract missing props defined in 'data'
 
@@ -130,19 +130,6 @@ function processProps(props, specification) {
   if (defaultProps) {
     for (var prop in defaultProps) {
       if (props[prop] == null) props[prop] = defaultProps[prop];
-    }
-  }
-
-  if (!data) return;
-
-  if (process.env.NODE_ENV == 'development' && 'browser' == 'browser') {
-    var ReactSecret = require('react/lib/ReactPropTypesSecret');
-
-    // Validate prop types
-    for (var key in data) {
-      var err = data[key](props, key, displayName, 'data property', key, ReactSecret);
-
-      if (err) console.error(err);
     }
   }
 }
