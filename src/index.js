@@ -7,10 +7,12 @@
  * @license MIT
  */
 
-const { h: el } = require('preact');
+const { h: el, render } = require('preact');
 const assign = require('object-assign');
 const Component = require('./lib/Component');
 const dataTypes = require('./lib/dataTypes');
+// This will be an empty object for browser
+const renderToString = require('preact-render-to-string');
 const runtime = require('@yr/runtime');
 
 const LIFECYCLE_METHODS = [
@@ -41,6 +43,7 @@ module.exports = {
 
   dataTypes,
   el,
+  render: 'function' == typeof renderToString ? renderToString : render,
 
   /**
    * Convert 'specification' into React component class,

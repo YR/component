@@ -8,11 +8,14 @@
  */
 
 var _require = require('preact'),
-    el = _require.h;
+    el = _require.h,
+    render = _require.render;
 
 var assign = require('object-assign');
 var Component = require('./lib/Component');
 var dataTypes = require('./lib/dataTypes');
+// This will be disabled for browser
+var renderToString = {};
 var runtime = require('@yr/runtime');
 
 var LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
@@ -27,6 +30,7 @@ module.exports = {
 
   dataTypes: dataTypes,
   el: el,
+  render: 'function' == typeof renderToString ? renderToString : render,
 
   /**
    * Convert 'specification' into React component class,

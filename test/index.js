@@ -1844,11 +1844,14 @@ $m['@yr/component'] = { exports: {} };
  */
 
 var yrcomponent___require = $m['preact'].exports,
-    yrcomponent__el = yrcomponent___require.h;
+    yrcomponent__el = yrcomponent___require.h,
+    yrcomponent__render = yrcomponent___require.render;
 
 var yrcomponent__assign = $m['object-assign'].exports;
 var yrcomponent__Component = $m['lib/Component'].exports;
 var yrcomponent__dataTypes = $m['lib/dataTypes'].exports;
+// This will be disabled for browser
+var yrcomponent__renderToString = {};
 var yrcomponent__runtime = $m['@yr/runtime'].exports;
 
 var yrcomponent__LIFECYCLE_METHODS = ['componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
@@ -1863,6 +1866,7 @@ $m['@yr/component'].exports = {
 
   dataTypes: yrcomponent__dataTypes,
   el: yrcomponent__el,
+  render: 'function' == typeof yrcomponent__renderToString ? yrcomponent__renderToString : yrcomponent__render,
 
   /**
    * Convert 'specification' into React component class,
