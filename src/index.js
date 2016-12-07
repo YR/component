@@ -7,12 +7,9 @@
  * @license MIT
  */
 
-const { h: el, render } = require('preact');
+const { React, ReactDOM } = require('./lib/react');
 const assign = require('object-assign');
 const Component = require('./lib/Component');
-const dataTypes = require('./lib/dataTypes');
-// This will be an empty object for browser
-const renderToString = require('preact-render-to-string');
 const runtime = require('@yr/runtime');
 
 const LIFECYCLE_METHODS = [
@@ -41,9 +38,11 @@ module.exports = {
   IS_TRANSITIONING: 2,
   DID_TRANSITION: 3,
 
-  dataTypes,
-  el,
-  render: 'function' == typeof renderToString ? renderToString : render,
+  React,
+  ReactDOM,
+
+  dataTypes: React.PropTypes,
+  el: React.createElement,
 
   /**
    * Convert 'specification' into React component class,
@@ -79,7 +78,8 @@ module.exports = {
 
     return function createElement (props, ...children) {
       processProps(props, specification);
-      return el(comp, props, ...children);
+
+      return React.createElement(comp, props, ...children);
     };
   },
 
@@ -119,7 +119,7 @@ function proxyKeys (obj, keys) {
  */
 function processProps (props, specification) {
   props = props || {};
-  const { data, defaultProps } = specification;
+  const { data, defaultProps, displayName } = specification;
 
   // Extract missing props defined in 'data'
   if (data && props && 'extract' in props) props.extract(Object.keys(data));
@@ -128,6 +128,19 @@ function processProps (props, specification) {
   if (defaultProps) {
     for (const prop in defaultProps) {
       if (props[prop] == null) props[prop] = defaultProps[prop];
+    }
+  }
+
+  if (!data) return;
+
+  if (process.env.NODE_ENV == 'development' && process.env.RUNTIME == 'browser') {
+    const ReactSecret = require('react/lib/ReactPropTypesSecret');
+
+    // Validate prop types
+    for (const key in data) {
+      const err = data[key](props, key, displayName, 'data property', key, ReactSecret);
+
+      if (err) console.error(err);
     }
   }
 }

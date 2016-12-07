@@ -4,7 +4,7 @@
  * Base component class (client)
  */
 
-const Preact = require('preact');
+const { React } = require('./react');
 const assign = require('object-assign');
 const clock = require('@yr/clock');
 const Debug = require('debug');
@@ -15,7 +15,7 @@ const TIMEOUT = 20;
 
 const debug = Debug('yr:component');
 
-module.exports = class Component extends Preact.Component {
+module.exports = class Component extends React.Component {
   /**
    * Constructor
    * @param {Object} props
@@ -38,17 +38,15 @@ module.exports = class Component extends Preact.Component {
   }
 
   /**
-   * Render
-   * @param {Object} props
-   * @param {Object} state
-   * @returns {Component}
+   * React: render
+   * @returns {React}
    */
-  render (props, state) {
-    return this.__render(props, state);
+  render () {
+    return this.__render(this.props, this.state);
   }
 
   /**
-   * Determine if component should update based on incoming props/state
+   * React: shouldComponentUpdate
    * @param {Object} nextProps
    * @param {Object} nextState
    * @returns {Boolean}
@@ -123,7 +121,7 @@ module.exports = class Component extends Preact.Component {
   }
 
   /**
-   * Hook during component unmount
+   * React: componentWillUnmount
    */
   componentWillUnmount () {
     // Reset

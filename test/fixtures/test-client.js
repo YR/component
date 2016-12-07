@@ -1,8 +1,8 @@
 'use strict';
 
-const { render } = require('preact');
+const ReactDom = require('react-dom');
 const testComponent = require('./testComponent');
 
 const comp = testComponent.create();
 
-render(comp({ label: 'click here!' }), null, document.getElementById('container'));
+ReactDom.render(comp({ label: 'click here!' }), document.getElementById('container'));
