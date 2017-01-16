@@ -7,13 +7,14 @@
     "@yr/clock": "1.1.x",
     "@yr/is-equal": "1.0.x",
     "@yr/runtime": "2.0.x",
-    "debug": "2.3.x",
+    "debug": "2.x.x",
     "object-assign": "4.1.x",
-    "react": "15.4.1",
-    "react-dom": "15.4.1"
+    "react": "15.4.2",
+    "react-dom": "15.4.2"
   },
   "devDependencies": {
     "babel-plugin-syntax-trailing-function-commas": "6.13.0",
+    "babel-plugin-transform-async-generator-functions": "6.17.0",
     "babel-plugin-transform-async-to-generator": "6.16.0",
     "babel-plugin-transform-es2015-arrow-functions": "6.8.0",
     "babel-plugin-transform-es2015-block-scoped-functions": "6.8.0",
@@ -34,12 +35,13 @@
     "babel-plugin-transform-es2015-unicode-regex": "6.11.0",
     "babel-plugin-transform-es5-property-mutators": "6.8.0",
     "babel-plugin-transform-exponentiation-operator": "6.8.0",
+    "babel-plugin-transform-object-rest-spread": "6.20.2",
     "benchmark": "2.1.x",
     "buddy": "6.x.x",
     "buddy-server": "*",
     "expect.js": "*",
     "mocha": "*",
-    "react-addons-test-utils": "15.4.1"
+    "react-addons-test-utils": "15.4.2"
   },
   "main": "./src/index.js",
   "repository": "https://github.com/YR/component.git",
@@ -62,7 +64,7 @@
   "buddy": {
     "build": [
       {
-        "input": "src",
+        "input": "src/",
         "output": ".",
         "bundle": false,
         "version": "es5"

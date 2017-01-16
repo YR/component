@@ -60,6 +60,131 @@ if ('browser' != 'browser') {
 })(typeof global === "undefined" ? self : global);
 
 (function () {
+/*== node_modules/react-dom/lib/escapeTextContentForBrowser.js ==*/
+$m['react-dom/lib/escapeTextContentForBrowser'] = { exports: {} };
+/**
+ * Copyright 2016-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * Based on the escape-html library, which is used under the MIT License below:
+ *
+ * Copyright (c) 2012-2013 TJ Holowaychuk
+ * Copyright (c) 2015 Andreas Lubbe
+ * Copyright (c) 2015 Tiancheng "Timothy" Gu
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * 'Software'), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+// code copied and modified from escape-html
+/**
+ * Module variables.
+ * @private
+ */
+
+var reactdomlibescapeTextContentForBrowser__matchHtmlRegExp = /["'&<>]/;
+
+/**
+ * Escape special characters in the given string of html.
+ *
+ * @param  {string} string The string to escape for inserting into HTML
+ * @return {string}
+ * @public
+ */
+
+function reactdomlibescapeTextContentForBrowser__escapeHtml(string) {
+  var str = '' + string;
+  var match = reactdomlibescapeTextContentForBrowser__matchHtmlRegExp.exec(str);
+
+  if (!match) {
+    return str;
+  }
+
+  var escape;
+  var html = '';
+  var index = 0;
+  var lastIndex = 0;
+
+  for (index = match.index; index < str.length; index++) {
+    switch (str.charCodeAt(index)) {
+      case 34:
+        // "
+        escape = '&quot;';
+        break;
+      case 38:
+        // &
+        escape = '&amp;';
+        break;
+      case 39:
+        // '
+        escape = '&#x27;'; // modified from escape-html; used to be '&#39'
+        break;
+      case 60:
+        // <
+        escape = '&lt;';
+        break;
+      case 62:
+        // >
+        escape = '&gt;';
+        break;
+      default:
+        continue;
+    }
+
+    if (lastIndex !== index) {
+      html += str.substring(lastIndex, index);
+    }
+
+    lastIndex = index + 1;
+    html += escape;
+  }
+
+  return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
+}
+// end code copied and modified from escape-html
+
+
+/**
+ * Escapes text to prevent scripting attacks.
+ *
+ * @param {*} text Text value to escape.
+ * @return {string} An escaped string.
+ */
+function reactdomlibescapeTextContentForBrowser__escapeTextContentForBrowser(text) {
+  if (typeof text === 'boolean' || typeof text === 'number') {
+    // this shortcircuit helps perf for types that we know will never have
+    // special characters, especially given that this function is used often
+    // for numeric dom ids.
+    return '' + text;
+  }
+  return reactdomlibescapeTextContentForBrowser__escapeHtml(text);
+}
+
+$m['react-dom/lib/escapeTextContentForBrowser'].exports = reactdomlibescapeTextContentForBrowser__escapeTextContentForBrowser;
+/*≠≠ node_modules/react-dom/lib/escapeTextContentForBrowser.js ≠≠*/
+
+
 /*== test/fixtures/testComponentMixin.js ==*/
 $m['test/fixtures/testComponentMixin'] = { exports: {} };
 
@@ -76,8 +201,8 @@ $m['test/fixtures/testComponentMixin'].exports = {
 /*≠≠ test/fixtures/testComponentMixin.js ≠≠*/
 
 
-/*== node_modules/react-dom/lib/isTextInputElement.js ==*/
-$m['react-dom/lib/isTextInputElement'] = { exports: {} };
+/*== node_modules/react/lib/ReactPropTypesSecret.js ==*/
+$m['react/lib/ReactPropTypesSecret'] = { exports: {} };
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -89,44 +214,10 @@ $m['react-dom/lib/isTextInputElement'] = { exports: {} };
  * 
  */
 
-/**
- * @see http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
- */
+var reactlibReactPropTypesSecret__ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
-var reactdomlibisTextInputElement__supportedInputTypes = {
-  'color': true,
-  'date': true,
-  'datetime': true,
-  'datetime-local': true,
-  'email': true,
-  'month': true,
-  'number': true,
-  'password': true,
-  'range': true,
-  'search': true,
-  'tel': true,
-  'text': true,
-  'time': true,
-  'url': true,
-  'week': true
-};
-
-function reactdomlibisTextInputElement__isTextInputElement(elem) {
-  var nodeName = elem && elem.nodeName && elem.nodeName.toLowerCase();
-
-  if (nodeName === 'input') {
-    return !!reactdomlibisTextInputElement__supportedInputTypes[elem.type];
-  }
-
-  if (nodeName === 'textarea') {
-    return true;
-  }
-
-  return false;
-}
-
-$m['react-dom/lib/isTextInputElement'].exports = reactdomlibisTextInputElement__isTextInputElement;
-/*≠≠ node_modules/react-dom/lib/isTextInputElement.js ≠≠*/
+$m['react/lib/ReactPropTypesSecret'].exports = reactlibReactPropTypesSecret__ReactPropTypesSecret;
+/*≠≠ node_modules/react/lib/ReactPropTypesSecret.js ≠≠*/
 
 
 /*== node_modules/@yr/is-equal/index.js ==*/
@@ -391,48 +482,10 @@ function ms__plural(ms, n, name) {
 /*≠≠ node_modules/ms/index.js ≠≠*/
 
 
-/*== node_modules/fbjs/lib/getActiveElement.js ==*/
-$m['fbjs/lib/getActiveElement'] = { exports: {} };
-
+/*== node_modules/react-dom/lib/ARIADOMPropertyConfig.js ==*/
+$m['react-dom/lib/ARIADOMPropertyConfig'] = { exports: {} };
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-/* eslint-disable fb-www/typeof-undefined */
-
-/**
- * Same as document.activeElement but wraps in a try-catch block. In IE it is
- * not safe to call document.activeElement if there is nothing focused.
- *
- * The activeElement will be null only if the document or document body is not
- * yet defined.
- */
-function fbjslibgetActiveElement__getActiveElement() /*?DOMElement*/{
-  if (typeof document === 'undefined') {
-    return null;
-  }
-  try {
-    return document.activeElement || document.body;
-  } catch (e) {
-    return document.body;
-  }
-}
-
-$m['fbjs/lib/getActiveElement'].exports = fbjslibgetActiveElement__getActiveElement;
-/*≠≠ node_modules/fbjs/lib/getActiveElement.js ≠≠*/
-
-
-/*== node_modules/fbjs/lib/focusNode.js ==*/
-$m['fbjs/lib/focusNode'] = { exports: {} };
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -441,28 +494,103 @@ $m['fbjs/lib/focusNode'] = { exports: {} };
  *
  */
 
+var reactdomlibARIADOMPropertyConfig__ARIADOMPropertyConfig = {
+  Properties: {
+    // Global States and Properties
+    'aria-current': 0, // state
+    'aria-details': 0,
+    'aria-disabled': 0, // state
+    'aria-hidden': 0, // state
+    'aria-invalid': 0, // state
+    'aria-keyshortcuts': 0,
+    'aria-label': 0,
+    'aria-roledescription': 0,
+    // Widget Attributes
+    'aria-autocomplete': 0,
+    'aria-checked': 0,
+    'aria-expanded': 0,
+    'aria-haspopup': 0,
+    'aria-level': 0,
+    'aria-modal': 0,
+    'aria-multiline': 0,
+    'aria-multiselectable': 0,
+    'aria-orientation': 0,
+    'aria-placeholder': 0,
+    'aria-pressed': 0,
+    'aria-readonly': 0,
+    'aria-required': 0,
+    'aria-selected': 0,
+    'aria-sort': 0,
+    'aria-valuemax': 0,
+    'aria-valuemin': 0,
+    'aria-valuenow': 0,
+    'aria-valuetext': 0,
+    // Live Region Attributes
+    'aria-atomic': 0,
+    'aria-busy': 0,
+    'aria-live': 0,
+    'aria-relevant': 0,
+    // Drag-and-Drop Attributes
+    'aria-dropeffect': 0,
+    'aria-grabbed': 0,
+    // Relationship Attributes
+    'aria-activedescendant': 0,
+    'aria-colcount': 0,
+    'aria-colindex': 0,
+    'aria-colspan': 0,
+    'aria-controls': 0,
+    'aria-describedby': 0,
+    'aria-errormessage': 0,
+    'aria-flowto': 0,
+    'aria-labelledby': 0,
+    'aria-owns': 0,
+    'aria-posinset': 0,
+    'aria-rowcount': 0,
+    'aria-rowindex': 0,
+    'aria-rowspan': 0,
+    'aria-setsize': 0
+  },
+  DOMAttributeNames: {},
+  DOMPropertyNames: {}
+};
+
+$m['react-dom/lib/ARIADOMPropertyConfig'].exports = reactdomlibARIADOMPropertyConfig__ARIADOMPropertyConfig;
+/*≠≠ node_modules/react-dom/lib/ARIADOMPropertyConfig.js ≠≠*/
+
+
+/*== node_modules/react-dom/lib/DefaultEventPluginOrder.js ==*/
+$m['react-dom/lib/DefaultEventPluginOrder'] = { exports: {} };
 /**
- * @param {DOMElement} node input/textarea to focus
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
  */
 
-function fbjslibfocusNode__focusNode(node) {
-  // IE8 can throw "Can't move focus to the control because it is invisible,
-  // not enabled, or of a type that does not accept the focus." for all kinds of
-  // reasons that are too expensive and fragile to test.
-  try {
-    node.focus();
-  } catch (e) {}
-}
+/**
+ * Module that is injectable into `EventPluginHub`, that specifies a
+ * deterministic ordering of `EventPlugin`s. A convenient way to reason about
+ * plugins, without having to package every one of them. This is better than
+ * having plugins be ordered in the same order that they are injected because
+ * that ordering would be influenced by the packaging order.
+ * `ResponderEventPlugin` must occur before `SimpleEventPlugin` so that
+ * preventing default on events is convenient in `SimpleEventPlugin` handlers.
+ */
 
-$m['fbjs/lib/focusNode'].exports = fbjslibfocusNode__focusNode;
-/*≠≠ node_modules/fbjs/lib/focusNode.js ≠≠*/
+var reactdomlibDefaultEventPluginOrder__DefaultEventPluginOrder = ['ResponderEventPlugin', 'SimpleEventPlugin', 'TapEventPlugin', 'EnterLeaveEventPlugin', 'ChangeEventPlugin', 'SelectEventPlugin', 'BeforeInputEventPlugin'];
+
+$m['react-dom/lib/DefaultEventPluginOrder'].exports = reactdomlibDefaultEventPluginOrder__DefaultEventPluginOrder;
+/*≠≠ node_modules/react-dom/lib/DefaultEventPluginOrder.js ≠≠*/
 
 
 /*== node_modules/performance-now/lib/performance-now.js ==*/
 $m['performance-now'] = { exports: {} };
-// Generated by CoffeeScript 1.7.1
+// Generated by CoffeeScript 1.12.2
 (function () {
-  var getNanoSeconds, hrtime, loadTime;
+  var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
 
   if (typeof performance !== "undefined" && performance !== null && performance.now) {
     $m['performance-now'].exports = function () {
@@ -470,7 +598,7 @@ $m['performance-now'] = { exports: {} };
     };
   } else if (typeof process !== "undefined" && process !== null && process.hrtime) {
     $m['performance-now'].exports = function () {
-      return (getNanoSeconds() - loadTime) / 1e6;
+      return (getNanoSeconds() - nodeLoadTime) / 1e6;
     };
     hrtime = process.hrtime;
     getNanoSeconds = function () {
@@ -478,7 +606,9 @@ $m['performance-now'] = { exports: {} };
       hr = hrtime();
       return hr[0] * 1e9 + hr[1];
     };
-    loadTime = getNanoSeconds();
+    moduleLoadTime = getNanoSeconds();
+    upTime = process.uptime() * 1e9;
+    nodeLoadTime = moduleLoadTime - upTime;
   } else if (Date.now) {
     $m['performance-now'].exports = function () {
       return Date.now() - loadTime;
@@ -494,8 +624,45 @@ $m['performance-now'] = { exports: {} };
 /*≠≠ node_modules/performance-now/lib/performance-now.js ≠≠*/
 
 
-/*== node_modules/fbjs/lib/isNode.js ==*/
-$m['fbjs/lib/isNode'] = { exports: {} };
+/*== node_modules/raf/node_modules/...nce-now/lib/performance-now.js ==*/
+$m['performance-now#0.2.0'] = { exports: {} };
+// Generated by CoffeeScript 1.7.1
+(function () {
+  var getNanoSeconds, hrtime, loadTime;
+
+  if (typeof performance !== "undefined" && performance !== null && performance.now) {
+    $m['performance-now#0.2.0'].exports = function () {
+      return performance.now();
+    };
+  } else if (typeof process !== "undefined" && process !== null && process.hrtime) {
+    $m['performance-now#0.2.0'].exports = function () {
+      return (getNanoSeconds() - loadTime) / 1e6;
+    };
+    hrtime = process.hrtime;
+    getNanoSeconds = function () {
+      var hr;
+      hr = hrtime();
+      return hr[0] * 1e9 + hr[1];
+    };
+    loadTime = getNanoSeconds();
+  } else if (Date.now) {
+    $m['performance-now#0.2.0'].exports = function () {
+      return Date.now() - loadTime;
+    };
+    loadTime = Date.now();
+  } else {
+    $m['performance-now#0.2.0'].exports = function () {
+      return new Date().getTime() - loadTime;
+    };
+    loadTime = new Date().getTime();
+  }
+}).call(undefined);
+/*≠≠ node_modules/raf/node_modules/...nce-now/lib/performance-now.js ≠≠*/
+
+
+/*== node_modules/fbjs/lib/camelize.js ==*/
+$m['fbjs/lib/camelize'] = { exports: {} };
+"use strict";
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -508,20 +675,29 @@ $m['fbjs/lib/isNode'] = { exports: {} };
  * @typechecks
  */
 
+var fbjslibcamelize___hyphenPattern = /-(.)/g;
+
 /**
- * @param {*} object The object to check.
- * @return {boolean} Whether or not the object is a DOM node.
+ * Camelcases a hyphenated string, for example:
+ *
+ *   > camelize('background-color')
+ *   < "backgroundColor"
+ *
+ * @param {string} string
+ * @return {string}
  */
-function fbjslibisNode__isNode(object) {
-  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+function fbjslibcamelize__camelize(string) {
+  return string.replace(fbjslibcamelize___hyphenPattern, function (_, character) {
+    return character.toUpperCase();
+  });
 }
 
-$m['fbjs/lib/isNode'].exports = fbjslibisNode__isNode;
-/*≠≠ node_modules/fbjs/lib/isNode.js ≠≠*/
+$m['fbjs/lib/camelize'].exports = fbjslibcamelize__camelize;
+/*≠≠ node_modules/fbjs/lib/camelize.js ≠≠*/
 
 
-/*== node_modules/react-dom/lib/getNodeForCharacterOffset.js ==*/
-$m['react-dom/lib/getNodeForCharacterOffset'] = { exports: {} };
+/*== node_modules/react-dom/lib/CSSProperty.js ==*/
+$m['react-dom/lib/CSSProperty'] = { exports: {} };
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -533,67 +709,141 @@ $m['react-dom/lib/getNodeForCharacterOffset'] = { exports: {} };
  */
 
 /**
- * Given any node return the first leaf node without children.
- *
- * @param {DOMElement|DOMTextNode} node
- * @return {DOMElement|DOMTextNode}
+ * CSS properties which accept numbers but are not in units of "px".
  */
 
-function reactdomlibgetNodeForCharacterOffset__getLeafNode(node) {
-  while (node && node.firstChild) {
-    node = node.firstChild;
-  }
-  return node;
+var reactdomlibCSSProperty__isUnitlessNumber = {
+  animationIterationCount: true,
+  borderImageOutset: true,
+  borderImageSlice: true,
+  borderImageWidth: true,
+  boxFlex: true,
+  boxFlexGroup: true,
+  boxOrdinalGroup: true,
+  columnCount: true,
+  flex: true,
+  flexGrow: true,
+  flexPositive: true,
+  flexShrink: true,
+  flexNegative: true,
+  flexOrder: true,
+  gridRow: true,
+  gridColumn: true,
+  fontWeight: true,
+  lineClamp: true,
+  lineHeight: true,
+  opacity: true,
+  order: true,
+  orphans: true,
+  tabSize: true,
+  widows: true,
+  zIndex: true,
+  zoom: true,
+
+  // SVG-related properties
+  fillOpacity: true,
+  floodOpacity: true,
+  stopOpacity: true,
+  strokeDasharray: true,
+  strokeDashoffset: true,
+  strokeMiterlimit: true,
+  strokeOpacity: true,
+  strokeWidth: true
+};
+
+/**
+ * @param {string} prefix vendor-specific prefix, eg: Webkit
+ * @param {string} key style name, eg: transitionDuration
+ * @return {string} style name prefixed with `prefix`, properly camelCased, eg:
+ * WebkitTransitionDuration
+ */
+function reactdomlibCSSProperty__prefixKey(prefix, key) {
+  return prefix + key.charAt(0).toUpperCase() + key.substring(1);
 }
 
 /**
- * Get the next sibling within a container. This will walk up the
- * DOM if a node's siblings have been exhausted.
- *
- * @param {DOMElement|DOMTextNode} node
- * @return {?DOMElement|DOMTextNode}
+ * Support style names that may come passed in prefixed by adding permutations
+ * of vendor prefixes.
  */
-function reactdomlibgetNodeForCharacterOffset__getSiblingNode(node) {
-  while (node) {
-    if (node.nextSibling) {
-      return node.nextSibling;
-    }
-    node = node.parentNode;
-  }
-}
+var reactdomlibCSSProperty__prefixes = ['Webkit', 'ms', 'Moz', 'O'];
+
+// Using Object.keys here, or else the vanilla for-in loop makes IE8 go into an
+// infinite loop, because it iterates over the newly added props too.
+Object.keys(reactdomlibCSSProperty__isUnitlessNumber).forEach(function (prop) {
+  reactdomlibCSSProperty__prefixes.forEach(function (prefix) {
+    reactdomlibCSSProperty__isUnitlessNumber[reactdomlibCSSProperty__prefixKey(prefix, prop)] = reactdomlibCSSProperty__isUnitlessNumber[prop];
+  });
+});
 
 /**
- * Get object describing the nodes which contain characters at offset.
- *
- * @param {DOMElement|DOMTextNode} root
- * @param {number} offset
- * @return {?object}
+ * Most style properties can be unset by doing .style[prop] = '' but IE8
+ * doesn't like doing that with shorthand properties so for the properties that
+ * IE8 breaks on, which are listed here, we instead unset each of the
+ * individual properties. See http://bugs.jquery.com/ticket/12385.
+ * The 4-value 'clock' properties like margin, padding, border-width seem to
+ * behave without any problems. Curiously, list-style works too without any
+ * special prodding.
  */
-function reactdomlibgetNodeForCharacterOffset__getNodeForCharacterOffset(root, offset) {
-  var node = reactdomlibgetNodeForCharacterOffset__getLeafNode(root);
-  var nodeStart = 0;
-  var nodeEnd = 0;
-
-  while (node) {
-    if (node.nodeType === 3) {
-      nodeEnd = nodeStart + node.textContent.length;
-
-      if (nodeStart <= offset && nodeEnd >= offset) {
-        return {
-          node: node,
-          offset: offset - nodeStart
-        };
-      }
-
-      nodeStart = nodeEnd;
-    }
-
-    node = reactdomlibgetNodeForCharacterOffset__getLeafNode(reactdomlibgetNodeForCharacterOffset__getSiblingNode(node));
+var reactdomlibCSSProperty__shorthandPropertyExpansions = {
+  background: {
+    backgroundAttachment: true,
+    backgroundColor: true,
+    backgroundImage: true,
+    backgroundPositionX: true,
+    backgroundPositionY: true,
+    backgroundRepeat: true
+  },
+  backgroundPosition: {
+    backgroundPositionX: true,
+    backgroundPositionY: true
+  },
+  border: {
+    borderWidth: true,
+    borderStyle: true,
+    borderColor: true
+  },
+  borderBottom: {
+    borderBottomWidth: true,
+    borderBottomStyle: true,
+    borderBottomColor: true
+  },
+  borderLeft: {
+    borderLeftWidth: true,
+    borderLeftStyle: true,
+    borderLeftColor: true
+  },
+  borderRight: {
+    borderRightWidth: true,
+    borderRightStyle: true,
+    borderRightColor: true
+  },
+  borderTop: {
+    borderTopWidth: true,
+    borderTopStyle: true,
+    borderTopColor: true
+  },
+  font: {
+    fontStyle: true,
+    fontVariant: true,
+    fontWeight: true,
+    fontSize: true,
+    lineHeight: true,
+    fontFamily: true
+  },
+  outline: {
+    outlineWidth: true,
+    outlineStyle: true,
+    outlineColor: true
   }
-}
+};
 
-$m['react-dom/lib/getNodeForCharacterOffset'].exports = reactdomlibgetNodeForCharacterOffset__getNodeForCharacterOffset;
-/*≠≠ node_modules/react-dom/lib/getNodeForCharacterOffset.js ≠≠*/
+var reactdomlibCSSProperty__CSSProperty = {
+  isUnitlessNumber: reactdomlibCSSProperty__isUnitlessNumber,
+  shorthandPropertyExpansions: reactdomlibCSSProperty__shorthandPropertyExpansions
+};
+
+$m['react-dom/lib/CSSProperty'].exports = reactdomlibCSSProperty__CSSProperty;
+/*≠≠ node_modules/react-dom/lib/CSSProperty.js ≠≠*/
 
 
 /*== node_modules/object-assign/index.js ==*/
@@ -723,6 +973,416 @@ fbjslibemptyFunction__emptyFunction.thatReturnsArgument = function (arg) {
 
 $m['fbjs/lib/emptyFunction'].exports = fbjslibemptyFunction__emptyFunction;
 /*≠≠ node_modules/fbjs/lib/emptyFunction.js ≠≠*/
+
+
+/*== node_modules/fbjs/lib/hyphenate.js ==*/
+$m['fbjs/lib/hyphenate'] = { exports: {} };
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @typechecks
+ */
+
+var fbjslibhyphenate___uppercasePattern = /([A-Z])/g;
+
+/**
+ * Hyphenates a camelcased string, for example:
+ *
+ *   > hyphenate('backgroundColor')
+ *   < "background-color"
+ *
+ * For CSS style names, use `hyphenateStyleName` instead which works properly
+ * with all vendor prefixes, including `ms`.
+ *
+ * @param {string} string
+ * @return {string}
+ */
+function fbjslibhyphenate__hyphenate(string) {
+  return string.replace(fbjslibhyphenate___uppercasePattern, '-$1').toLowerCase();
+}
+
+$m['fbjs/lib/hyphenate'].exports = fbjslibhyphenate__hyphenate;
+/*≠≠ node_modules/fbjs/lib/hyphenate.js ≠≠*/
+
+
+/*== node_modules/fbjs/lib/invariant.js ==*/
+$m['fbjs/lib/invariant'] = { exports: {} };
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var fbjslibinvariant__validateFormat = function validateFormat(format) {};
+
+if (process.env.NODE_ENV !== 'production') {
+  fbjslibinvariant__validateFormat = function validateFormat(format) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  };
+}
+
+function fbjslibinvariant__invariant(condition, format, a, b, c, d, e, f) {
+  fbjslibinvariant__validateFormat(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+$m['fbjs/lib/invariant'].exports = fbjslibinvariant__invariant;
+/*≠≠ node_modules/fbjs/lib/invariant.js ≠≠*/
+
+
+/*== node_modules/react/lib/ReactCurrentOwner.js ==*/
+$m['react/lib/ReactCurrentOwner'] = { exports: {} };
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ */
+
+/**
+ * Keeps track of the current owner.
+ *
+ * The current owner is the component who should own any components that are
+ * currently being constructed.
+ */
+var reactlibReactCurrentOwner__ReactCurrentOwner = {
+
+  /**
+   * @internal
+   * @type {ReactComponent}
+   */
+  current: null
+
+};
+
+$m['react/lib/ReactCurrentOwner'].exports = reactlibReactCurrentOwner__ReactCurrentOwner;
+/*≠≠ node_modules/react/lib/ReactCurrentOwner.js ≠≠*/
+
+
+/*== node_modules/react/lib/reactProdInvariant.js ==*/
+$m['react/lib/reactProdInvariant'] = { exports: {} };
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ */
+
+/**
+ * WARNING: DO NOT manually require this module.
+ * This is a replacement for `invariant(...)` used by the error code system
+ * and will _only_ be required by the corresponding babel pass.
+ * It always throws.
+ */
+
+function reactlibreactProdInvariant__reactProdInvariant(code) {
+  var argCount = arguments.length - 1;
+
+  var message = 'Minified React error #' + code + '; visit ' + 'http://facebook.github.io/react/docs/error-decoder.html?invariant=' + code;
+
+  for (var argIdx = 0; argIdx < argCount; argIdx++) {
+    message += '&args[]=' + encodeURIComponent(arguments[argIdx + 1]);
+  }
+
+  message += ' for the full message or use the non-minified dev environment' + ' for full errors and additional helpful warnings.';
+
+  var error = new Error(message);
+  error.name = 'Invariant Violation';
+  error.framesToPop = 1; // we don't care about reactProdInvariant's own frame
+
+  throw error;
+}
+
+$m['react/lib/reactProdInvariant'].exports = reactlibreactProdInvariant__reactProdInvariant;
+/*≠≠ node_modules/react/lib/reactProdInvariant.js ≠≠*/
+
+
+/*== node_modules/fbjs/lib/memoizeStringOnly.js ==*/
+$m['fbjs/lib/memoizeStringOnly'] = { exports: {} };
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ * @typechecks static-only
+ */
+
+/**
+ * Memoizes the return value of a function that accepts one string argument.
+ */
+
+function fbjslibmemoizeStringOnly__memoizeStringOnly(callback) {
+  var cache = {};
+  return function (string) {
+    if (!cache.hasOwnProperty(string)) {
+      cache[string] = callback.call(this, string);
+    }
+    return cache[string];
+  };
+}
+
+$m['fbjs/lib/memoizeStringOnly'].exports = fbjslibmemoizeStringOnly__memoizeStringOnly;
+/*≠≠ node_modules/fbjs/lib/memoizeStringOnly.js ≠≠*/
+
+
+/*== node_modules/react-dom/lib/reactProdInvariant.js ==*/
+$m['react-dom/lib/reactProdInvariant'] = { exports: {} };
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ */
+
+/**
+ * WARNING: DO NOT manually require this module.
+ * This is a replacement for `invariant(...)` used by the error code system
+ * and will _only_ be required by the corresponding babel pass.
+ * It always throws.
+ */
+
+function reactdomlibreactProdInvariant__reactProdInvariant(code) {
+  var argCount = arguments.length - 1;
+
+  var message = 'Minified React error #' + code + '; visit ' + 'http://facebook.github.io/react/docs/error-decoder.html?invariant=' + code;
+
+  for (var argIdx = 0; argIdx < argCount; argIdx++) {
+    message += '&args[]=' + encodeURIComponent(arguments[argIdx + 1]);
+  }
+
+  message += ' for the full message or use the non-minified dev environment' + ' for full errors and additional helpful warnings.';
+
+  var error = new Error(message);
+  error.name = 'Invariant Violation';
+  error.framesToPop = 1; // we don't care about reactProdInvariant's own frame
+
+  throw error;
+}
+
+$m['react-dom/lib/reactProdInvariant'].exports = reactdomlibreactProdInvariant__reactProdInvariant;
+/*≠≠ node_modules/react-dom/lib/reactProdInvariant.js ≠≠*/
+
+
+/*== node_modules/react-dom/lib/ReactElementSymbol.js ==*/
+$m['react-dom/lib/ReactElementSymbol'] = { exports: {} };
+/**
+ * Copyright 2014-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ */
+
+// The Symbol used to tag the ReactElement type. If there is no native Symbol
+// nor polyfill, then a plain number is used for performance.
+
+var reactdomlibReactElementSymbol__REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol['for']('react.element') || 0xeac7;
+
+$m['react-dom/lib/ReactElementSymbol'].exports = reactdomlibReactElementSymbol__REACT_ELEMENT_TYPE;
+/*≠≠ node_modules/react-dom/lib/ReactElementSymbol.js ≠≠*/
+
+
+/*== node_modules/react-dom/lib/getIteratorFn.js ==*/
+$m['react-dom/lib/getIteratorFn'] = { exports: {} };
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ */
+
+/* global Symbol */
+
+var reactdomlibgetIteratorFn__ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+var reactdomlibgetIteratorFn__FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+/**
+ * Returns the iterator method function contained on the iterable object.
+ *
+ * Be sure to invoke the function with the iterable as context:
+ *
+ *     var iteratorFn = getIteratorFn(myIterable);
+ *     if (iteratorFn) {
+ *       var iterator = iteratorFn.call(myIterable);
+ *       ...
+ *     }
+ *
+ * @param {?object} maybeIterable
+ * @return {?function}
+ */
+function reactdomlibgetIteratorFn__getIteratorFn(maybeIterable) {
+  var iteratorFn = maybeIterable && (reactdomlibgetIteratorFn__ITERATOR_SYMBOL && maybeIterable[reactdomlibgetIteratorFn__ITERATOR_SYMBOL] || maybeIterable[reactdomlibgetIteratorFn__FAUX_ITERATOR_SYMBOL]);
+  if (typeof iteratorFn === 'function') {
+    return iteratorFn;
+  }
+}
+
+$m['react-dom/lib/getIteratorFn'].exports = reactdomlibgetIteratorFn__getIteratorFn;
+/*≠≠ node_modules/react-dom/lib/getIteratorFn.js ≠≠*/
+
+
+/*== node_modules/react-dom/lib/KeyEscapeUtils.js ==*/
+$m['react-dom/lib/KeyEscapeUtils'] = { exports: {} };
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * 
+ */
+
+/**
+ * Escape and wrap key so it is safe to use as a reactid
+ *
+ * @param {string} key to be escaped.
+ * @return {string} the escaped key.
+ */
+
+function reactdomlibKeyEscapeUtils__escape(key) {
+  var escapeRegex = /[=:]/g;
+  var escaperLookup = {
+    '=': '=0',
+    ':': '=2'
+  };
+  var escapedString = ('' + key).replace(escapeRegex, function (match) {
+    return escaperLookup[match];
+  });
+
+  return '$' + escapedString;
+}
+
+/**
+ * Unescape and unwrap key for human-readable display
+ *
+ * @param {string} key to unescape.
+ * @return {string} the unescaped key.
+ */
+function reactdomlibKeyEscapeUtils__unescape(key) {
+  var unescapeRegex = /(=0|=2)/g;
+  var unescaperLookup = {
+    '=0': '=',
+    '=2': ':'
+  };
+  var keySubstring = key[0] === '.' && key[1] === '$' ? key.substring(2) : key.substring(1);
+
+  return ('' + keySubstring).replace(unescapeRegex, function (match) {
+    return unescaperLookup[match];
+  });
+}
+
+var reactdomlibKeyEscapeUtils__KeyEscapeUtils = {
+  escape: reactdomlibKeyEscapeUtils__escape,
+  unescape: reactdomlibKeyEscapeUtils__unescape
+};
+
+$m['react-dom/lib/KeyEscapeUtils'].exports = reactdomlibKeyEscapeUtils__KeyEscapeUtils;
+/*≠≠ node_modules/react-dom/lib/KeyEscapeUtils.js ≠≠*/
+
+
+/*== node_modules/fbjs/lib/getUnboundedScrollPosition.js ==*/
+$m['fbjs/lib/getUnboundedScrollPosition'] = { exports: {} };
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @typechecks
+ */
+
+/**
+ * Gets the scroll position of the supplied element or window.
+ *
+ * The return values are unbounded, unlike `getScrollPosition`. This means they
+ * may be negative or exceed the element boundaries (which is possible using
+ * inertial scrolling).
+ *
+ * @param {DOMWindow|DOMElement} scrollable
+ * @return {object} Map with `x` and `y` keys.
+ */
+
+function fbjslibgetUnboundedScrollPosition__getUnboundedScrollPosition(scrollable) {
+  if (scrollable === window) {
+    return {
+      x: window.pageXOffset || document.documentElement.scrollLeft,
+      y: window.pageYOffset || document.documentElement.scrollTop
+    };
+  }
+  return {
+    x: scrollable.scrollLeft,
+    y: scrollable.scrollTop
+  };
+}
+
+$m['fbjs/lib/getUnboundedScrollPosition'].exports = fbjslibgetUnboundedScrollPosition__getUnboundedScrollPosition;
+/*≠≠ node_modules/fbjs/lib/getUnboundedScrollPosition.js ≠≠*/
 
 
 /*== node_modules/react-dom/lib/SVGDOMPropertyConfig.js ==*/
@@ -1029,411 +1689,6 @@ $m['react-dom/lib/SVGDOMPropertyConfig'].exports = reactdomlibSVGDOMPropertyConf
 /*≠≠ node_modules/react-dom/lib/SVGDOMPropertyConfig.js ≠≠*/
 
 
-/*== node_modules/fbjs/lib/invariant.js ==*/
-$m['fbjs/lib/invariant'] = { exports: {} };
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-function fbjslibinvariant__invariant(condition, format, a, b, c, d, e, f) {
-  if (process.env.NODE_ENV !== 'production') {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  }
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-    } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error(format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
-      error.name = 'Invariant Violation';
-    }
-
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
-}
-
-$m['fbjs/lib/invariant'].exports = fbjslibinvariant__invariant;
-/*≠≠ node_modules/fbjs/lib/invariant.js ≠≠*/
-
-
-/*== node_modules/react/lib/ReactCurrentOwner.js ==*/
-$m['react/lib/ReactCurrentOwner'] = { exports: {} };
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-/**
- * Keeps track of the current owner.
- *
- * The current owner is the component who should own any components that are
- * currently being constructed.
- */
-var reactlibReactCurrentOwner__ReactCurrentOwner = {
-
-  /**
-   * @internal
-   * @type {ReactComponent}
-   */
-  current: null
-
-};
-
-$m['react/lib/ReactCurrentOwner'].exports = reactlibReactCurrentOwner__ReactCurrentOwner;
-/*≠≠ node_modules/react/lib/ReactCurrentOwner.js ≠≠*/
-
-
-/*== node_modules/react/lib/reactProdInvariant.js ==*/
-$m['react/lib/reactProdInvariant'] = { exports: {} };
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-/**
- * WARNING: DO NOT manually require this module.
- * This is a replacement for `invariant(...)` used by the error code system
- * and will _only_ be required by the corresponding babel pass.
- * It always throws.
- */
-
-function reactlibreactProdInvariant__reactProdInvariant(code) {
-  var argCount = arguments.length - 1;
-
-  var message = 'Minified React error #' + code + '; visit ' + 'http://facebook.github.io/react/docs/error-decoder.html?invariant=' + code;
-
-  for (var argIdx = 0; argIdx < argCount; argIdx++) {
-    message += '&args[]=' + encodeURIComponent(arguments[argIdx + 1]);
-  }
-
-  message += ' for the full message or use the non-minified dev environment' + ' for full errors and additional helpful warnings.';
-
-  var error = new Error(message);
-  error.name = 'Invariant Violation';
-  error.framesToPop = 1; // we don't care about reactProdInvariant's own frame
-
-  throw error;
-}
-
-$m['react/lib/reactProdInvariant'].exports = reactlibreactProdInvariant__reactProdInvariant;
-/*≠≠ node_modules/react/lib/reactProdInvariant.js ≠≠*/
-
-
-/*== node_modules/fbjs/lib/getUnboundedScrollPosition.js ==*/
-$m['fbjs/lib/getUnboundedScrollPosition'] = { exports: {} };
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @typechecks
- */
-
-/**
- * Gets the scroll position of the supplied element or window.
- *
- * The return values are unbounded, unlike `getScrollPosition`. This means they
- * may be negative or exceed the element boundaries (which is possible using
- * inertial scrolling).
- *
- * @param {DOMWindow|DOMElement} scrollable
- * @return {object} Map with `x` and `y` keys.
- */
-
-function fbjslibgetUnboundedScrollPosition__getUnboundedScrollPosition(scrollable) {
-  if (scrollable === window) {
-    return {
-      x: window.pageXOffset || document.documentElement.scrollLeft,
-      y: window.pageYOffset || document.documentElement.scrollTop
-    };
-  }
-  return {
-    x: scrollable.scrollLeft,
-    y: scrollable.scrollTop
-  };
-}
-
-$m['fbjs/lib/getUnboundedScrollPosition'].exports = fbjslibgetUnboundedScrollPosition__getUnboundedScrollPosition;
-/*≠≠ node_modules/fbjs/lib/getUnboundedScrollPosition.js ≠≠*/
-
-
-/*== node_modules/react-dom/lib/reactProdInvariant.js ==*/
-$m['react-dom/lib/reactProdInvariant'] = { exports: {} };
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-/**
- * WARNING: DO NOT manually require this module.
- * This is a replacement for `invariant(...)` used by the error code system
- * and will _only_ be required by the corresponding babel pass.
- * It always throws.
- */
-
-function reactdomlibreactProdInvariant__reactProdInvariant(code) {
-  var argCount = arguments.length - 1;
-
-  var message = 'Minified React error #' + code + '; visit ' + 'http://facebook.github.io/react/docs/error-decoder.html?invariant=' + code;
-
-  for (var argIdx = 0; argIdx < argCount; argIdx++) {
-    message += '&args[]=' + encodeURIComponent(arguments[argIdx + 1]);
-  }
-
-  message += ' for the full message or use the non-minified dev environment' + ' for full errors and additional helpful warnings.';
-
-  var error = new Error(message);
-  error.name = 'Invariant Violation';
-  error.framesToPop = 1; // we don't care about reactProdInvariant's own frame
-
-  throw error;
-}
-
-$m['react-dom/lib/reactProdInvariant'].exports = reactdomlibreactProdInvariant__reactProdInvariant;
-/*≠≠ node_modules/react-dom/lib/reactProdInvariant.js ≠≠*/
-
-
-/*== node_modules/react-dom/lib/KeyEscapeUtils.js ==*/
-$m['react-dom/lib/KeyEscapeUtils'] = { exports: {} };
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-/**
- * Escape and wrap key so it is safe to use as a reactid
- *
- * @param {string} key to be escaped.
- * @return {string} the escaped key.
- */
-
-function reactdomlibKeyEscapeUtils__escape(key) {
-  var escapeRegex = /[=:]/g;
-  var escaperLookup = {
-    '=': '=0',
-    ':': '=2'
-  };
-  var escapedString = ('' + key).replace(escapeRegex, function (match) {
-    return escaperLookup[match];
-  });
-
-  return '$' + escapedString;
-}
-
-/**
- * Unescape and unwrap key for human-readable display
- *
- * @param {string} key to unescape.
- * @return {string} the unescaped key.
- */
-function reactdomlibKeyEscapeUtils__unescape(key) {
-  var unescapeRegex = /(=0|=2)/g;
-  var unescaperLookup = {
-    '=0': '=',
-    '=2': ':'
-  };
-  var keySubstring = key[0] === '.' && key[1] === '$' ? key.substring(2) : key.substring(1);
-
-  return ('' + keySubstring).replace(unescapeRegex, function (match) {
-    return unescaperLookup[match];
-  });
-}
-
-var reactdomlibKeyEscapeUtils__KeyEscapeUtils = {
-  escape: reactdomlibKeyEscapeUtils__escape,
-  unescape: reactdomlibKeyEscapeUtils__unescape
-};
-
-$m['react-dom/lib/KeyEscapeUtils'].exports = reactdomlibKeyEscapeUtils__KeyEscapeUtils;
-/*≠≠ node_modules/react-dom/lib/KeyEscapeUtils.js ≠≠*/
-
-
-/*== node_modules/react-dom/lib/getIteratorFn.js ==*/
-$m['react-dom/lib/getIteratorFn'] = { exports: {} };
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-/* global Symbol */
-
-var reactdomlibgetIteratorFn__ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-var reactdomlibgetIteratorFn__FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
-
-/**
- * Returns the iterator method function contained on the iterable object.
- *
- * Be sure to invoke the function with the iterable as context:
- *
- *     var iteratorFn = getIteratorFn(myIterable);
- *     if (iteratorFn) {
- *       var iterator = iteratorFn.call(myIterable);
- *       ...
- *     }
- *
- * @param {?object} maybeIterable
- * @return {?function}
- */
-function reactdomlibgetIteratorFn__getIteratorFn(maybeIterable) {
-  var iteratorFn = maybeIterable && (reactdomlibgetIteratorFn__ITERATOR_SYMBOL && maybeIterable[reactdomlibgetIteratorFn__ITERATOR_SYMBOL] || maybeIterable[reactdomlibgetIteratorFn__FAUX_ITERATOR_SYMBOL]);
-  if (typeof iteratorFn === 'function') {
-    return iteratorFn;
-  }
-}
-
-$m['react-dom/lib/getIteratorFn'].exports = reactdomlibgetIteratorFn__getIteratorFn;
-/*≠≠ node_modules/react-dom/lib/getIteratorFn.js ≠≠*/
-
-
-/*== node_modules/react-dom/lib/ReactElementSymbol.js ==*/
-$m['react-dom/lib/ReactElementSymbol'] = { exports: {} };
-/**
- * Copyright 2014-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-// The Symbol used to tag the ReactElement type. If there is no native Symbol
-// nor polyfill, then a plain number is used for performance.
-
-var reactdomlibReactElementSymbol__REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol['for'] && Symbol['for']('react.element') || 0xeac7;
-
-$m['react-dom/lib/ReactElementSymbol'].exports = reactdomlibReactElementSymbol__REACT_ELEMENT_TYPE;
-/*≠≠ node_modules/react-dom/lib/ReactElementSymbol.js ≠≠*/
-
-
-/*== node_modules/fbjs/lib/memoizeStringOnly.js ==*/
-$m['fbjs/lib/memoizeStringOnly'] = { exports: {} };
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- * @typechecks static-only
- */
-
-/**
- * Memoizes the return value of a function that accepts one string argument.
- */
-
-function fbjslibmemoizeStringOnly__memoizeStringOnly(callback) {
-  var cache = {};
-  return function (string) {
-    if (!cache.hasOwnProperty(string)) {
-      cache[string] = callback.call(this, string);
-    }
-    return cache[string];
-  };
-}
-
-$m['fbjs/lib/memoizeStringOnly'].exports = fbjslibmemoizeStringOnly__memoizeStringOnly;
-/*≠≠ node_modules/fbjs/lib/memoizeStringOnly.js ≠≠*/
-
-
-/*== node_modules/react-dom/lib/getEventTarget.js ==*/
-$m['react-dom/lib/getEventTarget'] = { exports: {} };
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- */
-
-/**
- * Gets the target node from a native browser event by accounting for
- * inconsistencies in browser DOM APIs.
- *
- * @param {object} nativeEvent Native browser event.
- * @return {DOMEventTarget} Target node.
- */
-
-function reactdomlibgetEventTarget__getEventTarget(nativeEvent) {
-  var target = nativeEvent.target || nativeEvent.srcElement || window;
-
-  // Normalize SVG <use> element events #4963
-  if (target.correspondingUseElement) {
-    target = target.correspondingUseElement;
-  }
-
-  // Safari may fire events on text nodes (Node.TEXT_NODE is 3).
-  // @see http://www.quirksmode.org/js/events_properties.html
-  return target.nodeType === 3 ? target.parentNode : target;
-}
-
-$m['react-dom/lib/getEventTarget'].exports = reactdomlibgetEventTarget__getEventTarget;
-/*≠≠ node_modules/react-dom/lib/getEventTarget.js ≠≠*/
-
-
 /*== node_modules/fbjs/lib/ExecutionEnvironment.js ==*/
 $m['fbjs/lib/ExecutionEnvironment'] = { exports: {} };
 /**
@@ -1472,8 +1727,8 @@ $m['fbjs/lib/ExecutionEnvironment'].exports = fbjslibExecutionEnvironment__Execu
 /*≠≠ node_modules/fbjs/lib/ExecutionEnvironment.js ≠≠*/
 
 
-/*== node_modules/react-dom/lib/getEventModifierState.js ==*/
-$m['react-dom/lib/getEventModifierState'] = { exports: {} };
+/*== node_modules/react-dom/lib/getNodeForCharacterOffset.js ==*/
+$m['react-dom/lib/getNodeForCharacterOffset'] = { exports: {} };
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -1485,88 +1740,93 @@ $m['react-dom/lib/getEventModifierState'] = { exports: {} };
  */
 
 /**
- * Translation from modifier key to the associated property in the event.
- * @see http://www.w3.org/TR/DOM-Level-3-Events/#keys-Modifiers
+ * Given any node return the first leaf node without children.
+ *
+ * @param {DOMElement|DOMTextNode} node
+ * @return {DOMElement|DOMTextNode}
  */
 
-var reactdomlibgetEventModifierState__modifierKeyToProp = {
-  'Alt': 'altKey',
-  'Control': 'ctrlKey',
-  'Meta': 'metaKey',
-  'Shift': 'shiftKey'
-};
-
-// IE8 does not implement getModifierState so we simply map it to the only
-// modifier keys exposed by the event itself, does not support Lock-keys.
-// Currently, all major browsers except Chrome seems to support Lock-keys.
-function reactdomlibgetEventModifierState__modifierStateGetter(keyArg) {
-  var syntheticEvent = this;
-  var nativeEvent = syntheticEvent.nativeEvent;
-  if (nativeEvent.getModifierState) {
-    return nativeEvent.getModifierState(keyArg);
+function reactdomlibgetNodeForCharacterOffset__getLeafNode(node) {
+  while (node && node.firstChild) {
+    node = node.firstChild;
   }
-  var keyProp = reactdomlibgetEventModifierState__modifierKeyToProp[keyArg];
-  return keyProp ? !!nativeEvent[keyProp] : false;
+  return node;
 }
 
-function reactdomlibgetEventModifierState__getEventModifierState(nativeEvent) {
-  return reactdomlibgetEventModifierState__modifierStateGetter;
-}
-
-$m['react-dom/lib/getEventModifierState'].exports = reactdomlibgetEventModifierState__getEventModifierState;
-/*≠≠ node_modules/react-dom/lib/getEventModifierState.js ≠≠*/
-
-
-/*== node_modules/react-dom/lib/getEventCharCode.js ==*/
-$m['react-dom/lib/getEventCharCode'] = { exports: {} };
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Get the next sibling within a container. This will walk up the
+ * DOM if a node's siblings have been exhausted.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
+ * @param {DOMElement|DOMTextNode} node
+ * @return {?DOMElement|DOMTextNode}
  */
-
-/**
- * `charCode` represents the actual "character code" and is safe to use with
- * `String.fromCharCode`. As such, only keys that correspond to printable
- * characters produce a valid `charCode`, the only exception to this is Enter.
- * The Tab-key is considered non-printable and does not have a `charCode`,
- * presumably because it does not produce a tab-character in browsers.
- *
- * @param {object} nativeEvent Native browser event.
- * @return {number} Normalized `charCode` property.
- */
-
-function reactdomlibgetEventCharCode__getEventCharCode(nativeEvent) {
-  var charCode;
-  var keyCode = nativeEvent.keyCode;
-
-  if ('charCode' in nativeEvent) {
-    charCode = nativeEvent.charCode;
-
-    // FF does not set `charCode` for the Enter-key, check against `keyCode`.
-    if (charCode === 0 && keyCode === 13) {
-      charCode = 13;
+function reactdomlibgetNodeForCharacterOffset__getSiblingNode(node) {
+  while (node) {
+    if (node.nextSibling) {
+      return node.nextSibling;
     }
-  } else {
-    // IE8 does not implement `charCode`, but `keyCode` has the correct value.
-    charCode = keyCode;
+    node = node.parentNode;
   }
-
-  // Some non-printable keys are reported in `charCode`/`keyCode`, discard them.
-  // Must not discard the (non-)printable Enter-key.
-  if (charCode >= 32 || charCode === 13) {
-    return charCode;
-  }
-
-  return 0;
 }
 
-$m['react-dom/lib/getEventCharCode'].exports = reactdomlibgetEventCharCode__getEventCharCode;
-/*≠≠ node_modules/react-dom/lib/getEventCharCode.js ≠≠*/
+/**
+ * Get object describing the nodes which contain characters at offset.
+ *
+ * @param {DOMElement|DOMTextNode} root
+ * @param {number} offset
+ * @return {?object}
+ */
+function reactdomlibgetNodeForCharacterOffset__getNodeForCharacterOffset(root, offset) {
+  var node = reactdomlibgetNodeForCharacterOffset__getLeafNode(root);
+  var nodeStart = 0;
+  var nodeEnd = 0;
+
+  while (node) {
+    if (node.nodeType === 3) {
+      nodeEnd = nodeStart + node.textContent.length;
+
+      if (nodeStart <= offset && nodeEnd >= offset) {
+        return {
+          node: node,
+          offset: offset - nodeStart
+        };
+      }
+
+      nodeStart = nodeEnd;
+    }
+
+    node = reactdomlibgetNodeForCharacterOffset__getLeafNode(reactdomlibgetNodeForCharacterOffset__getSiblingNode(node));
+  }
+}
+
+$m['react-dom/lib/getNodeForCharacterOffset'].exports = reactdomlibgetNodeForCharacterOffset__getNodeForCharacterOffset;
+/*≠≠ node_modules/react-dom/lib/getNodeForCharacterOffset.js ≠≠*/
+
+
+/*== node_modules/fbjs/lib/isNode.js ==*/
+$m['fbjs/lib/isNode'] = { exports: {} };
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @typechecks
+ */
+
+/**
+ * @param {*} object The object to check.
+ * @return {boolean} Whether or not the object is a DOM node.
+ */
+function fbjslibisNode__isNode(object) {
+  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+}
+
+$m['fbjs/lib/isNode'].exports = fbjslibisNode__isNode;
+/*≠≠ node_modules/fbjs/lib/isNode.js ≠≠*/
 
 
 /*== node_modules/react-dom/lib/ReactHostOperationHistoryHook.js ==*/
@@ -1605,10 +1865,10 @@ $m['react-dom/lib/ReactHostOperationHistoryHook'].exports = reactdomlibReactHost
 /*≠≠ node_modules/react-dom/lib/ReactHostOperationHistoryHook.js ≠≠*/
 
 
-/*== node_modules/react-dom/lib/ReactVersion.js ==*/
-$m['react-dom/lib/ReactVersion'] = { exports: {} };
+/*== node_modules/fbjs/lib/focusNode.js ==*/
+$m['fbjs/lib/focusNode'] = { exports: {} };
 /**
- * Copyright 2013-present, Facebook, Inc.
+ * Copyright (c) 2013-present, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -1617,12 +1877,25 @@ $m['react-dom/lib/ReactVersion'] = { exports: {} };
  *
  */
 
-$m['react-dom/lib/ReactVersion'].exports = '15.4.1';
-/*≠≠ node_modules/react-dom/lib/ReactVersion.js ≠≠*/
+/**
+ * @param {DOMElement} node input/textarea to focus
+ */
+
+function fbjslibfocusNode__focusNode(node) {
+  // IE8 can throw "Can't move focus to the control because it is invisible,
+  // not enabled, or of a type that does not accept the focus." for all kinds of
+  // reasons that are too expensive and fragile to test.
+  try {
+    node.focus();
+  } catch (e) {}
+}
+
+$m['fbjs/lib/focusNode'].exports = fbjslibfocusNode__focusNode;
+/*≠≠ node_modules/fbjs/lib/focusNode.js ≠≠*/
 
 
-/*== node_modules/fbjs/lib/hyphenate.js ==*/
-$m['fbjs/lib/hyphenate'] = { exports: {} };
+/*== node_modules/fbjs/lib/getActiveElement.js ==*/
+$m['fbjs/lib/getActiveElement'] = { exports: {} };
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
@@ -1635,30 +1908,32 @@ $m['fbjs/lib/hyphenate'] = { exports: {} };
  * @typechecks
  */
 
-var fbjslibhyphenate___uppercasePattern = /([A-Z])/g;
+/* eslint-disable fb-www/typeof-undefined */
 
 /**
- * Hyphenates a camelcased string, for example:
+ * Same as document.activeElement but wraps in a try-catch block. In IE it is
+ * not safe to call document.activeElement if there is nothing focused.
  *
- *   > hyphenate('backgroundColor')
- *   < "background-color"
- *
- * For CSS style names, use `hyphenateStyleName` instead which works properly
- * with all vendor prefixes, including `ms`.
- *
- * @param {string} string
- * @return {string}
+ * The activeElement will be null only if the document or document body is not
+ * yet defined.
  */
-function fbjslibhyphenate__hyphenate(string) {
-  return string.replace(fbjslibhyphenate___uppercasePattern, '-$1').toLowerCase();
+function fbjslibgetActiveElement__getActiveElement() /*?DOMElement*/{
+  if (typeof document === 'undefined') {
+    return null;
+  }
+  try {
+    return document.activeElement || document.body;
+  } catch (e) {
+    return document.body;
+  }
 }
 
-$m['fbjs/lib/hyphenate'].exports = fbjslibhyphenate__hyphenate;
-/*≠≠ node_modules/fbjs/lib/hyphenate.js ≠≠*/
+$m['fbjs/lib/getActiveElement'].exports = fbjslibgetActiveElement__getActiveElement;
+/*≠≠ node_modules/fbjs/lib/getActiveElement.js ≠≠*/
 
 
-/*== node_modules/react-dom/lib/CSSProperty.js ==*/
-$m['react-dom/lib/CSSProperty'] = { exports: {} };
+/*== node_modules/react-dom/lib/isTextInputElement.js ==*/
+$m['react-dom/lib/isTextInputElement'] = { exports: {} };
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -1667,144 +1942,47 @@ $m['react-dom/lib/CSSProperty'] = { exports: {} };
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
+ * 
  */
 
 /**
- * CSS properties which accept numbers but are not in units of "px".
+ * @see http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
  */
 
-var reactdomlibCSSProperty__isUnitlessNumber = {
-  animationIterationCount: true,
-  borderImageOutset: true,
-  borderImageSlice: true,
-  borderImageWidth: true,
-  boxFlex: true,
-  boxFlexGroup: true,
-  boxOrdinalGroup: true,
-  columnCount: true,
-  flex: true,
-  flexGrow: true,
-  flexPositive: true,
-  flexShrink: true,
-  flexNegative: true,
-  flexOrder: true,
-  gridRow: true,
-  gridColumn: true,
-  fontWeight: true,
-  lineClamp: true,
-  lineHeight: true,
-  opacity: true,
-  order: true,
-  orphans: true,
-  tabSize: true,
-  widows: true,
-  zIndex: true,
-  zoom: true,
-
-  // SVG-related properties
-  fillOpacity: true,
-  floodOpacity: true,
-  stopOpacity: true,
-  strokeDasharray: true,
-  strokeDashoffset: true,
-  strokeMiterlimit: true,
-  strokeOpacity: true,
-  strokeWidth: true
+var reactdomlibisTextInputElement__supportedInputTypes = {
+  'color': true,
+  'date': true,
+  'datetime': true,
+  'datetime-local': true,
+  'email': true,
+  'month': true,
+  'number': true,
+  'password': true,
+  'range': true,
+  'search': true,
+  'tel': true,
+  'text': true,
+  'time': true,
+  'url': true,
+  'week': true
 };
 
-/**
- * @param {string} prefix vendor-specific prefix, eg: Webkit
- * @param {string} key style name, eg: transitionDuration
- * @return {string} style name prefixed with `prefix`, properly camelCased, eg:
- * WebkitTransitionDuration
- */
-function reactdomlibCSSProperty__prefixKey(prefix, key) {
-  return prefix + key.charAt(0).toUpperCase() + key.substring(1);
+function reactdomlibisTextInputElement__isTextInputElement(elem) {
+  var nodeName = elem && elem.nodeName && elem.nodeName.toLowerCase();
+
+  if (nodeName === 'input') {
+    return !!reactdomlibisTextInputElement__supportedInputTypes[elem.type];
+  }
+
+  if (nodeName === 'textarea') {
+    return true;
+  }
+
+  return false;
 }
 
-/**
- * Support style names that may come passed in prefixed by adding permutations
- * of vendor prefixes.
- */
-var reactdomlibCSSProperty__prefixes = ['Webkit', 'ms', 'Moz', 'O'];
-
-// Using Object.keys here, or else the vanilla for-in loop makes IE8 go into an
-// infinite loop, because it iterates over the newly added props too.
-Object.keys(reactdomlibCSSProperty__isUnitlessNumber).forEach(function (prop) {
-  reactdomlibCSSProperty__prefixes.forEach(function (prefix) {
-    reactdomlibCSSProperty__isUnitlessNumber[reactdomlibCSSProperty__prefixKey(prefix, prop)] = reactdomlibCSSProperty__isUnitlessNumber[prop];
-  });
-});
-
-/**
- * Most style properties can be unset by doing .style[prop] = '' but IE8
- * doesn't like doing that with shorthand properties so for the properties that
- * IE8 breaks on, which are listed here, we instead unset each of the
- * individual properties. See http://bugs.jquery.com/ticket/12385.
- * The 4-value 'clock' properties like margin, padding, border-width seem to
- * behave without any problems. Curiously, list-style works too without any
- * special prodding.
- */
-var reactdomlibCSSProperty__shorthandPropertyExpansions = {
-  background: {
-    backgroundAttachment: true,
-    backgroundColor: true,
-    backgroundImage: true,
-    backgroundPositionX: true,
-    backgroundPositionY: true,
-    backgroundRepeat: true
-  },
-  backgroundPosition: {
-    backgroundPositionX: true,
-    backgroundPositionY: true
-  },
-  border: {
-    borderWidth: true,
-    borderStyle: true,
-    borderColor: true
-  },
-  borderBottom: {
-    borderBottomWidth: true,
-    borderBottomStyle: true,
-    borderBottomColor: true
-  },
-  borderLeft: {
-    borderLeftWidth: true,
-    borderLeftStyle: true,
-    borderLeftColor: true
-  },
-  borderRight: {
-    borderRightWidth: true,
-    borderRightStyle: true,
-    borderRightColor: true
-  },
-  borderTop: {
-    borderTopWidth: true,
-    borderTopStyle: true,
-    borderTopColor: true
-  },
-  font: {
-    fontStyle: true,
-    fontVariant: true,
-    fontWeight: true,
-    fontSize: true,
-    lineHeight: true,
-    fontFamily: true
-  },
-  outline: {
-    outlineWidth: true,
-    outlineStyle: true,
-    outlineColor: true
-  }
-};
-
-var reactdomlibCSSProperty__CSSProperty = {
-  isUnitlessNumber: reactdomlibCSSProperty__isUnitlessNumber,
-  shorthandPropertyExpansions: reactdomlibCSSProperty__shorthandPropertyExpansions
-};
-
-$m['react-dom/lib/CSSProperty'].exports = reactdomlibCSSProperty__CSSProperty;
-/*≠≠ node_modules/react-dom/lib/CSSProperty.js ≠≠*/
+$m['react-dom/lib/isTextInputElement'].exports = reactdomlibisTextInputElement__isTextInputElement;
+/*≠≠ node_modules/react-dom/lib/isTextInputElement.js ≠≠*/
 
 
 /*== node_modules/react-dom/lib/shouldUpdateReactComponent.js ==*/
@@ -1907,40 +2085,41 @@ $m['react-dom/lib/DOMNamespaces'].exports = reactdomlibDOMNamespaces__DOMNamespa
 /*≠≠ node_modules/react-dom/lib/DOMNamespaces.js ≠≠*/
 
 
-/*== node_modules/fbjs/lib/camelize.js ==*/
-$m['fbjs/lib/camelize'] = { exports: {} };
-"use strict";
-
+/*== node_modules/react-dom/lib/getEventTarget.js ==*/
+$m['react-dom/lib/getEventTarget'] = { exports: {} };
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @typechecks
  */
-
-var fbjslibcamelize___hyphenPattern = /-(.)/g;
 
 /**
- * Camelcases a hyphenated string, for example:
+ * Gets the target node from a native browser event by accounting for
+ * inconsistencies in browser DOM APIs.
  *
- *   > camelize('background-color')
- *   < "backgroundColor"
- *
- * @param {string} string
- * @return {string}
+ * @param {object} nativeEvent Native browser event.
+ * @return {DOMEventTarget} Target node.
  */
-function fbjslibcamelize__camelize(string) {
-  return string.replace(fbjslibcamelize___hyphenPattern, function (_, character) {
-    return character.toUpperCase();
-  });
+
+function reactdomlibgetEventTarget__getEventTarget(nativeEvent) {
+  var target = nativeEvent.target || nativeEvent.srcElement || window;
+
+  // Normalize SVG <use> element events #4963
+  if (target.correspondingUseElement) {
+    target = target.correspondingUseElement;
+  }
+
+  // Safari may fire events on text nodes (Node.TEXT_NODE is 3).
+  // @see http://www.quirksmode.org/js/events_properties.html
+  return target.nodeType === 3 ? target.parentNode : target;
 }
 
-$m['fbjs/lib/camelize'].exports = fbjslibcamelize__camelize;
-/*≠≠ node_modules/fbjs/lib/camelize.js ≠≠*/
+$m['react-dom/lib/getEventTarget'].exports = reactdomlibgetEventTarget__getEventTarget;
+/*≠≠ node_modules/react-dom/lib/getEventTarget.js ≠≠*/
 
 
 /*== node_modules/react-dom/lib/getNextDebugID.js ==*/
@@ -1966,8 +2145,8 @@ $m['react-dom/lib/getNextDebugID'].exports = reactdomlibgetNextDebugID__getNextD
 /*≠≠ node_modules/react-dom/lib/getNextDebugID.js ≠≠*/
 
 
-/*== node_modules/react-dom/lib/DefaultEventPluginOrder.js ==*/
-$m['react-dom/lib/DefaultEventPluginOrder'] = { exports: {} };
+/*== node_modules/react-dom/lib/getEventModifierState.js ==*/
+$m['react-dom/lib/getEventModifierState'] = { exports: {} };
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -1979,19 +2158,36 @@ $m['react-dom/lib/DefaultEventPluginOrder'] = { exports: {} };
  */
 
 /**
- * Module that is injectable into `EventPluginHub`, that specifies a
- * deterministic ordering of `EventPlugin`s. A convenient way to reason about
- * plugins, without having to package every one of them. This is better than
- * having plugins be ordered in the same order that they are injected because
- * that ordering would be influenced by the packaging order.
- * `ResponderEventPlugin` must occur before `SimpleEventPlugin` so that
- * preventing default on events is convenient in `SimpleEventPlugin` handlers.
+ * Translation from modifier key to the associated property in the event.
+ * @see http://www.w3.org/TR/DOM-Level-3-Events/#keys-Modifiers
  */
 
-var reactdomlibDefaultEventPluginOrder__DefaultEventPluginOrder = ['ResponderEventPlugin', 'SimpleEventPlugin', 'TapEventPlugin', 'EnterLeaveEventPlugin', 'ChangeEventPlugin', 'SelectEventPlugin', 'BeforeInputEventPlugin'];
+var reactdomlibgetEventModifierState__modifierKeyToProp = {
+  'Alt': 'altKey',
+  'Control': 'ctrlKey',
+  'Meta': 'metaKey',
+  'Shift': 'shiftKey'
+};
 
-$m['react-dom/lib/DefaultEventPluginOrder'].exports = reactdomlibDefaultEventPluginOrder__DefaultEventPluginOrder;
-/*≠≠ node_modules/react-dom/lib/DefaultEventPluginOrder.js ≠≠*/
+// IE8 does not implement getModifierState so we simply map it to the only
+// modifier keys exposed by the event itself, does not support Lock-keys.
+// Currently, all major browsers except Chrome seems to support Lock-keys.
+function reactdomlibgetEventModifierState__modifierStateGetter(keyArg) {
+  var syntheticEvent = this;
+  var nativeEvent = syntheticEvent.nativeEvent;
+  if (nativeEvent.getModifierState) {
+    return nativeEvent.getModifierState(keyArg);
+  }
+  var keyProp = reactdomlibgetEventModifierState__modifierKeyToProp[keyArg];
+  return keyProp ? !!nativeEvent[keyProp] : false;
+}
+
+function reactdomlibgetEventModifierState__getEventModifierState(nativeEvent) {
+  return reactdomlibgetEventModifierState__modifierStateGetter;
+}
+
+$m['react-dom/lib/getEventModifierState'].exports = reactdomlibgetEventModifierState__getEventModifierState;
+/*≠≠ node_modules/react-dom/lib/getEventModifierState.js ≠≠*/
 
 
 /*== node_modules/react-dom/lib/ReactEmptyComponent.js ==*/
@@ -2164,8 +2360,8 @@ $m['react-dom/lib/ReactPropTypeLocationNames'].exports = reactdomlibReactPropTyp
 /*≠≠ node_modules/react-dom/lib/ReactPropTypeLocationNames.js ≠≠*/
 
 
-/*== node_modules/react-dom/lib/ARIADOMPropertyConfig.js ==*/
-$m['react-dom/lib/ARIADOMPropertyConfig'] = { exports: {} };
+/*== node_modules/react-dom/lib/getEventCharCode.js ==*/
+$m['react-dom/lib/getEventCharCode'] = { exports: {} };
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -2176,68 +2372,60 @@ $m['react-dom/lib/ARIADOMPropertyConfig'] = { exports: {} };
  *
  */
 
-var reactdomlibARIADOMPropertyConfig__ARIADOMPropertyConfig = {
-  Properties: {
-    // Global States and Properties
-    'aria-current': 0, // state
-    'aria-details': 0,
-    'aria-disabled': 0, // state
-    'aria-hidden': 0, // state
-    'aria-invalid': 0, // state
-    'aria-keyshortcuts': 0,
-    'aria-label': 0,
-    'aria-roledescription': 0,
-    // Widget Attributes
-    'aria-autocomplete': 0,
-    'aria-checked': 0,
-    'aria-expanded': 0,
-    'aria-haspopup': 0,
-    'aria-level': 0,
-    'aria-modal': 0,
-    'aria-multiline': 0,
-    'aria-multiselectable': 0,
-    'aria-orientation': 0,
-    'aria-placeholder': 0,
-    'aria-pressed': 0,
-    'aria-readonly': 0,
-    'aria-required': 0,
-    'aria-selected': 0,
-    'aria-sort': 0,
-    'aria-valuemax': 0,
-    'aria-valuemin': 0,
-    'aria-valuenow': 0,
-    'aria-valuetext': 0,
-    // Live Region Attributes
-    'aria-atomic': 0,
-    'aria-busy': 0,
-    'aria-live': 0,
-    'aria-relevant': 0,
-    // Drag-and-Drop Attributes
-    'aria-dropeffect': 0,
-    'aria-grabbed': 0,
-    // Relationship Attributes
-    'aria-activedescendant': 0,
-    'aria-colcount': 0,
-    'aria-colindex': 0,
-    'aria-colspan': 0,
-    'aria-controls': 0,
-    'aria-describedby': 0,
-    'aria-errormessage': 0,
-    'aria-flowto': 0,
-    'aria-labelledby': 0,
-    'aria-owns': 0,
-    'aria-posinset': 0,
-    'aria-rowcount': 0,
-    'aria-rowindex': 0,
-    'aria-rowspan': 0,
-    'aria-setsize': 0
-  },
-  DOMAttributeNames: {},
-  DOMPropertyNames: {}
-};
+/**
+ * `charCode` represents the actual "character code" and is safe to use with
+ * `String.fromCharCode`. As such, only keys that correspond to printable
+ * characters produce a valid `charCode`, the only exception to this is Enter.
+ * The Tab-key is considered non-printable and does not have a `charCode`,
+ * presumably because it does not produce a tab-character in browsers.
+ *
+ * @param {object} nativeEvent Native browser event.
+ * @return {number} Normalized `charCode` property.
+ */
 
-$m['react-dom/lib/ARIADOMPropertyConfig'].exports = reactdomlibARIADOMPropertyConfig__ARIADOMPropertyConfig;
-/*≠≠ node_modules/react-dom/lib/ARIADOMPropertyConfig.js ≠≠*/
+function reactdomlibgetEventCharCode__getEventCharCode(nativeEvent) {
+  var charCode;
+  var keyCode = nativeEvent.keyCode;
+
+  if ('charCode' in nativeEvent) {
+    charCode = nativeEvent.charCode;
+
+    // FF does not set `charCode` for the Enter-key, check against `keyCode`.
+    if (charCode === 0 && keyCode === 13) {
+      charCode = 13;
+    }
+  } else {
+    // IE8 does not implement `charCode`, but `keyCode` has the correct value.
+    charCode = keyCode;
+  }
+
+  // Some non-printable keys are reported in `charCode`/`keyCode`, discard them.
+  // Must not discard the (non-)printable Enter-key.
+  if (charCode >= 32 || charCode === 13) {
+    return charCode;
+  }
+
+  return 0;
+}
+
+$m['react-dom/lib/getEventCharCode'].exports = reactdomlibgetEventCharCode__getEventCharCode;
+/*≠≠ node_modules/react-dom/lib/getEventCharCode.js ≠≠*/
+
+
+/*== node_modules/react-dom/lib/ReactVersion.js ==*/
+$m['react-dom/lib/ReactVersion'] = { exports: {} };
+/**
+ * Copyright 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+$m['react-dom/lib/ReactVersion'].exports = '15.4.2';
+/*≠≠ node_modules/react-dom/lib/ReactVersion.js ≠≠*/
 
 
 /*== node_modules/@yr/runtime/index.js ==*/
@@ -2257,131 +2445,6 @@ $m['@yr/runtime'].exports.isServer = yrruntime__isServer;
 $m['@yr/runtime'].exports.isBrowser = !yrruntime__isServer && yrruntime__isBrowser;
 $m['@yr/runtime'].exports.isWorker = !yrruntime__isServer && !yrruntime__isBrowser;
 /*≠≠ node_modules/@yr/runtime/index.js ≠≠*/
-
-
-/*== node_modules/react-dom/lib/escapeTextContentForBrowser.js ==*/
-$m['react-dom/lib/escapeTextContentForBrowser'] = { exports: {} };
-/**
- * Copyright 2016-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * Based on the escape-html library, which is used under the MIT License below:
- *
- * Copyright (c) 2012-2013 TJ Holowaychuk
- * Copyright (c) 2015 Andreas Lubbe
- * Copyright (c) 2015 Tiancheng "Timothy" Gu
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * 'Software'), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to
- * the following conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
- * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- */
-
-// code copied and modified from escape-html
-/**
- * Module variables.
- * @private
- */
-
-var reactdomlibescapeTextContentForBrowser__matchHtmlRegExp = /["'&<>]/;
-
-/**
- * Escape special characters in the given string of html.
- *
- * @param  {string} string The string to escape for inserting into HTML
- * @return {string}
- * @public
- */
-
-function reactdomlibescapeTextContentForBrowser__escapeHtml(string) {
-  var str = '' + string;
-  var match = reactdomlibescapeTextContentForBrowser__matchHtmlRegExp.exec(str);
-
-  if (!match) {
-    return str;
-  }
-
-  var escape;
-  var html = '';
-  var index = 0;
-  var lastIndex = 0;
-
-  for (index = match.index; index < str.length; index++) {
-    switch (str.charCodeAt(index)) {
-      case 34:
-        // "
-        escape = '&quot;';
-        break;
-      case 38:
-        // &
-        escape = '&amp;';
-        break;
-      case 39:
-        // '
-        escape = '&#x27;'; // modified from escape-html; used to be '&#39'
-        break;
-      case 60:
-        // <
-        escape = '&lt;';
-        break;
-      case 62:
-        // >
-        escape = '&gt;';
-        break;
-      default:
-        continue;
-    }
-
-    if (lastIndex !== index) {
-      html += str.substring(lastIndex, index);
-    }
-
-    lastIndex = index + 1;
-    html += escape;
-  }
-
-  return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
-}
-// end code copied and modified from escape-html
-
-
-/**
- * Escapes text to prevent scripting attacks.
- *
- * @param {*} text Text value to escape.
- * @return {string} An escaped string.
- */
-function reactdomlibescapeTextContentForBrowser__escapeTextContentForBrowser(text) {
-  if (typeof text === 'boolean' || typeof text === 'number') {
-    // this shortcircuit helps perf for types that we know will never have
-    // special characters, especially given that this function is used often
-    // for numeric dom ids.
-    return '' + text;
-  }
-  return reactdomlibescapeTextContentForBrowser__escapeHtml(text);
-}
-
-$m['react-dom/lib/escapeTextContentForBrowser'].exports = reactdomlibescapeTextContentForBrowser__escapeTextContentForBrowser;
-/*≠≠ node_modules/react-dom/lib/escapeTextContentForBrowser.js ≠≠*/
 
 
 /*== node_modules/react-dom/lib/forEachAccumulated.js ==*/
@@ -2665,7 +2728,7 @@ $m['react/lib/ReactVersion'] = { exports: {} };
  *
  */
 
-$m['react/lib/ReactVersion'].exports = '15.4.1';
+$m['react/lib/ReactVersion'].exports = '15.4.2';
 /*≠≠ node_modules/react/lib/ReactVersion.js ≠≠*/
 
 
@@ -2883,27 +2946,8 @@ $m['react/lib/KeyEscapeUtils'].exports = reactlibKeyEscapeUtils__KeyEscapeUtils;
 /*≠≠ node_modules/react/lib/KeyEscapeUtils.js ≠≠*/
 
 
-/*== node_modules/react/lib/ReactPropTypesSecret.js ==*/
-$m['react/lib/ReactPropTypesSecret'] = { exports: {} };
-/**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * 
- */
-
-var reactlibReactPropTypesSecret__ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
-
-$m['react/lib/ReactPropTypesSecret'].exports = reactlibReactPropTypesSecret__ReactPropTypesSecret;
-/*≠≠ node_modules/react/lib/ReactPropTypesSecret.js ≠≠*/
-
-
-/*== node_modules/debug/debug.js ==*/
-$m['debug/debug'] = { exports: {} };
+/*== node_modules/debug/src/debug.js ==*/
+$m['debug/src/debug'] = { exports: {} };
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -2912,49 +2956,51 @@ $m['debug/debug'] = { exports: {} };
  * Expose `debug()` as the module.
  */
 
-$m['debug/debug'].exports = $m['debug/debug'].exports = debugdebug__debug.debug = debugdebug__debug;
-$m['debug/debug'].exports.coerce = debugdebug__coerce;
-$m['debug/debug'].exports.disable = debugdebug__disable;
-$m['debug/debug'].exports.enable = debugdebug__enable;
-$m['debug/debug'].exports.enabled = debugdebug__enabled;
-$m['debug/debug'].exports.humanize = $m['ms'].exports;
+$m['debug/src/debug'].exports = $m['debug/src/debug'].exports = debugsrcdebug__createDebug.debug = debugsrcdebug__createDebug.default = debugsrcdebug__createDebug;
+$m['debug/src/debug'].exports.coerce = debugsrcdebug__coerce;
+$m['debug/src/debug'].exports.disable = debugsrcdebug__disable;
+$m['debug/src/debug'].exports.enable = debugsrcdebug__enable;
+$m['debug/src/debug'].exports.enabled = debugsrcdebug__enabled;
+$m['debug/src/debug'].exports.humanize = $m['ms'].exports;
 
 /**
  * The currently active debug mode names, and names to skip.
  */
 
-$m['debug/debug'].exports.names = [];
-$m['debug/debug'].exports.skips = [];
+$m['debug/src/debug'].exports.names = [];
+$m['debug/src/debug'].exports.skips = [];
 
 /**
  * Map of special "%n" handling functions, for the debug "format" argument.
  *
- * Valid key names are a single, lowercased letter, i.e. "n".
+ * Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
  */
 
-$m['debug/debug'].exports.formatters = {};
-
-/**
- * Previously assigned color.
- */
-
-var debugdebug__prevColor = 0;
+$m['debug/src/debug'].exports.formatters = {};
 
 /**
  * Previous log timestamp.
  */
 
-var debugdebug__prevTime;
+var debugsrcdebug__prevTime;
 
 /**
  * Select a color.
- *
+ * @param {String} namespace
  * @return {Number}
  * @api private
  */
 
-function debugdebug__selectColor() {
-  return $m['debug/debug'].exports.colors[debugdebug__prevColor++ % $m['debug/debug'].exports.colors.length];
+function debugsrcdebug__selectColor(namespace) {
+  var hash = 0,
+      i;
+
+  for (i in namespace) {
+    hash = (hash << 5) - hash + namespace.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+
+  return $m['debug/src/debug'].exports.colors[Math.abs(hash) % $m['debug/src/debug'].exports.colors.length];
 }
 
 /**
@@ -2965,48 +3011,42 @@ function debugdebug__selectColor() {
  * @api public
  */
 
-function debugdebug__debug(namespace) {
+function debugsrcdebug__createDebug(namespace) {
 
-  // define the `disabled` version
-  function disabled() {}
-  disabled.enabled = false;
+  function debug() {
+    // disabled?
+    if (!debug.enabled) return;
 
-  // define the `enabled` version
-  function enabled() {
-
-    var self = enabled;
+    var self = debug;
 
     // set `diff` timestamp
     var curr = +new Date();
-    var ms = curr - (debugdebug__prevTime || curr);
+    var ms = curr - (debugsrcdebug__prevTime || curr);
     self.diff = ms;
-    self.prev = debugdebug__prevTime;
+    self.prev = debugsrcdebug__prevTime;
     self.curr = curr;
-    debugdebug__prevTime = curr;
+    debugsrcdebug__prevTime = curr;
 
-    // add the `color` if not set
-    if (null == self.useColors) self.useColors = $m['debug/debug'].exports.useColors();
-    if (null == self.color && self.useColors) self.color = debugdebug__selectColor();
-
+    // turn the `arguments` into a proper Array
     var args = new Array(arguments.length);
     for (var i = 0; i < args.length; i++) {
       args[i] = arguments[i];
     }
 
-    args[0] = $m['debug/debug'].exports.coerce(args[0]);
+    args[0] = $m['debug/src/debug'].exports.coerce(args[0]);
 
     if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %o
-      args = ['%o'].concat(args);
+      // anything else let's inspect with %O
+      args.unshift('%O');
     }
 
     // apply any `formatters` transformations
     var index = 0;
-    args[0] = args[0].replace(/%([a-z%])/g, function (match, format) {
+    args[0] = args[0].replace(/%([a-zA-Z%])/g, function (match, format) {
       // if we encounter an escaped % then don't increase the array index
       if (match === '%%') return match;
       index++;
-      var formatter = $m['debug/debug'].exports.formatters[format];
+      var formatter = $m['debug/src/debug'].exports.formatters[format];
       if ('function' === typeof formatter) {
         var val = args[index];
         match = formatter.call(self, val);
@@ -3018,19 +3058,24 @@ function debugdebug__debug(namespace) {
       return match;
     });
 
-    // apply env-specific formatting
-    args = $m['debug/debug'].exports.formatArgs.apply(self, args);
+    // apply env-specific formatting (colors, etc.)
+    $m['debug/src/debug'].exports.formatArgs.call(self, args);
 
-    var logFn = enabled.log || $m['debug/debug'].exports.log || console.log.bind(console);
+    var logFn = debug.log || $m['debug/src/debug'].exports.log || console.log.bind(console);
     logFn.apply(self, args);
   }
-  enabled.enabled = true;
 
-  var fn = $m['debug/debug'].exports.enabled(namespace) ? enabled : disabled;
+  debug.namespace = namespace;
+  debug.enabled = $m['debug/src/debug'].exports.enabled(namespace);
+  debug.useColors = $m['debug/src/debug'].exports.useColors();
+  debug.color = debugsrcdebug__selectColor(namespace);
 
-  fn.namespace = namespace;
+  // env-specific initialization logic for debug instances
+  if ('function' === typeof $m['debug/src/debug'].exports.init) {
+    $m['debug/src/debug'].exports.init(debug);
+  }
 
-  return fn;
+  return debug;
 }
 
 /**
@@ -3041,19 +3086,19 @@ function debugdebug__debug(namespace) {
  * @api public
  */
 
-function debugdebug__enable(namespaces) {
-  $m['debug/debug'].exports.save(namespaces);
+function debugsrcdebug__enable(namespaces) {
+  $m['debug/src/debug'].exports.save(namespaces);
 
   var split = (namespaces || '').split(/[\s,]+/);
   var len = split.length;
 
   for (var i = 0; i < len; i++) {
     if (!split[i]) continue; // ignore empty strings
-    namespaces = split[i].replace(/[\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, '.*?');
+    namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
-      $m['debug/debug'].exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+      $m['debug/src/debug'].exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
     } else {
-      $m['debug/debug'].exports.names.push(new RegExp('^' + namespaces + '$'));
+      $m['debug/src/debug'].exports.names.push(new RegExp('^' + namespaces + '$'));
     }
   }
 }
@@ -3064,8 +3109,8 @@ function debugdebug__enable(namespaces) {
  * @api public
  */
 
-function debugdebug__disable() {
-  $m['debug/debug'].exports.enable('');
+function debugsrcdebug__disable() {
+  $m['debug/src/debug'].exports.enable('');
 }
 
 /**
@@ -3076,15 +3121,15 @@ function debugdebug__disable() {
  * @api public
  */
 
-function debugdebug__enabled(name) {
+function debugsrcdebug__enabled(name) {
   var i, len;
-  for (i = 0, len = $m['debug/debug'].exports.skips.length; i < len; i++) {
-    if ($m['debug/debug'].exports.skips[i].test(name)) {
+  for (i = 0, len = $m['debug/src/debug'].exports.skips.length; i < len; i++) {
+    if ($m['debug/src/debug'].exports.skips[i].test(name)) {
       return false;
     }
   }
-  for (i = 0, len = $m['debug/debug'].exports.names.length; i < len; i++) {
-    if ($m['debug/debug'].exports.names[i].test(name)) {
+  for (i = 0, len = $m['debug/src/debug'].exports.names.length; i < len; i++) {
+    if ($m['debug/src/debug'].exports.names[i].test(name)) {
       return true;
     }
   }
@@ -3099,23 +3144,22 @@ function debugdebug__enabled(name) {
  * @api private
  */
 
-function debugdebug__coerce(val) {
+function debugsrcdebug__coerce(val) {
   if (val instanceof Error) return val.stack || val.message;
   return val;
 }
-/*≠≠ node_modules/debug/debug.js ≠≠*/
+/*≠≠ node_modules/debug/src/debug.js ≠≠*/
 
 
-/*== node_modules/debug/browser.js ==*/
+/*== node_modules/debug/src/browser.js ==*/
 $m['debug'] = { exports: {} };
-
 /**
  * This is the web browser implementation of `debug()`.
  *
  * Expose `debug()` as the module.
  */
 
-$m['debug'].exports = $m['debug'].exports = $m['debug/debug'].exports;
+$m['debug'].exports = $m['debug'].exports = $m['debug/src/debug'].exports;
 $m['debug'].exports.log = debug__log;
 $m['debug'].exports.formatArgs = debug__formatArgs;
 $m['debug'].exports.save = debug__save;
@@ -3138,14 +3182,23 @@ $m['debug'].exports.colors = ['lightseagreen', 'forestgreen', 'goldenrod', 'dodg
  */
 
 function debug__useColors() {
+  // NB: In an Electron preload script, document will be defined but not fully
+  // initialized. Since we know we're in Chrome, we'll just detect this case
+  // explicitly
+  if (typeof window !== 'undefined' && window && typeof window.process !== 'undefined' && window.process.type === 'renderer') {
+    return true;
+  }
+
   // is webkit? http://stackoverflow.com/a/16459606/376773
   // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-  return typeof document !== 'undefined' && 'WebkitAppearance' in document.documentElement.style ||
+  return typeof document !== 'undefined' && document && 'WebkitAppearance' in document.documentElement.style ||
   // is firebug? http://stackoverflow.com/a/398120/376773
-  window.console && (console.firebug || console.exception && console.table) ||
+  typeof window !== 'undefined' && window && window.console && (console.firebug || console.exception && console.table) ||
   // is firefox >= v31?
   // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-  navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31;
+  typeof navigator !== 'undefined' && navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31 ||
+  // double check webkit in userAgent just in case we are in a worker
+  typeof navigator !== 'undefined' && navigator && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
 }
 
 /**
@@ -3166,23 +3219,22 @@ $m['debug'].exports.formatters.j = function (v) {
  * @api public
  */
 
-function debug__formatArgs() {
-  var args = arguments;
+function debug__formatArgs(args) {
   var useColors = this.useColors;
 
   args[0] = (useColors ? '%c' : '') + this.namespace + (useColors ? ' %c' : ' ') + args[0] + (useColors ? '%c ' : ' ') + '+' + $m['debug'].exports.humanize(this.diff);
 
-  if (!useColors) return args;
+  if (!useColors) return;
 
   var c = 'color: ' + this.color;
-  args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
+  args.splice(1, 0, c, 'color: inherit');
 
   // the final "%c" is somewhat tricky, because there could be other
   // arguments passed either before or after the %c, so we need to
   // figure out the correct index to insert the CSS into
   var index = 0;
   var lastC = 0;
-  args[0].replace(/%[a-z%]/g, function (match) {
+  args[0].replace(/%[a-zA-Z%]/g, function (match) {
     if ('%%' === match) return;
     index++;
     if ('%c' === match) {
@@ -3193,7 +3245,6 @@ function debug__formatArgs() {
   });
 
   args.splice(lastC, 0, c);
-  return args;
 }
 
 /**
@@ -3234,7 +3285,6 @@ function debug__save(namespaces) {
  */
 
 function debug__load() {
-  var r;
   try {
     return $m['debug'].exports.storage.debug;
   } catch (e) {}
@@ -3267,12 +3317,12 @@ function debug__localstorage() {
     return window.localStorage;
   } catch (e) {}
 }
-/*≠≠ node_modules/debug/browser.js ≠≠*/
+/*≠≠ node_modules/debug/src/browser.js ≠≠*/
 
 
 /*== node_modules/raf/index.js ==*/
 $m['raf'] = { exports: {} };
-var raf__now = $m['performance-now'].exports,
+var raf__now = $m['performance-now#0.2.0'].exports,
     raf__root = typeof window === 'undefined' ? global : window,
     raf__vendors = ['moz', 'webkit'],
     raf__suffix = 'AnimationFrame',
@@ -5270,14 +5320,11 @@ $m['react-dom/lib/ReactHostComponent'] = { exports: {} };
  *
  */
 
-var reactdomlibReactHostComponent___prodInvariant = $m['react-dom/lib/reactProdInvariant'].exports,
-    reactdomlibReactHostComponent___assign = $m['object-assign'].exports;
+var reactdomlibReactHostComponent___prodInvariant = $m['react-dom/lib/reactProdInvariant'].exports;
 
 var reactdomlibReactHostComponent__invariant = $m['fbjs/lib/invariant'].exports;
 
 var reactdomlibReactHostComponent__genericComponentClass = null;
-// This registry keeps track of wrapper classes around host tags.
-var reactdomlibReactHostComponent__tagToComponentClass = {};
 var reactdomlibReactHostComponent__textComponentClass = null;
 
 var reactdomlibReactHostComponent__ReactHostComponentInjection = {
@@ -5290,11 +5337,6 @@ var reactdomlibReactHostComponent__ReactHostComponentInjection = {
   // rendered as props.
   injectTextComponentClass: function (componentClass) {
     reactdomlibReactHostComponent__textComponentClass = componentClass;
-  },
-  // This accepts a keyed object with classes as values. Each key represents a
-  // tag. That particular tag will use this class instead of the generic one.
-  injectComponentClasses: function (componentClasses) {
-    reactdomlibReactHostComponent___assign(reactdomlibReactHostComponent__tagToComponentClass, componentClasses);
   }
 };
 
@@ -6378,7 +6420,14 @@ var reactlibReactElementValidator__ReactElementValidator = {
     // We warn in this case but don't throw. We expect the element creation to
     // succeed and there will likely be errors in render.
     if (!validType) {
-      process.env.NODE_ENV !== 'production' ? reactlibReactElementValidator__warning(false, 'React.createElement: type should not be null, undefined, boolean, or ' + 'number. It should be a string (for DOM elements) or a ReactClass ' + '(for composite components).%s', reactlibReactElementValidator__getDeclarationErrorAddendum()) : void 0;
+      if (typeof type !== 'function' && typeof type !== 'string') {
+        var info = '';
+        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
+          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
+        }
+        info += reactlibReactElementValidator__getDeclarationErrorAddendum();
+        process.env.NODE_ENV !== 'production' ? reactlibReactElementValidator__warning(false, 'React.createElement: type is invalid -- expected a string (for ' + 'built-in components) or a class/function (for composite ' + 'components) but got: %s.%s', type == null ? type : typeof type, info) : void 0;
+      }
     }
 
     var element = reactlibReactElementValidator__ReactElement.createElement.apply(this, arguments);
@@ -8318,17 +8367,6 @@ var reactlibPooledClass__fourArgumentPooler = function (a1, a2, a3, a4) {
   }
 };
 
-var reactlibPooledClass__fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
-  var Klass = this;
-  if (Klass.instancePool.length) {
-    var instance = Klass.instancePool.pop();
-    Klass.call(instance, a1, a2, a3, a4, a5);
-    return instance;
-  } else {
-    return new Klass(a1, a2, a3, a4, a5);
-  }
-};
-
 var reactlibPooledClass__standardReleaser = function (instance) {
   var Klass = this;
   !(instance instanceof Klass) ? process.env.NODE_ENV !== 'production' ? reactlibPooledClass__invariant(false, 'Trying to release an instance into a pool of a different type.') : reactlibPooledClass___prodInvariant('25') : void 0;
@@ -8368,8 +8406,7 @@ var reactlibPooledClass__PooledClass = {
   oneArgumentPooler: reactlibPooledClass__oneArgumentPooler,
   twoArgumentPooler: reactlibPooledClass__twoArgumentPooler,
   threeArgumentPooler: reactlibPooledClass__threeArgumentPooler,
-  fourArgumentPooler: reactlibPooledClass__fourArgumentPooler,
-  fiveArgumentPooler: reactlibPooledClass__fiveArgumentPooler
+  fourArgumentPooler: reactlibPooledClass__fourArgumentPooler
 };
 
 $m['react/lib/PooledClass'].exports = reactlibPooledClass__PooledClass;
@@ -8983,7 +9020,7 @@ var reactdomlibReactCompositeComponent__ReactCompositeComponent = {
       // Since plain JS classes are defined without any special initialization
       // logic, we can not catch common errors early. Therefore, we have to
       // catch them here, at initialization time, instead.
-      process.env.NODE_ENV !== 'production' ? reactdomlibReactCompositeComponent__warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
+      process.env.NODE_ENV !== 'production' ? reactdomlibReactCompositeComponent__warning(!inst.getInitialState || inst.getInitialState.isReactClassApproved || inst.state, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', this.getName() || 'a component') : void 0;
       process.env.NODE_ENV !== 'production' ? reactdomlibReactCompositeComponent__warning(!inst.getDefaultProps || inst.getDefaultProps.isReactClassApproved, 'getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', this.getName() || 'a component') : void 0;
       process.env.NODE_ENV !== 'production' ? reactdomlibReactCompositeComponent__warning(!inst.propTypes, 'propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', this.getName() || 'a component') : void 0;
       process.env.NODE_ENV !== 'production' ? reactdomlibReactCompositeComponent__warning(!inst.contextTypes, 'contextTypes was defined as an instance property on %s. Use a ' + 'static property to define contextTypes instead.', this.getName() || 'a component') : void 0;
@@ -9720,7 +9757,17 @@ function reactdomlibinstantiateReactComponent__instantiateReactComponent(node, s
     instance = reactdomlibinstantiateReactComponent__ReactEmptyComponent.create(reactdomlibinstantiateReactComponent__instantiateReactComponent);
   } else if (typeof node === 'object') {
     var element = node;
-    !(element && (typeof element.type === 'function' || typeof element.type === 'string')) ? process.env.NODE_ENV !== 'production' ? reactdomlibinstantiateReactComponent__invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', element.type == null ? element.type : typeof element.type, reactdomlibinstantiateReactComponent__getDeclarationErrorAddendum(element._owner)) : reactdomlibinstantiateReactComponent___prodInvariant('130', element.type == null ? element.type : typeof element.type, reactdomlibinstantiateReactComponent__getDeclarationErrorAddendum(element._owner)) : void 0;
+    var type = element.type;
+    if (typeof type !== 'function' && typeof type !== 'string') {
+      var info = '';
+      if (process.env.NODE_ENV !== 'production') {
+        if (type === undefined || typeof type === 'object' && type !== null && Object.keys(type).length === 0) {
+          info += ' You likely forgot to export your component from the file ' + 'it\'s defined in.';
+        }
+      }
+      info += reactdomlibinstantiateReactComponent__getDeclarationErrorAddendum(element._owner);
+      !false ? process.env.NODE_ENV !== 'production' ? reactdomlibinstantiateReactComponent__invariant(false, 'Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s', type == null ? type : typeof type, info) : reactdomlibinstantiateReactComponent___prodInvariant('130', type == null ? type : typeof type, info) : void 0;
+    }
 
     // Special case string values
     if (typeof element.type === 'string') {
@@ -10068,17 +10115,6 @@ var reactdomlibPooledClass__fourArgumentPooler = function (a1, a2, a3, a4) {
   }
 };
 
-var reactdomlibPooledClass__fiveArgumentPooler = function (a1, a2, a3, a4, a5) {
-  var Klass = this;
-  if (Klass.instancePool.length) {
-    var instance = Klass.instancePool.pop();
-    Klass.call(instance, a1, a2, a3, a4, a5);
-    return instance;
-  } else {
-    return new Klass(a1, a2, a3, a4, a5);
-  }
-};
-
 var reactdomlibPooledClass__standardReleaser = function (instance) {
   var Klass = this;
   !(instance instanceof Klass) ? process.env.NODE_ENV !== 'production' ? reactdomlibPooledClass__invariant(false, 'Trying to release an instance into a pool of a different type.') : reactdomlibPooledClass___prodInvariant('25') : void 0;
@@ -10118,8 +10154,7 @@ var reactdomlibPooledClass__PooledClass = {
   oneArgumentPooler: reactdomlibPooledClass__oneArgumentPooler,
   twoArgumentPooler: reactdomlibPooledClass__twoArgumentPooler,
   threeArgumentPooler: reactdomlibPooledClass__threeArgumentPooler,
-  fourArgumentPooler: reactdomlibPooledClass__fourArgumentPooler,
-  fiveArgumentPooler: reactdomlibPooledClass__fiveArgumentPooler
+  fourArgumentPooler: reactdomlibPooledClass__fourArgumentPooler
 };
 
 $m['react-dom/lib/PooledClass'].exports = reactdomlibPooledClass__PooledClass;
@@ -11224,6 +11259,13 @@ var reactdomlibReactDOMComponentTree__Flags = reactdomlibReactDOMComponentTree__
 var reactdomlibReactDOMComponentTree__internalInstanceKey = '__reactInternalInstance$' + Math.random().toString(36).slice(2);
 
 /**
+ * Check if a given node should be cached.
+ */
+function reactdomlibReactDOMComponentTree__shouldPrecacheNode(node, nodeID) {
+  return node.nodeType === 1 && node.getAttribute(reactdomlibReactDOMComponentTree__ATTR_NAME) === String(nodeID) || node.nodeType === 8 && node.nodeValue === ' react-text: ' + nodeID + ' ' || node.nodeType === 8 && node.nodeValue === ' react-empty: ' + nodeID + ' ';
+}
+
+/**
  * Drill down (through composites and empty components) until we get a host or
  * host text component.
  *
@@ -11288,7 +11330,7 @@ function reactdomlibReactDOMComponentTree__precacheChildNodes(inst, node) {
     }
     // We assume the child nodes are in the same order as the child instances.
     for (; childNode !== null; childNode = childNode.nextSibling) {
-      if (childNode.nodeType === 1 && childNode.getAttribute(reactdomlibReactDOMComponentTree__ATTR_NAME) === String(childID) || childNode.nodeType === 8 && childNode.nodeValue === ' react-text: ' + childID + ' ' || childNode.nodeType === 8 && childNode.nodeValue === ' react-empty: ' + childID + ' ') {
+      if (reactdomlibReactDOMComponentTree__shouldPrecacheNode(childNode, childID)) {
         reactdomlibReactDOMComponentTree__precacheNode(childInst, childNode);
         continue outer;
       }
@@ -18074,9 +18116,15 @@ var reactdomlibReactDOMTextarea__ReactDOMTextarea = {
     // This is in postMount because we need access to the DOM node, which is not
     // available until after the component has mounted.
     var node = reactdomlibReactDOMTextarea__ReactDOMComponentTree.getNodeFromInstance(inst);
+    var textContent = node.textContent;
 
-    // Warning: node.value may be the empty string at this point (IE11) if placeholder is set.
-    node.value = node.textContent; // Detach value from defaultValue
+    // Only set node.value if textContent is equal to the expected
+    // initial value. In IE10/IE11 there is a bug where the placeholder attribute
+    // will populate textContent as well.
+    // https://developer.microsoft.com/microsoft-edge/platform/issues/101525/
+    if (textContent === inst._wrapperState.initialValue) {
+      node.value = textContent;
+    }
   }
 };
 
@@ -18844,7 +18892,17 @@ var reactdomlibReactDOMInput__ReactDOMInput = {
       }
     } else {
       if (props.value == null && props.defaultValue != null) {
-        node.defaultValue = '' + props.defaultValue;
+        // In Chrome, assigning defaultValue to certain input types triggers input validation.
+        // For number inputs, the display value loses trailing decimal points. For email inputs,
+        // Chrome raises "The specified value <x> is not a valid email address".
+        //
+        // Here we check to see if the defaultValue has actually changed, avoiding these problems
+        // when the user is inputting text
+        //
+        // https://github.com/facebook/react/issues/7253
+        if (node.defaultValue !== '' + props.defaultValue) {
+          node.defaultValue = '' + props.defaultValue;
+        }
       }
       if (props.checked == null && props.defaultChecked != null) {
         node.defaultChecked = !!props.defaultChecked;
@@ -20039,12 +20097,18 @@ reactdomlibReactDOMComponent__ReactDOMComponent.Mixin = {
     } else {
       var contentToUse = reactdomlibReactDOMComponent__CONTENT_TYPES[typeof props.children] ? props.children : null;
       var childrenToUse = contentToUse != null ? null : props.children;
+      // TODO: Validate that text is allowed as a child of this node
       if (contentToUse != null) {
-        // TODO: Validate that text is allowed as a child of this node
-        if (process.env.NODE_ENV !== 'production') {
-          reactdomlibReactDOMComponent__setAndValidateContentChildDev.call(this, contentToUse);
+        // Avoid setting textContent when the text is empty. In IE11 setting
+        // textContent on a text area will cause the placeholder to not
+        // show within the textarea until it has been focused and blurred again.
+        // https://github.com/facebook/react/issues/6731#issuecomment-254874553
+        if (contentToUse !== '') {
+          if (process.env.NODE_ENV !== 'production') {
+            reactdomlibReactDOMComponent__setAndValidateContentChildDev.call(this, contentToUse);
+          }
+          reactdomlibReactDOMComponent__DOMLazyTree.queueText(lazyTree, contentToUse);
         }
-        reactdomlibReactDOMComponent__DOMLazyTree.queueText(lazyTree, contentToUse);
       } else if (childrenToUse != null) {
         var mountImages = this.mountChildren(childrenToUse, transaction, context);
         for (var i = 0; i < mountImages.length; i++) {
