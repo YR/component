@@ -1,27 +1,25 @@
 'use strict';
 
-/**
- * Base component class (client)
- */
-
-const { React } = require('./react');
 const assign = require('object-assign');
 const clock = require('@yr/clock');
 const Debug = require('debug');
 const isEqual = require('@yr/is-equal');
+const propTypes = require('prop-types');
+const React = require('react');
 
 const DEFAULT_TRANSITION_DURATION = 250;
 const TIMEOUT = 20;
 
 const debug = Debug('yr:component');
 
-module.exports = class Component extends React.Component {
+class Component extends React.Component {
   /**
    * Constructor
    * @param {Object} props
+   * @param {Object} context
    */
-  constructor (props) {
-    super(props);
+  constructor (props, context) {
+    super(props, context);
 
     this.__timerID = 0;
     this.__transitionDuration = ('getTransitionDuration' in this)
@@ -42,7 +40,7 @@ module.exports = class Component extends React.Component {
    * @returns {React}
    */
   render () {
-    return this.__render(this.props, this.state);
+    return this.__render(this.props, this.state, this.context);
   }
 
   /**
@@ -130,3 +128,11 @@ module.exports = class Component extends React.Component {
     if (this.__componentWillUnmount) this.__componentWillUnmount();
   }
 };
+
+Component.contextTypes = {
+  data: propTypes.object,
+  locale: propTypes.object,
+  settings: propTypes.object
+};
+
+module.exports = Component;

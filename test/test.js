@@ -1,55 +1,85 @@
 'use strict';
 
-const { create, el, ReactDOM, stateless } = require('../src/index');
-const expect = require('expect.js');
+const { create, el, stateless } = require('../src/index');
+const { expect } = require('chai');
+const ReactDOM = require('react-dom/server');
 const runtime = require('@yr/runtime');
 
-describe('component', function () {
-  describe('stateful', function () {
-    before(function () {
+describe('component', () => {
+  describe('stateful', () => {
+    before(() => {
       runtime.isServer = false;
     });
-    after(function () {
+    after(() => {
       runtime.isServer = true;
     });
 
-    it('should return a renderable element factory', function () {
+    it('should return a renderable element factory', () => {
       const foo = create({
-        render (props, state) {
+        render(props, state) {
           return el('div', {}, props.text);
         }
       });
 
       expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>foo</div>');
     });
-    it('should return a renderable element factory for a component with defaultProps', function () {
+    it('should return a renderable element factory for a component with defaultProps', () => {
       const foo = create({
         defaultProps: {
           foo: 'bar'
         },
-        render (props, state) {
+        render(props, state) {
           return el('div', {}, props.foo);
         }
       });
 
       expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
     });
-    it('should return a renderable element factory for a component with state', function () {
+    it('should return a renderable element factory for a component with state', () => {
       const foo = create({
         state: {
           foo: 'bar'
         },
-        render (props, state) {
+        render(props, state) {
           return el('div', {}, state.foo);
         }
       });
 
       expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<div>bar</div>');
     });
-    it('should return a renderable element factory for an svg component', function () {
+    it('should return a renderable element factory for a component tree with context', () => {
+      const Bar = create({
+        propTypes: {},
+        render(props, state, context) {
+          return el('span', {}, context.data.bar);
+        }
+      });
+      const Bat = create({
+        render(props, state, context) {
+          return el('span', {}, context.data.bat);
+        }
+      });
+      const Foo = create({
+        getChildContext() {
+          return {
+            data: { bar: 'bar', bat: 'bat' },
+            locale: {},
+            settings: {}
+          };
+        },
+        render(props, state, context) {
+          return el('div', {}, props.text, Bar(), Bat());
+        }
+      });
+
+      expect(ReactDOM.renderToStaticMarkup(Foo({ text: 'foo' }))).to.eql('<div>foo<span>bar</span><span>bat</span></div>');
+    });
+    it('should return a renderable element factory for an svg component', () => {
       const foo = create({
-        render (props, state) {
-          return el('svg', {},
+        render(props, state) {
+          return el(
+            'svg',
+            {},
             el('use', {
               xlinkHref: '#foo',
               x: 0,
@@ -62,8 +92,15 @@ describe('component', function () {
         }
       });
 
-      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql('<svg><use xlink:href="#foo" x="0" y="0" width="100" height="100"></use><text>foo</text></svg>');
+      expect(ReactDOM.renderToStaticMarkup(foo({ text: 'foo' }))).to.eql(
+        '<svg><use xlink:href="#foo" x="0" y="0" width="100" height="100"></use><text>foo</text></svg>'
+      );
     });
+  });
+});
+
+/*
+describe('component', function () {
     it('should return a renderable element factory for a component with mixins', function () {
       let fired = false;
       const foo = create({
@@ -114,3 +151,4 @@ describe('component', function () {
     });
   });
 });
+*/
