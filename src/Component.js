@@ -4,7 +4,6 @@ const assign = require('object-assign');
 const clock = require('@yr/clock');
 const Debug = require('debug');
 const isEqual = require('@yr/is-equal');
-const propTypes = require('prop-types');
 const React = require('react');
 
 const DEFAULT_TRANSITION_DURATION = 250;
@@ -129,10 +128,6 @@ class Component extends React.Component {
   }
 };
 
-Component.contextTypes = {
-  data: propTypes.object,
-  locale: propTypes.object,
-  settings: propTypes.object
-};
+Component.contextTypes = {};
 
 module.exports = Component;

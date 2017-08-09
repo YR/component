@@ -8,31 +8,12 @@
  */
 
 const assign = require('object-assign');
-const Component = require('./lib/Component');
+const Component = require('./Component');
 const React = require('react');
 const runtime = require('@yr/runtime');
 
-const LIFECYCLE_METHODS = [
-  'componentWillMount',
-  'componentDidMount',
-  'componentWillReceiveProps',
-  'componentWillUpdate',
-  'componentDidUpdate',
-  'componentWillUnmount',
-  'componentDidCatch'
-];
-const PROXY_KEYS = ['componentWillUnmount', 'render', 'state'];
-const RESERVED_METHODS = LIFECYCLE_METHODS.concat([
-  'render',
-  'shouldComponentUpdate',
-  'shouldComponentTransition',
-  'getTransitionDuration'
-]);
-const STATIC_PROPERTIES = [
-  'displayName',
-  'defaultProps',
-  'propTypes'
-];
+const STATIC_KEYS = ['displayName', 'defaultProps', 'propTypes'];
+const RESERVED_KEYS = STATIC_KEYS.concat(['componentWillUnmount', 'render', 'state']);
 
 module.exports = {
   NOT_TRANSITIONING: 0,
@@ -41,90 +22,105 @@ module.exports = {
   DID_TRANSITION: 3,
 
   Component,
-  el: React.createElement,
-
-  /**
-   * Convert 'specification' into a renderable component definition
-   * Returns stateless function if server or no state/lifecycle methods defined
-   * @param {Object} specification
-   * @returns {Class|Function}
-   */
-  define(specification) {
-    if (specification.render === undefined) {
-      throw Error('a component specification requires a "render" function');
-    }
-
-
-
-    // Rename select keys to prevent overwriting
-    proxyKeys(specification, PROXY_KEYS);
-
-    if (isStateless(specification)) {
-      return specification.__render;
-    }
-
-    const comp = class extends Component {};
-
-    comp.displayName = specification.displayName || '<component>';
-    comp.defaultProps = specification.defaultProps || {};
-    comp.propTypes = specification.propTypes || {};
-    if ('getChildContext' in specification) {
-      comp.childContextTypes = Component.contextTypes;
-    }
-
-    // Copy to comp prototype
-    assign(comp.prototype, specification);
-
-    return comp;
-  }
+  define,
+  el: createElement
 };
+
+/**
+ * Convert 'specification' into a renderable component definition
+ * Returns stateless function if server or no state/lifecycle methods defined
+ * @param {Object} specification
+ * @returns {Class|Function}
+ */
+function define(specification) {
+  if (specification === undefined || specification.render === undefined) {
+    throw Error('a component specification requires a "render" function');
+  }
+
+  const defaultProps = specification.defaultProps || {};
+  const isStateless = shouldBeStateless(specification);
+  const propTypes = specification.propTypes || {};
+  const spec = {
+    __bindableMethods: [],
+    __componentWillUnmount: specification.componentWillUnmount,
+    __render: specification.render,
+    __state: specification.state !== undefined ? specification.state : {}
+  };
+
+  for (const prop in specification) {
+    if (!~RESERVED_KEYS.indexOf(prop)) {
+      const value = specification[prop];
+
+      if (!isStateless && typeof value === 'function') {
+        spec.__bindableMethods.push(prop);
+      }
+      spec[prop] = value;
+    }
+  }
+
+  if (isStateless) {
+    spec.render = function renderStateless(props, context) {
+      return this.__render(props, this.__state, context);
+    }.bind(spec);
+    spec.render.__isStateless = true;
+    spec.render.displayName = specification.displayName || '<statelessComponent>';
+    spec.render.defaultProps = defaultProps;
+    spec.render.propTypes = propTypes;
+    if ('getChildContext' in specification) {
+      spec.render.childContextTypes = Component.contextTypes;
+    } else {
+      spec.render.contextTypes = Component.contextTypes;
+    }
+    return spec.render;
+  }
+
+  const comp = class extends Component {};
+
+  // Handle static class properties
+  comp.displayName = specification.displayName || '<component>';
+  comp.defaultProps = defaultProps;
+  comp.propTypes = propTypes;
+  if ('getChildContext' in specification) {
+    comp.childContextTypes = Component.contextTypes;
+  }
+
+  // Copy to comp prototype
+  assign(comp.prototype, spec);
+
+  return comp;
+}
+
+/**
+ * Create element from 'type' component definition
+ * @param {Class|Function|String} type
+ * @param {Object} config
+ * @returns {Object}
+ */
+function createElement(type, config, ...children) {
+  // const isStateless = typeof type === 'function' && type.__isStateless;
+  const element = React.createElement(type, config, ...children);
+
+  return element;
+}
 
 /**
  * Determine if 'specification' is stateless
  * @param {Object} specification
  * @returns {Boolean}
  */
-function isStateless(specification) {
-  if (runtime.isServer) {
+function shouldBeStateless(specification) {
+  if (runtime.isServer && specification.getChildContext === undefined) {
     return true;
   }
 
   // Not stateless if contains anything more than render and static properties
   for (const prop in specification) {
-    if (prop !== 'render' && !~STATIC_PROPERTIES.indexOf(prop)) {
+    if (prop !== 'render' && !~STATIC_KEYS.indexOf(prop)) {
       return false;
     }
   }
 
   return true;
-}
-
-/**
- * Stateless component factory
- * @param {Object} specification
- * @returns {Function}
- */
-function createStateless(specification) {
-  return function createStatelessElement(props, context) {
-    processProps(props, specification);
-
-    // Send in initial state
-    return specification.render(props, specification.state !== undefined ? specification.state : {}, context);
-  };
-}
-
-/**
- * Proxy 'keys' of 'obj'
- * @param {Object} obj
- * @param {Array} keys
- */
-function proxyKeys(obj, keys) {
-  keys.forEach(key => {
-    if (key in obj) {
-      obj[`__${key}`] = obj[key];
-      delete obj[key];
-    }
-  });
 }
 
 /**

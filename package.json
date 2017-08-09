@@ -50,7 +50,7 @@
     "build": "buddy deploy buddy-react-bundle.js",
     "perf": "NODE_ENV=production node test/perf.js",
     "prepublish": "yarn run build && buddy build",
-    "test": "NODE_ENV=test mocha test/test.js --reporter spec",
+    "test": "NODE_ENV=test mocha test/test.js --reporter spec --bail",
     "watch": "buddy -rs watch"
   },
   "engines": {
