@@ -122,37 +122,3 @@ function shouldBeStateless(specification) {
 
   return true;
 }
-
-/**
- * Process 'props'
- * @param {Props} props
- * @param {Object} specification
- */
-function processProps(props, specification) {
-  props = props || {};
-  const { data, defaultProps, displayName } = specification;
-
-  // Extract missing props defined in 'data'
-  if (data && props && 'extract' in props) props.extract(Object.keys(data));
-
-  // Copy default props
-  if (defaultProps) {
-    for (const prop in defaultProps) {
-      if (props[prop] == null) props[prop] = defaultProps[prop];
-    }
-  }
-
-  if (!data) return;
-
-  /*   if (process.env.NODE_ENV == 'development' && process.env.RUNTIME == 'browser') {
-    const ReactSecret = require('react/lib/ReactPropTypesSecret');
-
-    // Validate prop types
-    for (const key in data) {
-      const err = data[key](props, key, displayName, 'data property', key, ReactSecret);
-
-      if (err) console.error(err);
-    }
-  }
- */
-}

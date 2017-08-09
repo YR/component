@@ -156,6 +156,22 @@ describe('component', () => {
     expect(Foo.__isStateless).to.equal(undefined);
     expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
   });
+  it('should render a stateful component with bound lifecycle method', () => {
+    const Foo = define({
+      state: {
+        foo: 'bar'
+      },
+      componentWillMount() {
+        this.setState({ foo: 'foo' })
+      },
+      render(props, state) {
+        return el('div', {}, state.foo);
+      }
+    });
+
+    expect(Foo.__isStateless).to.equal(undefined);
+    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+  });
   it('should render a stateful component tree with context', () => {
     const Bar = define({
       state: {

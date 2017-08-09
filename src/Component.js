@@ -2,14 +2,10 @@
 
 const assign = require('object-assign');
 const clock = require('@yr/clock');
-const Debug = require('debug');
-const isEqual = require('@yr/is-equal');
 const React = require('react');
 
 const DEFAULT_TRANSITION_DURATION = 250;
 const TIMEOUT = 20;
-
-const debug = Debug('yr:component');
 
 class Component extends React.Component {
   /**
@@ -17,18 +13,17 @@ class Component extends React.Component {
    * @param {Object} props
    * @param {Object} context
    */
-  constructor (props, context) {
+  constructor(props, context) {
     super(props, context);
 
     this.__timerID = 0;
-    this.__transitionDuration = ('getTransitionDuration' in this)
-      ? this.getTransitionDuration()
-      : DEFAULT_TRANSITION_DURATION;
+    this.__transitionDuration =
+      'getTransitionDuration' in this ? this.getTransitionDuration() : DEFAULT_TRANSITION_DURATION;
     // Set up initial state
     this.state = assign({}, this.__state);
     // Autobind mixin methods
     if (this.__bindableMethods) {
-      this.__bindableMethods.forEach((method) => {
+      this.__bindableMethods.forEach(method => {
         this[method] = this[method].bind(this);
       });
     }
@@ -38,33 +33,8 @@ class Component extends React.Component {
    * React: render
    * @returns {React}
    */
-  render () {
+  render() {
     return this.__render(this.props, this.state, this.context);
-  }
-
-  /**
-   * React: shouldComponentUpdate
-   * @param {Object} nextProps
-   * @param {Object} nextState
-   * @returns {Boolean}
-   */
-  shouldComponentUpdate (nextProps, nextState) {
-    let changed = ('isEqual' in nextProps)
-      ? !this.props.isEqual(nextProps)
-      : !isEqual(nextProps, this.props, null, debug);
-
-    if (!changed) {
-      changed = !isEqual(nextState, this.state, null, debug);
-      if (changed) debug('state changed for %s', this.displayName);
-    } else {
-      debug('props changed for %s', this.displayName);
-    }
-
-    if (changed && this.shouldComponentTransition(nextProps, nextState)) {
-      this.willTransition(nextState);
-    }
-
-    return changed;
   }
 
   /**
@@ -73,7 +43,7 @@ class Component extends React.Component {
    * @param {Object} nextState
    * @returns {Boolean}
    */
-  shouldComponentTransition (nextProps, nextState) {
+  shouldComponentTransition(nextProps, nextState) {
     return false;
   }
 
@@ -81,7 +51,7 @@ class Component extends React.Component {
    * Update 'state' for transition
    * @param {Object} state
    */
-  willTransition (state) {
+  willTransition(state) {
     if (this.__timerID) clock.cancel(this.__timerID);
 
     // Generally a bad idea...
@@ -96,9 +66,9 @@ class Component extends React.Component {
   /**
    * Trigger transition state change
    */
-  isTransitioning () {
+  isTransitioning() {
     this.setState({
-      visibility: (this.state.visibility == 1) ? 2 : 1
+      visibility: this.state.visibility == 1 ? 2 : 1
     });
 
     this.__timerID = clock.timeout(this.__transitionDuration, () => {
@@ -109,24 +79,24 @@ class Component extends React.Component {
   /**
    * Trigger transition state change
    */
-  didTransition () {
+  didTransition() {
     this.__timerID = 0;
 
     this.setState({
-      visibility: (this.state.visibility == 2) ? 3 : 0
+      visibility: this.state.visibility == 2 ? 3 : 0
     });
   }
 
   /**
    * React: componentWillUnmount
    */
-  componentWillUnmount () {
+  componentWillUnmount() {
     // Reset
     if (this.state && this.state.visibility) this.state.visibility = 0;
     if (this.__timerID) clock.cancel(this.__timerID);
     if (this.__componentWillUnmount) this.__componentWillUnmount();
   }
-};
+}
 
 Component.contextTypes = {};
 
