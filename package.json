@@ -47,9 +47,8 @@
   "repository": "https://github.com/YR/component.git",
   "license": "MIT",
   "scripts": {
-    "build": "buddy deploy buddy-react-bundle.js",
     "perf": "NODE_ENV=production node test/perf.js",
-    "prepublish": "yarn run build && buddy build",
+    "prepublish": "buddy build",
     "test": "NODE_ENV=test mocha test/test.js --reporter spec --bail",
     "watch": "buddy -rs watch"
   },
