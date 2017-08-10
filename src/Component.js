@@ -2,12 +2,12 @@
 
 const assign = require('object-assign');
 const clock = require('@yr/clock');
-const React = require('react');
+const InfernoComponent = require('inferno-component');
 
 const DEFAULT_TRANSITION_DURATION = 250;
 const TIMEOUT = 20;
 
-class Component extends React.Component {
+class Component extends InfernoComponent {
   /**
    * Constructor
    * @param {Object} props

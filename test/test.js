@@ -2,8 +2,8 @@
 
 const { Component, define, el } = require('../src/index');
 const { expect } = require('chai');
+const { renderToStaticMarkup } = require('inferno-server');
 const propTypes = require('prop-types');
-const ReactDOM = require('react-dom/server');
 const runtime = require('@yr/runtime');
 
 describe('component', () => {
@@ -30,7 +30,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should render a stateless component with default props', () => {
     const Foo = define({
@@ -43,7 +43,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
   });
   it('should render a stateless component with default state', () => {
     runtime.isServer = true;
@@ -57,7 +57,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
     runtime.isServer = false;
   });
   it('should render a stateless svg component', () => {
@@ -67,7 +67,7 @@ describe('component', () => {
           'svg',
           {},
           el('use', {
-            xlinkHref: '#foo',
+            'xlink:href': '#foo',
             x: 0,
             y: 0,
             width: 100,
@@ -79,7 +79,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
       '<svg><use xlink:href="#foo" x="0" y="0" width="100" height="100"></use><text>foo</text></svg>'
     );
   });
@@ -110,7 +110,7 @@ describe('component', () => {
     expect(Bar.__isStateless).to.equal(true);
     expect(Bat.__isStateless).to.equal(true);
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
       '<div>foo<span>bar</span><span>bat</span></div>'
     );
   });
@@ -125,7 +125,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should render a stateful component with default props', () => {
     const Foo = define({
@@ -141,7 +141,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
   });
   it('should render a stateful component with default state', () => {
     const Foo = define({
@@ -154,7 +154,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
   });
   it('should render a stateful component with bound lifecycle method', () => {
     const Foo = define({
@@ -170,7 +170,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should render a stateful component tree with context', () => {
     const Bar = define({
@@ -205,7 +205,7 @@ describe('component', () => {
     expect(Bar.__isStateless).to.equal(undefined);
     expect(Bat.__isStateless).to.equal(undefined);
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(ReactDOM.renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
+    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
       '<div>foo<span>bar</span><span>bat</span></div>'
     );
   });

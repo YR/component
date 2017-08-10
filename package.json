@@ -8,10 +8,11 @@
     "@yr/is-equal": "1.0.x",
     "@yr/runtime": "2.0.x",
     "debug": "2.x.x",
+    "inferno": "3.7.1",
+    "inferno-component": "3.7.1",
+    "inferno-create-element": "3.7.1",
     "object-assign": "4.1.x",
-    "prop-types": "15.5.10",
-    "react": "next",
-    "react-dom": "next"
+    "prop-types": "15.5.10"
   },
   "devDependencies": {
     "babel-plugin-syntax-trailing-function-commas": "6.22.0",
@@ -41,6 +42,7 @@
     "buddy": "6.x.x",
     "buddy-server": "*",
     "chai": "^4.1.1",
+    "inferno-server": "3.7.1",
     "mocha": "^3.5.0"
   },
   "main": "./src/index.js",

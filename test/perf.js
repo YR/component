@@ -1,8 +1,8 @@
 'use strict';
 
 const { el, define } = require('../src/index');
+const { renderToString } = require('inferno-server');
 const benchmark = require('benchmark');
-const reactDOM = require('react-dom/server');
 
 const BREADTH = 11;
 const DEPTH = 4;
@@ -31,7 +31,7 @@ const comp = define({
 });
 
 function render() {
-  return reactDOM.renderToString(el(comp, { depth: DEPTH, breadth: BREADTH }));
+  return renderToString(el(comp, { depth: DEPTH, breadth: BREADTH }));
 }
 
 suite
