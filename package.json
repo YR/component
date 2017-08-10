@@ -66,10 +66,6 @@
         "output": ".",
         "bundle": false,
         "version": "es5"
-      },
-      {
-        "input": "test/fixtures/test-client.js",
-        "output": "test/index.js"
       }
     ],
     "server": {
