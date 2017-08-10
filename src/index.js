@@ -7,9 +7,9 @@
  * @license MIT
  */
 
+const { createElement } = require('react');
 const assign = require('object-assign');
 const Component = require('./Component');
-const React = require('react');
 const runtime = require('@yr/runtime');
 
 const STATIC_KEYS = ['displayName', 'defaultProps', 'propTypes'];
@@ -23,7 +23,7 @@ module.exports = {
 
   Component,
   define,
-  el: React.createElement
+  el: createElement
 };
 
 /**

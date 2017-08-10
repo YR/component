@@ -1,13 +1,13 @@
 'use strict';
 
+const { Component: ReactComponent } = require('react');
 const assign = require('object-assign');
 const clock = require('@yr/clock');
-const React = require('react');
 
 const DEFAULT_TRANSITION_DURATION = 250;
 const TIMEOUT = 20;
 
-class Component extends React.Component {
+class Component extends ReactComponent {
   /**
    * Constructor
    * @param {Object} props
