@@ -55,7 +55,10 @@
   "engines": {
     "node": ">=6"
   },
-  "browser": "./index.js",
+  "browser": {
+    "./src/index.js": "./index.js",
+    "react-dom/server.browser.js": "react-dom/index.js"
+  },
   "buddy": {
     "build": [
       {

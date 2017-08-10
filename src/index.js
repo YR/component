@@ -23,22 +23,24 @@ module.exports = {
 
   Component,
   define,
-  el: createElement
+  el: React.createElement
 };
 
 /**
  * Convert 'specification' into a renderable component definition
- * Returns stateless function if server or no state/lifecycle methods defined
+ * Always returns class-based definition if 'preferStateless' is "false",
+ * otherwise returns stateless function if server or no state/lifecycle methods defined
  * @param {Object} specification
+ * @param {Boolean} preferStateless
  * @returns {Class|Function}
  */
-function define(specification) {
+function define(specification, preferStateless = true) {
   if (specification === undefined || specification.render === undefined) {
     throw Error('a component specification requires a "render" function');
   }
 
   const defaultProps = specification.defaultProps || {};
-  const isStateless = shouldBeStateless(specification);
+  const isStateless = shouldBeStateless(specification, preferStateless);
   const propTypes = specification.propTypes || {};
   const spec = {
     __bindableMethods: [],
@@ -91,24 +93,16 @@ function define(specification) {
 }
 
 /**
- * Create element from 'type' component definition
- * @param {Class|Function|String} type
- * @param {Object} config
- * @returns {Object}
- */
-function createElement(type, config, ...children) {
-  // const isStateless = typeof type === 'function' && type.__isStateless;
-  const element = React.createElement(type, config, ...children);
-
-  return element;
-}
-
-/**
  * Determine if 'specification' is stateless
  * @param {Object} specification
+ * @param {Boolean} preferStateless
  * @returns {Boolean}
  */
-function shouldBeStateless(specification) {
+function shouldBeStateless(specification, preferStateless) {
+  if (!preferStateless) {
+    return false;
+  }
+
   if (runtime.isServer && specification.getChildContext === undefined) {
     return true;
   }

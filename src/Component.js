@@ -52,7 +52,9 @@ class Component extends React.Component {
    * @param {Object} state
    */
   willTransition(state) {
-    if (this.__timerID) clock.cancel(this.__timerID);
+    if (this.__timerID) {
+      clock.cancel(this.__timerID);
+    }
 
     // Generally a bad idea...
     state.visibility = !state.visibility ? 1 : 2;
@@ -92,9 +94,15 @@ class Component extends React.Component {
    */
   componentWillUnmount() {
     // Reset
-    if (this.state && this.state.visibility) this.state.visibility = 0;
-    if (this.__timerID) clock.cancel(this.__timerID);
-    if (this.__componentWillUnmount) this.__componentWillUnmount();
+    if (this.state && this.state.visibility) {
+      this.state.visibility = 0;
+    }
+    if (this.__timerID) {
+      clock.cancel(this.__timerID);
+    }
+    if (this.__componentWillUnmount) {
+      this.__componentWillUnmount();
+    }
   }
 }
 
