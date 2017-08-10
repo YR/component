@@ -10,7 +10,7 @@
     "debug": "2.x.x",
     "object-assign": "4.1.x",
     "prop-types": "15.5.10",
-    "react": "next"
+    "react": "16.0.0-beta.5"
   },
   "devDependencies": {
     "babel-plugin-syntax-trailing-function-commas": "6.22.0",
@@ -41,7 +41,7 @@
     "buddy-server": "*",
     "chai": "^4.1.1",
     "mocha": "^3.5.0",
-    "react-dom": "next"
+    "react-dom": "16.0.0-beta.5"
   },
   "main": "./src/index.js",
   "repository": "https://github.com/YR/component.git",
