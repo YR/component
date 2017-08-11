@@ -1,6 +1,6 @@
 'use strict';
 
-const { Component, define, el, propTypes } = require('../src/index');
+const { Component, define, el, PropTypes } = require('../src/index');
 const { expect } = require('chai');
 const { renderToStaticMarkup } = require('react-dom/server');
 const runtime = require('@yr/runtime');
@@ -9,9 +9,9 @@ describe('component', () => {
   before(() => {
     runtime.isServer = false;
     Component.contextTypes = {
-      data: propTypes.object,
-      locale: propTypes.object,
-      settings: propTypes.object
+      data: PropTypes.object,
+      locale: PropTypes.object,
+      settings: PropTypes.object
     };
   });
   after(() => {

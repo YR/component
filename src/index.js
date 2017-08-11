@@ -10,7 +10,7 @@
 const { createElement } = require('react');
 const assign = require('object-assign');
 const Component = require('./Component');
-const propTypes = require('prop-types');
+const PropTypes = require('prop-types');
 const runtime = require('@yr/runtime');
 
 const STATIC_KEYS = ['displayName', 'defaultProps', 'propTypes'];
@@ -25,7 +25,7 @@ module.exports = {
   Component,
   define,
   el: createElement,
-  propTypes
+  PropTypes
 };
 
 /**
