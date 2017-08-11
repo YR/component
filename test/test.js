@@ -1,9 +1,8 @@
 'use strict';
 
-const { Component, define, el } = require('../src/index');
+const { Component, define, el, propTypes } = require('../src/index');
 const { expect } = require('chai');
 const { renderToStaticMarkup } = require('react-dom/server');
-const propTypes = require('prop-types');
 const runtime = require('@yr/runtime');
 
 describe('component', () => {
