@@ -11,6 +11,7 @@ const { render } = require('inferno');
 const assign = require('object-assign');
 const Component = require('./Component');
 const createElement = require('inferno-create-element');
+const PropTypes = require('prop-types');
 const runtime = require('@yr/runtime');
 const serverRender = require('inferno-server');
 
@@ -26,6 +27,7 @@ module.exports = {
   Component,
   define,
   el: createElement,
+  PropTypes,
   render: runtime.isServer ? serverRender : render
 };
 
