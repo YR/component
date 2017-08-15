@@ -11,6 +11,7 @@
     "inferno": "3.7.1",
     "inferno-component": "3.7.1",
     "inferno-create-element": "3.7.1",
+    "inferno-server": "3.7.1",
     "object-assign": "4.1.x",
     "prop-types": "15.5.10"
   },
@@ -40,9 +41,7 @@
     "babel-plugin-transform-object-rest-spread": "6.23.0",
     "benchmark": "2.1.x",
     "buddy": "6.x.x",
-    "buddy-server": "*",
     "chai": "^4.1.1",
-    "inferno-server": "3.7.1",
     "mocha": "^3.5.0"
   },
   "main": "./src/index.js",
@@ -59,7 +58,7 @@
   },
   "browser": {
     "./src/index.js": "./index.js",
-    "react-dom/server.browser.js": "react-dom/index.js"
+    "inferno-server": false
   },
   "buddy": {
     "build": [
@@ -68,11 +67,15 @@
         "output": ".",
         "bundle": false,
         "version": "es5"
+      },
+      {
+        "input": "test/fixtures/src/index.js",
+        "output": "test/fixtures",
+        "version": [
+          "react",
+          "es5"
+        ]
       }
-    ],
-    "server": {
-      "directory": "test",
-      "port": 3000
-    }
+    ]
   }
 }

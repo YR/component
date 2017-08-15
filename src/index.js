@@ -1,16 +1,18 @@
 'use strict';
 
 /**
- * A factory utility for creating React.js components
+ * A factory utility for creating Inferno components
  * https://github.com/yr/component
  * @copyright Yr
  * @license MIT
  */
 
+const { render } = require('inferno');
 const assign = require('object-assign');
 const Component = require('./Component');
 const createElement = require('inferno-create-element');
 const runtime = require('@yr/runtime');
+const serverRender = require('inferno-server');
 
 const STATIC_KEYS = ['displayName', 'defaultProps', 'propTypes'];
 const RESERVED_KEYS = STATIC_KEYS.concat(['componentWillUnmount', 'render', 'state']);
@@ -23,7 +25,8 @@ module.exports = {
 
   Component,
   define,
-  el: createElement
+  el: createElement,
+  render: runtime.isServer ? serverRender : render
 };
 
 /**

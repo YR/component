@@ -1,8 +1,7 @@
 'use strict';
 
-const { Component, define, el } = require('../src/index');
+const { Component, define, el, render: { renderToStaticMarkup } } = require('../src/index');
 const { expect } = require('chai');
-const { renderToStaticMarkup } = require('inferno-server');
 const propTypes = require('prop-types');
 const runtime = require('@yr/runtime');
 
