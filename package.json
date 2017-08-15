@@ -72,7 +72,7 @@
         "input": "test/fixtures/src/index.js",
         "output": "test/fixtures",
         "version": [
-          "react",
+          "inferno",
           "es5"
         ]
       }
