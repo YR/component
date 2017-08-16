@@ -169,15 +169,30 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(render(el(Foo))).to.eql('<div>foo</div>');
+  });
+  it('should render a stateful component with pseudo constructor', () => {
+    const Foo = define({
+      init(props) {
+        this.state = {
+          foo: 'foo'
+        };
+      },
+      render(props, state) {
+        return el('div', {}, state.foo);
+      }
+    });
+
+    expect(Foo.__isStateless).to.equal(undefined);
+    expect(render(el(Foo))).to.eql('<div>foo</div>');
   });
   it('should render a stateful component tree with context', () => {
     const Bar = define({
-      state: {
-        bar: 'bar'
+      init(props, context) {
+        this.bar = context.data.bar;
       },
       render(props, state, context) {
-        return el('span', {}, context.data.bar);
+        return el('span', {}, this.bar);
       }
     });
     const Bat = define({

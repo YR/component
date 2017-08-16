@@ -27,6 +27,11 @@ class Component extends PreactComponent {
         this[method] = this[method].bind(this);
       });
     }
+
+    // Call pseudo constructor
+    if (this.init !== undefined) {
+      this.init(props, context);
+    }
   }
 
   /**
