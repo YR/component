@@ -1,7 +1,6 @@
 'use strict';
 
-const { el, define } = require('../src/index');
-const { renderToString } = require('inferno-server');
+const { el, define, render: renderToString } = require('../src/index');
 const benchmark = require('benchmark');
 
 const BREADTH = 11;

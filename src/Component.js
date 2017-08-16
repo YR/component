@@ -1,13 +1,13 @@
 'use strict';
 
+const { Component: PreactComponent } = require('preact');
 const assign = require('object-assign');
 const clock = require('@yr/clock');
-const InfernoComponent = require('inferno-component');
 
 const DEFAULT_TRANSITION_DURATION = 250;
 const TIMEOUT = 20;
 
-class Component extends InfernoComponent {
+class Component extends PreactComponent {
   /**
    * Constructor
    * @param {Object} props

@@ -1,6 +1,6 @@
 'use strict';
 
-const { Component, define, el, render: { renderToStaticMarkup } } = require('../src/index');
+const { Component, define, el, render } = require('../src/index');
 const { expect } = require('chai');
 const propTypes = require('prop-types');
 const runtime = require('@yr/runtime');
@@ -29,7 +29,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should render a stateless component with default props', () => {
     const Foo = define({
@@ -42,7 +42,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
   });
   it('should render a stateless component with default state', () => {
     runtime.isServer = true;
@@ -56,7 +56,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
     runtime.isServer = false;
   });
   it('should render a stateless svg component', () => {
@@ -78,7 +78,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(true);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
+    expect(render(el(Foo, { text: 'foo' }))).to.eql(
       '<svg><use xlink:href="#foo" x="0" y="0" width="100" height="100"></use><text>foo</text></svg>'
     );
   });
@@ -109,7 +109,7 @@ describe('component', () => {
     expect(Bar.__isStateless).to.equal(true);
     expect(Bat.__isStateless).to.equal(true);
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
+    expect(render(el(Foo, { text: 'foo' }))).to.eql(
       '<div>foo<span>bar</span><span>bat</span></div>'
     );
   });
@@ -124,7 +124,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should render a stateful component with default props', () => {
     const Foo = define({
@@ -140,7 +140,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
   });
   it('should render a stateful component with default state', () => {
     const Foo = define({
@@ -153,7 +153,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>bar</div>');
   });
   it('should render a stateful component with bound lifecycle method', () => {
     const Foo = define({
@@ -169,7 +169,7 @@ describe('component', () => {
     });
 
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>foo</div>');
   });
   it('should render a stateful component tree with context', () => {
     const Bar = define({
@@ -204,7 +204,7 @@ describe('component', () => {
     expect(Bar.__isStateless).to.equal(undefined);
     expect(Bat.__isStateless).to.equal(undefined);
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(renderToStaticMarkup(el(Foo, { text: 'foo' }))).to.eql(
+    expect(render(el(Foo, { text: 'foo' }))).to.eql(
       '<div>foo<span>bar</span><span>bat</span></div>'
     );
   });

@@ -7,13 +7,12 @@
  * @license MIT
  */
 
-const { render } = require('inferno');
+const { render, createElement } = require('preact');
+const { render: serverRender } = require('preact-render-to-string');
 const assign = require('object-assign');
 const Component = require('./Component');
-const createElement = require('inferno-create-element');
 const PropTypes = require('prop-types');
 const runtime = require('@yr/runtime');
-const serverRender = require('inferno-server');
 
 const STATIC_KEYS = ['displayName', 'defaultProps', 'propTypes'];
 const RESERVED_KEYS = STATIC_KEYS.concat(['componentWillUnmount', 'render', 'state']);

@@ -1,18 +1,16 @@
 {
   "name": "@yr/component",
   "description": "A factory utility for creating React.js components",
-  "version": "6.1.0-beta.1",
+  "version": "6.1.0-beta.2",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
     "@yr/clock": "2.0.x",
     "@yr/is-equal": "1.0.x",
     "@yr/runtime": "2.0.x",
     "debug": "2.x.x",
-    "inferno": "3.7.1",
-    "inferno-component": "3.7.1",
-    "inferno-create-element": "3.7.1",
-    "inferno-server": "3.7.1",
     "object-assign": "4.1.x",
+    "preact": "8.2.1",
+    "preact-render-to-string": "3.6.3",
     "prop-types": "15.5.10"
   },
   "devDependencies": {
@@ -58,7 +56,7 @@
   },
   "browser": {
     "./src/index.js": "./index.js",
-    "inferno-server": false
+    "preact-render-to-string": false
   },
   "buddy": {
     "build": [
@@ -72,7 +70,6 @@
         "input": "test/fixtures/src/index.js",
         "output": "test/fixtures",
         "version": [
-          "inferno",
           "es5"
         ]
       }
