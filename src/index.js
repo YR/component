@@ -1,13 +1,14 @@
 'use strict';
 
 /**
- * A factory utility for creating React.js components
+ * A factory utility for creating Preact components
  * https://github.com/yr/component
  * @copyright Yr
  * @license MIT
  */
 
-const { createElement } = require('react');
+const { render, createElement } = require('preact');
+const { render: serverRender } = require('preact-render-to-string');
 const assign = require('object-assign');
 const Component = require('./Component');
 const PropTypes = require('prop-types');
@@ -17,43 +18,38 @@ const STATIC_KEYS = ['displayName', 'defaultProps', 'propTypes'];
 const RESERVED_KEYS = STATIC_KEYS.concat(['componentWillUnmount', 'render', 'state']);
 
 module.exports = {
-  NOT_TRANSITIONING: 0,
-  WILL_TRANSITION: 1,
-  IS_TRANSITIONING: 2,
-  DID_TRANSITION: 3,
-
   Component,
   define,
   el: createElement,
-  PropTypes
+  PropTypes,
+  render: runtime.isServer ? serverRender : render
 };
 
 /**
- * Convert 'specification' into a renderable component definition
+ * Convert 'definition' into a renderable component definition
  * Always returns class-based definition if 'preferStateless' is "false",
  * otherwise returns stateless function if server or no state/lifecycle methods defined
- * @param {Object} specification
+ * @param {Object} definition
  * @param {Boolean} preferStateless
  * @returns {Class|Function}
  */
-function define(specification, preferStateless = true) {
-  if (specification === undefined || specification.render === undefined) {
-    throw Error('a component specification requires a "render" function');
+function define(definition, preferStateless = true) {
+  if (definition === undefined || definition.render === undefined) {
+    throw Error('a component definition requires a "render" function');
   }
 
-  const defaultProps = specification.defaultProps || {};
-  const isStateless = shouldBeStateless(specification, preferStateless);
-  const propTypes = specification.propTypes || {};
+  const defaultProps = definition.defaultProps || {};
+  const isStateless = shouldBeStateless(definition, preferStateless);
+  const propTypes = definition.propTypes || {};
   const spec = {
     __bindableMethods: [],
-    __componentWillUnmount: specification.componentWillUnmount,
-    __render: specification.render,
-    __state: specification.state !== undefined ? specification.state : {}
+    __render: definition.render,
+    __state: definition.state !== undefined ? definition.state : {}
   };
 
-  for (const prop in specification) {
+  for (const prop in definition) {
     if (!~RESERVED_KEYS.indexOf(prop)) {
-      const value = specification[prop];
+      const value = definition[prop];
 
       if (!isStateless && typeof value === 'function') {
         spec.__bindableMethods.push(prop);
@@ -67,10 +63,10 @@ function define(specification, preferStateless = true) {
       return this.__render(props, this.__state, context);
     }.bind(spec);
     spec.render.__isStateless = true;
-    spec.render.displayName = specification.displayName || '<statelessComponent>';
+    spec.render.displayName = definition.displayName || '<statelessComponent>';
     spec.render.defaultProps = defaultProps;
     spec.render.propTypes = propTypes;
-    if ('getChildContext' in specification) {
+    if ('getChildContext' in definition) {
       spec.render.childContextTypes = Component.contextTypes;
     } else {
       spec.render.contextTypes = Component.contextTypes;
@@ -81,10 +77,10 @@ function define(specification, preferStateless = true) {
   const comp = class extends Component {};
 
   // Handle static class properties
-  comp.displayName = specification.displayName || '<component>';
+  comp.displayName = definition.displayName || '<component>';
   comp.defaultProps = defaultProps;
   comp.propTypes = propTypes;
-  if ('getChildContext' in specification) {
+  if ('getChildContext' in definition) {
     comp.childContextTypes = Component.contextTypes;
   }
 
@@ -95,22 +91,22 @@ function define(specification, preferStateless = true) {
 }
 
 /**
- * Determine if 'specification' is stateless
- * @param {Object} specification
+ * Determine if 'definition' is stateless
+ * @param {Object} definition
  * @param {Boolean} preferStateless
  * @returns {Boolean}
  */
-function shouldBeStateless(specification, preferStateless) {
+function shouldBeStateless(definition, preferStateless) {
   if (!preferStateless) {
     return false;
   }
 
-  if (runtime.isServer && specification.getChildContext === undefined) {
+  if (runtime.isServer && definition.getChildContext === undefined) {
     return true;
   }
 
   // Not stateless if contains anything more than render and static properties
-  for (const prop in specification) {
+  for (const prop in definition) {
     if (prop !== 'render' && !~STATIC_KEYS.indexOf(prop)) {
       return false;
     }

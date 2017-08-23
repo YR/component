@@ -1,16 +1,15 @@
 {
   "name": "@yr/component",
-  "description": "A factory utility for creating React.js components",
-  "version": "5.0.2",
+  "description": "A factory utility for creating React-like components",
+  "version": "6.1.0-beta.3",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
-    "@yr/clock": "2.0.x",
-    "@yr/is-equal": "1.0.x",
     "@yr/runtime": "2.0.x",
     "debug": "2.x.x",
     "object-assign": "4.1.x",
-    "prop-types": "15.5.10",
-    "react": "16.0.0-beta.5"
+    "preact": "8.2.1",
+    "preact-render-to-string": "3.6.3",
+    "prop-types": "15.5.10"
   },
   "devDependencies": {
     "babel-plugin-syntax-jsx": "6.18.0",
@@ -41,7 +40,6 @@
     "babel-plugin-transform-react-jsx": "6.24.1",
     "benchmark": "2.1.x",
     "buddy": "6.x.x",
-    "buddy-server": "*",
     "chai": "^4.1.1",
     "mocha": "^3.5.0",
     "react-dom": "16.0.0-beta.5"
@@ -59,7 +57,8 @@
     "node": ">=6"
   },
   "browser": {
-    "./src/index.js": "./index.js"
+    "./src/index.js": "./index.js",
+    "preact-render-to-string": false
   },
   "buddy": {
     "build": [
@@ -73,14 +72,9 @@
         "input": "test/fixtures/src/index.js",
         "output": "test/fixtures",
         "version": [
-          "react",
           "es5"
         ]
       }
-    ],
-    "server": {
-      "directory": "test/fixtures",
-      "port": 3000
-    }
+    ]
   }
 }
