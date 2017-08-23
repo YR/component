@@ -1,6 +1,6 @@
 {
   "name": "@yr/component",
-  "description": "A factory utility for creating React.js components",
+  "description": "A factory utility for creating React-like components",
   "version": "6.1.0-beta.3",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
