@@ -36,28 +36,28 @@ const comp = define({
 
 ### About component definitions
 
-In general, component definitions can be broadly considered either stateful or stateless (smart or dumb, container or presentational). **Component** removes the need to consider the technical implementation of these differences by automatically creating `Class` based definitions for stateful components, and `Function` based definitions for stateless components. Stateless (functional) components are prefered due to their reduced overhead, but stateful (class) components will be defined if at least one of the following are `true`:
+In general, component definitions can be broadly considered either *stateful* or *stateless* (smart or dumb, container or presentational). **Component** removes the need to consider the technical implementation of these differences by automatically creating `Class` based definitions for stateful components, and `Function` based definitions for stateless components. Stateless (functional) components are prefered due to their reduced overhead, but stateful (class) components will be defined if at least one of the following are `true`:
 
-- `preferStateless` argument passed to `define` is `false`
-- is server and `getChildContext` is defined
-- additional properties/methods other than `render`, `displayName`, `defaultProps`, and `propTypes` are defined
+- `preferStateless` argument passed to `define()` is `false`
+- is server and `getChildContext()` is defined
+- additional properties/methods other than `render()`, `displayName`, `defaultProps`, and `propTypes` are defined
 
 When a `class` based stateful definition is instantiated, any methods defined will be automatically bound to that instance. In addition, regardless of the format, a component's `render` method will always be passed `props`, `state`, and `context` references.
 
 ## API
 
-**define(definition: Object, preferStateless: Boolean): Class|Function**
+#### define(definition: Object, preferStateless: Boolean): Class|Function
 Returns a component render function, or component class, based on the passed `definition`.
 
 If `preferStateless` is `false`, a class will be returned regardless of the shape of `definition`. When `true` (the default), a function will be returned unless one of the following rules outlined [above](#about-component-definitions) apply.
 
-**el(type: String|Class|Function, props: Object, ...children)**
+#### el(type: String|Class|Function, props: Object, ...children)
 Alias for `Preact.createElement`.
 
-**PropTypes**
+#### PropTypes
 Reference to the [PropTypes](https://github.com/facebook/prop-types) library.
 
-**render(component: Object[, containerNode: DOMElement[, replaceNode: DOMElement]]): [String]**
+#### render(component: Object[, containerNode: DOMElement[, replaceNode: DOMElement]]): [String]
 On the server, accepts a `component` object (JSX element, or result of call to `el()`), and returns a string of HTML:
 
 ```js
