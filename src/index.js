@@ -15,7 +15,7 @@ const PropTypes = require('prop-types');
 const runtime = require('@yr/runtime');
 
 const STATIC_KEYS = ['displayName', 'defaultProps', 'propTypes'];
-const RESERVED_KEYS = STATIC_KEYS.concat(['componentWillUnmount', 'render', 'state']);
+const RESERVED_KEYS = STATIC_KEYS.concat(['render', 'state']);
 
 module.exports = {
   Component,
