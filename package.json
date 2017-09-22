@@ -1,7 +1,7 @@
 {
   "name": "@yr/component",
   "description": "A factory utility for creating React-like components",
-  "version": "6.1.2",
+  "version": "6.1.3",
   "author": "Alexander Pope <alexander.pope@nrk.no>",
   "dependencies": {
     "@yr/runtime": "2.0.x",
