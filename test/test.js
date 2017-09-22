@@ -109,9 +109,7 @@ describe('component', () => {
     expect(Bar.__isStateless).to.equal(true);
     expect(Bat.__isStateless).to.equal(true);
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(render(el(Foo, { text: 'foo' }))).to.eql(
-      '<div>foo<span>bar</span><span>bat</span></div>'
-    );
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>foo<span>bar</span><span>bat</span></div>');
   });
   it('should render a stateful component', () => {
     const Foo = define({
@@ -161,7 +159,7 @@ describe('component', () => {
         foo: 'bar'
       },
       componentWillMount() {
-        this.setState({ foo: 'foo' })
+        this.setState({ foo: 'foo' });
       },
       render(props, state) {
         return el('div', {}, state.foo);
@@ -219,8 +217,6 @@ describe('component', () => {
     expect(Bar.__isStateless).to.equal(undefined);
     expect(Bat.__isStateless).to.equal(undefined);
     expect(Foo.__isStateless).to.equal(undefined);
-    expect(render(el(Foo, { text: 'foo' }))).to.eql(
-      '<div>foo<span>bar</span><span>bat</span></div>'
-    );
+    expect(render(el(Foo, { text: 'foo' }))).to.eql('<div>foo<span>bar</span><span>bat</span></div>');
   });
 });

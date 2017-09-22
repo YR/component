@@ -1,7 +1,6 @@
 'use strict';
 
 const { Component: PreactComponent } = require('preact');
-const assign = require('object-assign');
 
 class Component extends PreactComponent {
   /**
@@ -13,7 +12,7 @@ class Component extends PreactComponent {
     super(props, context);
 
     // Set up initial state
-    this.state = assign({}, this.__state);
+    this.state = Object.assign({}, this.__state);
     // Autobind mixin methods
     if (this.__bindableMethods) {
       this.__bindableMethods.forEach(method => {
@@ -28,8 +27,8 @@ class Component extends PreactComponent {
   }
 
   /**
-   * React: render
-   * @returns {React}
+   * Render
+   * @returns {Object}
    */
   render() {
     return this.__render(this.props, this.state, this.context);

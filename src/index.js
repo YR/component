@@ -9,7 +9,6 @@
 
 const { render, createElement } = require('preact');
 const { render: serverRender } = require('preact-render-to-string');
-const assign = require('object-assign');
 const Component = require('./Component');
 const PropTypes = require('prop-types');
 const runtime = require('@yr/runtime');
@@ -85,7 +84,7 @@ function define(definition, preferStateless = true) {
   }
 
   // Copy to comp prototype
-  assign(comp.prototype, spec);
+  Object.assign(comp.prototype, spec);
 
   return comp;
 }

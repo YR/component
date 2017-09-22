@@ -6,8 +6,7 @@
   "dependencies": {
     "@yr/runtime": "2.0.x",
     "debug": "2.x.x",
-    "object-assign": "4.1.x",
-    "preact": "8.2.4",
+    "preact": "8.2.5",
     "preact-render-to-string": "3.6.3",
     "prop-types": "15.5.10"
   },
@@ -49,8 +48,7 @@
   "scripts": {
     "perf": "NODE_ENV=production node test/perf.js",
     "prepublish": "buddy build",
-    "test": "NODE_ENV=test mocha test/test.js --reporter spec --bail",
-    "watch": "buddy -rs watch"
+    "test": "NODE_ENV=test mocha test/test.js --reporter spec --bail"
   },
   "engines": {
     "node": ">=6"
@@ -66,13 +64,6 @@
         "output": ".",
         "bundle": false,
         "version": "es5"
-      },
-      {
-        "input": "test/fixtures/src/index.js",
-        "output": "test/fixtures",
-        "version": [
-          "es5"
-        ]
       }
     ]
   }
