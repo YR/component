@@ -100,7 +100,7 @@ function shouldBeStateless(definition, preferStateless) {
     return false;
   }
 
-  if (runtime.isServer && definition.getChildContext === undefined) {
+  if (runtime.isServer && (definition.getChildContext === undefined && definition.init === undefined)) {
     return true;
   }
 
